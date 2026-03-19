@@ -5,6 +5,7 @@ import { useNavigation } from '../composables/useNavigation'
 import { exportToExcel } from '../utils/excelExporter'
 import http from '../utils/http'
 import PaginationControls from './PaginationControls.vue'
+import GenericCreateModal from './GenericCreateModal.vue'
 
 interface Props {
   endpoint: string
@@ -13,7 +14,8 @@ interface Props {
   icon?: string
   itemLabel: string
   showActions?: boolean
-  showCreateLeaves?: boolean
+  showCreate?: boolean
+  createType?: 'leave' | 'student' | 'reviewer' | 'teacher' | 'course'
   customData?: any[]
   customLoading?: boolean
   customError?: string
@@ -28,9 +30,10 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   icon: '',
   showActions: false,
+  showCreate: false,
+  createType: 'leave',
   hideExport: false,
-  hideBackButton: false,
-  showCreateLeaves: false
+  hideBackButton: false
 })
 
 // 导出相关状态
@@ -197,131 +200,22 @@ const handleExportCSV = async () => {
 
 
 
-// 创建请假条相关
+// 创建相关状态
 const showCreateModal = ref(false)
-const isCreating = ref(false)
-const createError = ref('')
-
-interface LeaveForm {
-  student_id: number | null
-  course_id: number
-  leave_date: string
-  leave_hours: number | null
-  leave_type: string
-  remarks: string
-}
-
-const leaveForm = ref<LeaveForm>({
-  student_id: null,
-  course_id: 0,
-  leave_date: '',
-  leave_hours: null,
-  leave_type: '',
-  remarks: ''
-})
-
-// 获取当前用户信息
-const currentUserId = ref<number | null>(null)
-const currentUserRole = ref<string>('')
-
-// 获取课程列表
-const courses = ref<any[]>([])
-const coursesLoading = ref(false)
-
-const fetchCourses = async () => {
-  try {
-    coursesLoading.value = true
-    const result: any = await http.get('/courses')
-    courses.value = result.items || []
-  } catch (error) {
-    console.error('获取课程列表失败:', error)
-  } finally {
-    coursesLoading.value = false
-  }
-}
 
 // 打开创建弹窗
 const openCreateModal = () => {
-  // 从 localStorage 获取当前用户信息
-  const userInfo = localStorage.getItem('userInfo')
-  if (userInfo) {
-    try {
-      const user = JSON.parse(userInfo)
-      currentUserId.value = user.id
-      currentUserRole.value = user.role || 'student'
-      // 如果是学生，自动填充学生ID
-      if (currentUserRole.value === 'student') {
-        leaveForm.value.student_id = user.id
-      }
-    } catch (e) {
-      console.error('解析用户信息失败:', e)
-    }
-  }
-
   showCreateModal.value = true
-  fetchCourses()
-  createError.value = ''
 }
 
 // 关闭创建弹窗
 const closeCreateModal = () => {
   showCreateModal.value = false
-  // 重置表单
-  leaveForm.value = {
-    student_id: currentUserRole.value === 'student' ? currentUserId.value : null,
-    course_id: 0,
-    leave_date: '',
-    leave_hours: null,
-    leave_type: '',
-    remarks: ''
-  }
-  createError.value = ''
 }
 
-// 课程变更处理
-const handleCourseChange = () => {
-  // 可以在这里添加课程变更后的逻辑
-}
-
-// 创建请假条
-const handleCreateLeave = async () => {
-  try {
-    isCreating.value = true
-    createError.value = ''
-
-    // 验证表单
-    if (!leaveForm.value.student_id) {
-      createError.value = '请输入学生ID'
-      return
-    }
-    if (!leaveForm.value.leave_date) {
-      createError.value = '请选择请假日期'
-      return
-    }
-    if (!leaveForm.value.leave_hours || leaveForm.value.leave_hours <= 0) {
-      createError.value = '请输入有效的请假课时'
-      return
-    }
-
-    const payload = {
-      student_id: leaveForm.value.student_id,
-      course_id: leaveForm.value.course_id === 0 ? null : leaveForm.value.course_id,
-      leave_date: leaveForm.value.leave_date,
-      leave_hours: leaveForm.value.leave_hours,
-      leave_type: leaveForm.value.leave_type || null,
-      remarks: leaveForm.value.remarks || null
-    }
-
-    await http.post('/leaves', payload)
-    alert('创建请假条成功')
-    closeCreateModal()
-    fetchData() // 刷新列表
-  } catch (error: any) {
-    console.error('创建请假条失败:', error)
-    createError.value = error.response?.data?.message || error.message || '创建失败，请稍后重试'
-  } finally {
-    isCreating.value = false
-  }
+// 创建成功回调
+const onCreateSuccess = () => {
+  fetchData() // 刷新列表
 }
 
 onMounted(() => {
@@ -335,11 +229,15 @@ onMounted(() => {
       <div class="page-header">
         <h1 v-if="title" class="page-title">{{ title }}</h1>
         <div class="header-buttons">
+          <slot name="header-buttons"></slot>
           <button v-if="!hideExport" @click="handleExportCSV" class="btn btn-export" :disabled="isExporting">
             {{ isExporting ? '导出中...' : '导出Excel' }}
           </button>
-          <button v-if="showCreateLeaves" @click="openCreateModal" class="btn btn-primary">
-            创建请假条
+          <button v-if="showCreate" @click="openCreateModal" class="btn btn-primary">
+            {{ createType === 'leave' ? '创建请假条' : 
+               createType === 'student' ? '添加学生' : 
+               createType === 'reviewer' ? '添加审核员' : 
+               createType === 'teacher' ? '添加教师' : '添加课程' }}
           </button>
           <button v-if="!hideBackButton" @click="onBackClick ? onBackClick() : goToHome()" class="btn btn-back">
             {{ backButtonText || '返回首页' }}
@@ -404,81 +302,13 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 创建请假条弹窗 -->
-    <div v-if="showCreateModal" class="modal-overlay" @click.self="closeCreateModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>创建请假条</h3>
-        </div>
-
-        <form @submit.prevent="handleCreateLeave" class="modal-form">
-          <div class="form-row-two">
-            <div class="form-group">
-              <label for="student_id">
-                学生ID
-              </label>
-              <input type="number" id="student_id" v-model="leaveForm.student_id"
-                :readonly="currentUserRole === 'student'" :disabled="currentUserRole === 'student'"
-                :class="{ 'readonly-input': currentUserRole === 'student' }" required
-                :placeholder="currentUserRole === 'student' ? `当前用户ID: ${currentUserId}` : '请输入学生ID'"
-                min="1" />
-            </div>
-            <div class="form-group">
-              <label for="leave_date">请假日期 *</label>
-              <input type="date" id="leave_date" v-model="leaveForm.leave_date" required />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="course">课程</label>
-            <select id="course" v-model="leaveForm.course_id" @change="handleCourseChange">
-              <option value="0">请选择课程</option>
-              <option v-if="coursesLoading" value="">加载中...</option>
-              <option v-for="course in courses" :key="course.course_id" :value="course.course_id">
-                {{ course.course_name }} ({{ course.teacher_name }})
-              </option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="leave_hours">请假课时 *</label>
-              <input type="number" id="leave_hours" v-model="leaveForm.leave_hours" required placeholder="数字" />
-            </div>
-            <div class="form-group">
-              <label for="leave_type">请假类型</label>
-              <select id="leave_type" v-model="leaveForm.leave_type">
-                <option value="">请选择请假类型</option>
-                <option value="病假">病假</option>
-                <option value="事假">事假</option>
-                <option value="公假">公假</option>
-                <option value="其他">其他</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="remarks">备注</label>
-            <textarea id="remarks" v-model="leaveForm.remarks" rows="3" placeholder="请输入请假事由等备注信息"
-              maxlength="100"></textarea>
-          </div>
-
-          <!-- 错误信息 -->
-          <div v-if="createError" class="error-message">
-            {{ createError }}
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" @click="closeCreateModal" class="btn btn-secondary">
-              取消
-            </button>
-            <button type="submit" class="btn btn-primary" :disabled="isCreating">
-              {{ isCreating ? '创建中...' : '创建请假条' }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <!-- 通用创建弹窗 -->
+    <GenericCreateModal 
+      :show="showCreateModal" 
+      :type="createType"
+      @close="closeCreateModal" 
+      @success="onCreateSuccess" 
+    />
   </div>
 </template>
 
@@ -899,7 +729,9 @@ onMounted(() => {
   border: none;
   padding: 0.5rem 1rem;
   border-radius: var(--radius);
+  font-size: var(--text-sm);
   font-weight: 500;
+  cursor: pointer;
   transition: all var(--transition);
 }
 

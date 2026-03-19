@@ -1,0 +1,5 @@
+[database]
+path = "lms.db"
+
+[cors]
+origins = ["http://localhost:3000", "http://127.0.0.1:3000", "http://gxj62.cn", "https://gxj62.cn", "http://*.gxj62.cn", "https://*.gxj62.cn", "http://gkux.cn", "https://gkux.cn", "http://*.gkux.cn", "https://*.gkux.cn"]

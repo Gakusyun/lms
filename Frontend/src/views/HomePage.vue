@@ -6,14 +6,13 @@ import { useNavigation } from '../composables/useNavigation'
 import { logout } from '../api'
 import { clearAuth } from '../utils/auth'
 import GenericFeatureCard from '../components/GenericFeatureCard.vue'
-import type { CountResponse } from '../types'
 
 // 使用组合式函数
-const { data: studentResponse, fetchCount: getStudentCount, error: studentError } = useApiCount<Record<string, number>>('/students/count')
-const { data: leaveResponse, fetchCount: getLeavesCount, error: leaveError } = useApiCount<Record<string, number>>('/leaves/count')
-const { data: reviewerResponse, fetchCount: getReviewerCount, error: reviewerError } = useApiCount<Record<string, number>>('/reviewers/count')
-const { data: teacherResponse, fetchCount: getTeacherCount, error: teacherError } = useApiCount<Record<string, number>>('/teachers/count')
-const { data: courseResponse, fetchCount: getCourseCount, error: courseError } = useApiCount<Record<string, number>>('/courses/count')
+const { data: studentResponse, fetchCount: getStudentCount } = useApiCount<Record<string, number>>('/students/count')
+const { data: leaveResponse, fetchCount: getLeavesCount } = useApiCount<Record<string, number>>('/leaves/count')
+const { data: reviewerResponse, fetchCount: getReviewerCount } = useApiCount<Record<string, number>>('/reviewers/count')
+const { data: teacherResponse, fetchCount: getTeacherCount } = useApiCount<Record<string, number>>('/teachers/count')
+const { data: courseResponse, fetchCount: getCourseCount } = useApiCount<Record<string, number>>('/courses/count')
 
 const router = useRouter()
 const { goToStudents, goToLeaves, goToReviewers, goToTeachers, goToCourses } = useNavigation()
@@ -42,10 +41,7 @@ const error = ref('')
 // 退出登录
 const handleLogout = async () => {
   try {
-    const token = localStorage.getItem('token')
-    if (token) {
-      await logout(token)
-    }
+    await logout()
   } catch (error) {
     console.error('退出登录请求失败:', error)
   } finally {

@@ -1,0 +1,2206 @@
+2026-03-19 13:07:29,463 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:29,463 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:29,656 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:29,656 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:30,874 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:30,874 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:31,067 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:31,067 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:31,845 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:31,845 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:32,073 - app.services.auth - INFO - Login successful for user 1 (Test Teacher, role: teacher)
+2026-03-19 13:07:32,073 - app.services.auth - INFO - Login successful for user 1 (Test Teacher, role: teacher)
+2026-03-19 13:07:32,855 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:32,855 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:33,049 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:33,049 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:33,830 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:33,830 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:07:34,020 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:34,020 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:07:34,797 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:07:34,797 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:09:27,653 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:27,653 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:27,849 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:27,849 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:29,062 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:29,062 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:29,254 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:29,254 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:30,043 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:30,043 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:30,244 - app.services.auth - INFO - Login successful for user 1 (Teacher, role: teacher)
+2026-03-19 13:09:30,244 - app.services.auth - INFO - Login successful for user 1 (Teacher, role: teacher)
+2026-03-19 13:09:31,028 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:31,028 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:31,221 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:31,221 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:32,008 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:32,008 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:09:32,199 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:32,199 - app.services.auth - WARNING - Invalid credentials for user 1
+2026-03-19 13:09:32,998 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:09:32,998 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:11:10,310 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:11:10,310 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:11:10,512 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:11:10,512 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:11:11,294 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 13:11:11,294 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 13:11:11,491 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 13:11:11,491 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 13:11:12,268 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 13:11:12,268 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 13:11:12,462 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 13:11:12,462 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 13:11:13,244 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 13:11:13,244 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 13:11:13,436 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 13:11:13,436 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 13:11:14,218 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:11:14,218 - app.services.auth - INFO - Login attempt for user ID: 1
+2026-03-19 13:11:15,437 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:11:15,437 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:11:47,888 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:11:47,888 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:11:48,094 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:11:48,094 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:11:48,882 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 13:11:48,882 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 13:11:49,080 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 13:11:49,080 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 13:11:49,871 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 13:11:49,871 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 13:11:50,067 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 13:11:50,067 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 13:11:50,847 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 13:11:50,847 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 13:11:51,040 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 13:11:51,040 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 13:11:51,823 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:11:51,823 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:11:52,019 - app.services.auth - WARNING - Invalid credentials for user 1001
+2026-03-19 13:11:52,019 - app.services.auth - WARNING - Invalid credentials for user 1001
+2026-03-19 13:11:52,794 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:11:52,794 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:55:55,131 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:55:55,131 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:55:55,334 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:55:55,334 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:55:56,113 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 13:55:56,113 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 13:55:56,306 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 13:55:56,306 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 13:55:57,079 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 13:55:57,079 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 13:55:57,270 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 13:55:57,270 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 13:55:58,042 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 13:55:58,042 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 13:55:58,234 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 13:55:58,234 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 13:55:59,009 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:55:59,009 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:55:59,201 - app.services.auth - WARNING - Invalid credentials for user 1001
+2026-03-19 13:55:59,201 - app.services.auth - WARNING - Invalid credentials for user 1001
+2026-03-19 13:55:59,981 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:55:59,981 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 13:58:28,244 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:28,244 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:28,447 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:28,447 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:29,044 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:29,044 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:29,237 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:29,237 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:29,828 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:29,828 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:30,024 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:30,024 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:30,617 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:30,617 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:30,809 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:30,809 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:31,840 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:31,840 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:58:32,034 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:58:32,034 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:14,270 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:14,270 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:14,471 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:14,471 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:15,069 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:15,069 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:15,263 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:15,263 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:15,855 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:15,855 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:16,048 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:16,048 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:16,632 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:16,632 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:16,822 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:16,822 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:17,860 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:17,860 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:18,050 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:18,050 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:48,347 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:48,347 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:48,548 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:48,548 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:49,136 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:49,136 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:49,330 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:49,330 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:49,920 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:49,920 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:50,115 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:50,115 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:50,715 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:50,715 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:50,908 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:50,908 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:51,695 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:51,695 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 13:59:51,889 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 13:59:51,889 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:55,229 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:55,229 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:55,436 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:55,436 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:55,840 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:55,840 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:56,031 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:56,031 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:56,429 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:56,429 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:56,619 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:56,619 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:57,017 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:57,017 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:57,209 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:57,209 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:58,044 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:58,044 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:01:58,235 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:01:58,235 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:39,449 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:39,449 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:39,656 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:39,656 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:40,056 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:40,056 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:40,249 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:40,249 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:40,648 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:40,648 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:40,841 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:40,841 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:41,241 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:41,241 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:41,434 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:41,434 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:43,085 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:43,085 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:02:43,279 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:02:43,279 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:21,971 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:21,971 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:22,173 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:22,173 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:22,576 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:22,576 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:22,773 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:22,773 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:23,167 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:23,167 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:23,362 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:23,362 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:23,763 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:23,763 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:23,954 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:23,954 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:24,545 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:24,545 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:03:24,740 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:03:24,740 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:18,899 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:18,899 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:19,100 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:19,100 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:19,316 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:19,316 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:19,509 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:19,509 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:19,721 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:19,721 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:19,915 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:19,915 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:20,123 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:20,123 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:20,317 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:20,317 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:20,722 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:20,722 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:20,916 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:20,916 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:21,320 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:21,320 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:21,513 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:21,513 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:22,113 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:22,113 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:22,306 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:22,306 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:22,513 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:22,513 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:22,706 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:22,706 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:23,113 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:23,113 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:10:23,306 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:10:23,306 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:23,072 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:23,072 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:23,076 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:23,076 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:24,325 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:12:24,325 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:12:24,326 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:24,326 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:25,101 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:12:25,101 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:12:25,102 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:25,102 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:25,871 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:12:25,871 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:12:25,872 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:25,872 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:26,647 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:26,647 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:26,648 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:26,648 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:27,419 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:12:27,419 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:12:27,420 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:27,420 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,201 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,201 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,202 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,202 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,410 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,410 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,411 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,411 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,618 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,618 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,619 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,619 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,827 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,827 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:30,828 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:30,828 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,032 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,032 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,033 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,033 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,241 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,241 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,242 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,242 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,451 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,451 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,452 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,452 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,661 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,661 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,662 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,662 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,875 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,875 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:31,876 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:31,876 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:32,475 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:32,475 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:32,476 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:32,476 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:33,069 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:33,069 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:33,070 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:33,070 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:33,657 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:33,657 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:33,657 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:33,657 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:34,246 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:34,246 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:34,247 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:34,247 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:34,836 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:34,836 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:34,837 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:34,837 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:12:35,237 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:35,237 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:35,436 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:35,436 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:35,837 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:35,837 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:36,027 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:36,027 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:36,428 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:36,428 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:36,622 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:36,622 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:37,022 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:37,022 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:37,211 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:37,211 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:37,800 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:37,800 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:12:38,004 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:12:38,004 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:09,951 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:09,951 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:10,155 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:10,155 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:10,371 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:10,371 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:10,565 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:10,565 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:10,777 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:10,777 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:10,967 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:10,967 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:11,177 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:11,177 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:11,372 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:11,372 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:11,778 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:11,778 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:11,972 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:11,972 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:12,400 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:12,400 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:12,600 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:12,600 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:13,205 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:13,205 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:13,399 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:13,399 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:13,611 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:13,611 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:13,804 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:13,804 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:14,214 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:14,214 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:14,408 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:14,408 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:44,994 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:44,994 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:45,194 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:45,194 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:45,795 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:45,795 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:45,989 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:45,989 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:46,582 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:46,582 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:46,773 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:46,773 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:47,365 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:47,365 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:47,559 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:47,559 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:48,342 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:48,342 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:13:48,533 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:13:48,533 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:03,534 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:03,534 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:03,734 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:03,734 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:04,140 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:04,140 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:04,334 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:04,334 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:04,740 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:04,740 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:04,932 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:04,932 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:05,331 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:05,331 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:05,526 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:05,526 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:06,116 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:06,116 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:06,309 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:06,309 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:45,947 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:45,947 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:46,152 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:46,152 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:14:46,936 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:14:46,936 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:14:47,129 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:14:47,129 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:14:47,910 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:14:47,910 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:14:48,102 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:14:48,102 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:14:48,882 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:14:48,882 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:14:49,072 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:14:49,072 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:14:49,855 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:49,855 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:14:50,045 - app.services.auth - WARNING - Invalid credentials for user 1001
+2026-03-19 14:14:50,045 - app.services.auth - WARNING - Invalid credentials for user 1001
+2026-03-19 14:14:50,826 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:14:50,826 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:15:02,977 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:02,977 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:02,980 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:02,980 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:04,233 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:15:04,233 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:15:04,234 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:04,234 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:05,021 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:15:05,021 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:15:05,022 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:05,022 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:05,808 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:15:05,808 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:15:05,809 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:05,809 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:06,590 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:06,590 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:06,591 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:06,591 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:07,376 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:15:07,376 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:15:07,377 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:07,377 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,187 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,187 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,188 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,188 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,396 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,396 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,396 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,396 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,604 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,604 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,605 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,605 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,815 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,815 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:10,816 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:10,816 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,023 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,023 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,023 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,023 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,231 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,231 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,232 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,232 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,444 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,444 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,445 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,445 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,657 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,657 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,658 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,658 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,870 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,870 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:11,870 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:11,870 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:12,464 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:12,464 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:12,465 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:12,465 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:13,062 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:13,062 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:13,063 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:13,063 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:13,651 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:13,651 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:13,652 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:13,652 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:14,246 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:14,246 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:14,247 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:14,247 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:14,834 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:14,834 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:14,835 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:14,835 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:15:15,232 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:15,232 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:15,435 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:15,435 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:15,835 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:15,835 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:16,028 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:16,028 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:16,427 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:16,427 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:16,623 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:16,623 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:17,030 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:17,030 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:17,225 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:17,225 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:17,824 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:17,824 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:15:18,018 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:15:18,018 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:49,395 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:49,395 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:49,598 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:49,598 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:49,603 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:25:49,603 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:25:49,802 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:25:49,802 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:25:49,818 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:25:49,818 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:25:50,016 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:25:50,016 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:25:50,020 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:25:50,020 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:25:50,216 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:25:50,216 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:25:51,002 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:25:51,002 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:25:51,194 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:25:51,194 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:25:52,443 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:52,443 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:52,641 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:52,641 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:53,444 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:53,444 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:53,639 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:53,639 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:55,081 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:55,081 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:55,278 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:55,278 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:56,464 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:56,464 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:25:56,663 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:25:56,663 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:26,859 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:26,859 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:27,064 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:27,064 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:27,069 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:27:27,069 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:27:27,266 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:27:27,266 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:27:27,282 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:27:27,282 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:27:27,475 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:27:27,475 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:27:27,480 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:27:27,480 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:27:27,674 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:27:27,674 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:27:28,465 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:27:28,465 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:27:28,658 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:27:28,658 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:27:29,906 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:29,906 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:30,099 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:30,099 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:30,896 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:30,896 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:31,092 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:31,092 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:31,880 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:31,880 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:32,074 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:32,074 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:33,243 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:33,243 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:27:33,438 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:27:33,438 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:19,138 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:19,138 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:19,340 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:19,340 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:19,346 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:28:19,346 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:28:19,538 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:28:19,538 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:28:19,544 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:28:19,544 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:28:19,737 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:28:19,737 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:28:19,741 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:28:19,741 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:28:19,938 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:28:19,938 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:28:20,726 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:28:20,726 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:28:20,919 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:28:20,919 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:28:20,944 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:28:20,944 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:28:21,139 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:28:21,139 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:28:22,398 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:22,398 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:22,595 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:22,595 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:23,392 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:23,392 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:23,585 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:23,585 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:24,384 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:24,384 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:24,580 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:24,580 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:25,779 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:25,779 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:28:25,973 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:28:25,973 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:05,391 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:05,391 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:05,593 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:05,593 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:05,599 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:05,599 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:05,792 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:29:05,792 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:29:05,809 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:29:05,809 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:29:06,003 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:29:06,003 - app.services.auth - INFO - Login successful for user 3001 (Teacher, role: teacher)
+2026-03-19 14:29:06,008 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:29:06,008 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:29:06,202 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:29:06,202 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:29:06,984 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:06,984 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:07,181 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:29:07,181 - app.services.auth - INFO - Login successful for user 2001 (Student, role: student)
+2026-03-19 14:29:07,206 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:29:07,206 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:29:07,401 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:29:07,401 - app.services.auth - INFO - Login successful for user 4001 (Reviewer, role: reviewer)
+2026-03-19 14:29:08,194 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:08,194 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:08,387 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:08,387 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:09,186 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:09,186 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:09,381 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:09,381 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:10,182 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:10,182 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:10,376 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:10,376 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:11,556 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:11,556 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:11,753 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:11,753 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:22,907 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:22,907 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:22,910 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:22,910 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:24,148 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:24,148 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:24,149 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:24,149 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:24,925 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:29:24,925 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:29:24,926 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:24,926 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:25,713 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:29:25,713 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:29:25,714 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:25,714 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:26,493 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:26,493 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:26,494 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:26,494 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:27,279 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:29:27,279 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:29:27,280 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:27,280 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:30,704 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:30,704 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:30,705 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:30,705 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:31,490 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:31,490 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:29:31,490 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:31,490 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:32,282 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:32,282 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:32,283 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:32,283 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:33,074 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:33,074 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:33,075 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:33,075 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:33,860 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:33,860 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:33,861 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:33,861 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:34,650 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:34,650 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:34,651 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:34,651 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:34,862 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:34,862 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:34,863 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:34,863 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,075 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,075 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,076 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,076 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,282 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,282 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,283 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,283 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,495 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,495 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,496 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,496 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,703 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,703 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,704 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,704 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,919 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,919 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:35,920 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:35,920 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:36,132 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:36,132 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:36,132 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:36,132 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:36,339 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:36,339 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:36,340 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:36,340 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:36,550 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:36,550 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:36,551 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:36,551 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:37,143 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:37,143 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:37,144 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:37,144 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:37,740 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:37,740 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:37,741 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:37,741 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:38,340 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:38,340 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:38,341 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:38,341 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:38,936 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:38,936 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:38,937 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:38,937 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:39,533 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:39,533 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:39,533 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:39,533 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:29:39,936 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:39,936 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:40,136 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:40,136 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:40,544 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:40,544 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:40,743 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:40,743 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:41,144 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:41,144 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:41,337 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:41,337 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:41,739 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:41,739 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:41,936 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:41,936 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:42,537 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:42,537 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:29:42,730 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:29:42,730 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:15,656 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:15,656 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:15,663 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:15,663 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:16,726 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:31:16,726 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:31:16,728 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:16,728 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:17,514 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:31:17,514 - app.services.auth - INFO - Login attempt for user ID: 3001
+2026-03-19 14:31:17,516 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:17,516 - app.services.auth - ERROR - Error during login for user 3001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (3001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:18,301 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:31:18,301 - app.services.auth - INFO - Login attempt for user ID: 4001
+2026-03-19 14:31:18,302 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:18,302 - app.services.auth - ERROR - Error during login for user 4001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (4001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:19,091 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:19,091 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:19,092 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:19,092 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:19,869 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:31:19,869 - app.services.auth - INFO - Login attempt for user ID: 999
+2026-03-19 14:31:19,870 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:19,870 - app.services.auth - ERROR - Error during login for user 999: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (999,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:23,283 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:23,283 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:23,284 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:23,284 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:24,069 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:31:24,069 - app.services.auth - INFO - Login attempt for user ID: 2001
+2026-03-19 14:31:24,070 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:24,070 - app.services.auth - ERROR - Error during login for user 2001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (2001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:24,859 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:24,859 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:24,860 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:24,860 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:25,649 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:25,649 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:25,650 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:25,650 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:26,438 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:26,438 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:26,439 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:26,439 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,227 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,227 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,228 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,228 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,440 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,440 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,441 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,441 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,655 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,655 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,656 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,656 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,868 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,868 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:27,869 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:27,869 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,104 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,104 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,105 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,105 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,315 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,315 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,316 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,316 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,523 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,523 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,524 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,524 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,734 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,734 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,735 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,735 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,945 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,945 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:28,946 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:28,946 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:29,159 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:29,159 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:29,160 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:29,160 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:29,756 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:29,756 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:29,757 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:29,757 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:30,346 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:30,346 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:30,346 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:30,346 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:30,941 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:30,941 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:30,942 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:30,942 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:31,535 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:31,535 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:31,536 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:31,536 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:32,127 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:32,127 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:32,128 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:32,128 - app.services.auth - ERROR - Error during login for user 1001: (sqlite3.OperationalError) no such table: teacher
+[SQL: SELECT teacher.teacher_id, teacher.teacher_name, teacher.password 
+FROM teacher 
+WHERE teacher.teacher_id = ?]
+[parameters: (1001,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-19 14:31:32,532 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:32,532 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:32,745 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:32,745 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:33,154 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:33,154 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:33,350 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:33,350 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:33,755 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:33,755 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:33,958 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:33,958 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:34,358 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:34,358 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:34,553 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:34,553 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:35,153 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:35,153 - app.services.auth - INFO - Login attempt for user ID: 1001
+2026-03-19 14:31:35,347 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:31:35,347 - app.services.auth - INFO - Login successful for user 1001 (Admin, role: admin)
+2026-03-19 14:54:19,727 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:54:19,727 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:54:24,940 - app.main - INFO - 应用关闭
+2026-03-19 14:54:24,940 - app.main - INFO - 应用关闭
+2026-03-19 14:54:27,866 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:54:27,866 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:54:56,752 - app.main - INFO - 应用关闭
+2026-03-19 14:54:56,752 - app.main - INFO - 应用关闭
+2026-03-19 14:55:51,884 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:55:51,884 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:58:42,701 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:58:42,701 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:58:42,704 - app.main - INFO - 应用关闭
+2026-03-19 14:58:42,704 - app.main - INFO - 应用关闭
+2026-03-19 14:59:03,437 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:59:03,437 - app.main - INFO - 数据库表创建成功
+2026-03-19 14:59:03,440 - app.main - INFO - 应用关闭
+2026-03-19 14:59:03,440 - app.main - INFO - 应用关闭
+2026-03-19 15:03:29,535 - app.main - INFO - 应用关闭
+2026-03-19 15:03:29,535 - app.main - INFO - 应用关闭
+2026-03-19 15:03:32,049 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:03:32,049 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:04:11,850 - app.main - INFO - 应用关闭
+2026-03-19 15:04:11,850 - app.main - INFO - 应用关闭
+2026-03-19 15:04:13,878 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:04:13,878 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:04:28,363 - app.main - INFO - 应用关闭
+2026-03-19 15:04:28,363 - app.main - INFO - 应用关闭
+2026-03-19 15:10:12,012 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:10:12,012 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:13:25,304 - app.main - INFO - 应用关闭
+2026-03-19 15:13:25,304 - app.main - INFO - 应用关闭
+2026-03-19 15:13:27,226 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:13:27,226 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:13:34,105 - app.services.auth - INFO - Login attempt for user ID: 8001
+2026-03-19 15:13:34,105 - app.services.auth - INFO - Login attempt for user ID: 8001
+2026-03-19 15:13:34,527 - app.services.auth - INFO - Login successful for user 8001 (管理员, role: admin)
+2026-03-19 15:13:34,527 - app.services.auth - INFO - Login successful for user 8001 (管理员, role: admin)
+2026-03-19 15:14:59,184 - app.main - INFO - 应用关闭
+2026-03-19 15:14:59,184 - app.main - INFO - 应用关闭
+2026-03-19 15:15:29,036 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:15:29,036 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:16:29,932 - app.services.auth - INFO - Login attempt for user ID: 8001
+2026-03-19 15:16:29,932 - app.services.auth - INFO - Login attempt for user ID: 8001
+2026-03-19 15:16:30,335 - app.services.auth - INFO - Login successful for user 8001 (伽库噚, role: admin)
+2026-03-19 15:16:30,335 - app.services.auth - INFO - Login successful for user 8001 (伽库噚, role: admin)
+2026-03-19 15:52:22,469 - app.main - WARNING - HTTP异常: 401 - Invalid or expired token
+2026-03-19 15:52:22,469 - app.main - WARNING - HTTP异常: 401 - Invalid or expired token
+2026-03-19 15:52:26,779 - app.services.auth - INFO - Login attempt for user ID: 8001
+2026-03-19 15:52:26,779 - app.services.auth - INFO - Login attempt for user ID: 8001
+2026-03-19 15:52:27,163 - app.services.auth - INFO - Login successful for user 8001 (伽库噚, role: admin)
+2026-03-19 15:52:27,163 - app.services.auth - INFO - Login successful for user 8001 (伽库噚, role: admin)
+2026-03-19 15:52:59,374 - app.main - INFO - 应用关闭
+2026-03-19 15:52:59,374 - app.main - INFO - 应用关闭
+2026-03-19 15:53:11,559 - app.main - INFO - 数据库表创建成功
+2026-03-19 15:53:11,559 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:12:51,477 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:12:51,477 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:12:51,479 - app.main - INFO - 应用关闭
+2026-03-19 16:12:51,479 - app.main - INFO - 应用关闭
+2026-03-19 16:13:09,893 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:13:09,893 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:14:34,590 - app.main - ERROR - 全局异常: create_engine() got an unexpected keyword argument 'echo'
+2026-03-19 16:14:34,590 - app.main - ERROR - 全局异常: create_engine() got an unexpected keyword argument 'echo'
+2026-03-19 16:14:34,621 - app.main - ERROR - Traceback (most recent call last):
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 125, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 111, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 391, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 292, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 61, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2525, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+  File "D:\leavemanagementsystem\backend\app\api\v1\auth.py", line 143, in configure_database
+    create_engine()
+    ~~~~~~~~~~~~~^^
+  File "D:\leavemanagementsystem\backend\app\database\connection.py", line 25, in create_engine
+    engine = create_engine(
+        settings.database_url,
+    ...<5 lines>...
+        pool_recycle=1800  # 30分钟后回收连接
+    )
+TypeError: create_engine() got an unexpected keyword argument 'echo'
+
+2026-03-19 16:14:34,621 - app.main - ERROR - Traceback (most recent call last):
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 125, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 111, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 391, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 292, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 61, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2525, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+  File "D:\leavemanagementsystem\backend\app\api\v1\auth.py", line 143, in configure_database
+    create_engine()
+    ~~~~~~~~~~~~~^^
+  File "D:\leavemanagementsystem\backend\app\database\connection.py", line 25, in create_engine
+    engine = create_engine(
+        settings.database_url,
+    ...<5 lines>...
+        pool_recycle=1800  # 30分钟后回收连接
+    )
+TypeError: create_engine() got an unexpected keyword argument 'echo'
+
+2026-03-19 16:16:16,845 - app.main - ERROR - 全局异常: create_engine() got an unexpected keyword argument 'echo'
+2026-03-19 16:16:16,845 - app.main - ERROR - 全局异常: create_engine() got an unexpected keyword argument 'echo'
+2026-03-19 16:16:16,871 - app.main - ERROR - Traceback (most recent call last):
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 125, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 111, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 391, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 292, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 61, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2525, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+  File "D:\leavemanagementsystem\backend\app\api\v1\auth.py", line 143, in configure_database
+    recreate_engine()
+    ^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\app\database\connection.py", line 25, in create_engine
+    from sqlmodel import create_engine as sqlmodel_create_engine
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+        pool_recycle=1800  # 30分钟后回收连接
+    
+TypeError: create_engine() got an unexpected keyword argument 'echo'
+
+2026-03-19 16:16:16,871 - app.main - ERROR - Traceback (most recent call last):
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 125, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 111, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 391, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\fastapi\routing.py", line 292, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 61, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2525, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+  File "D:\leavemanagementsystem\backend\app\api\v1\auth.py", line 143, in configure_database
+    recreate_engine()
+    ^^^^^^^^^^^^^^^
+  File "D:\leavemanagementsystem\backend\app\database\connection.py", line 25, in create_engine
+    from sqlmodel import create_engine as sqlmodel_create_engine
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+        pool_recycle=1800  # 30分钟后回收连接
+    
+TypeError: create_engine() got an unexpected keyword argument 'echo'
+
+2026-03-19 16:17:37,542 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:17:37,542 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:20:45,903 - app.main - INFO - 应用关闭
+2026-03-19 16:20:45,903 - app.main - INFO - 应用关闭
+2026-03-19 16:20:47,959 - app.main - INFO - 数据库表创建成功
+2026-03-19 16:20:47,959 - app.main - INFO - 数据库表创建成功

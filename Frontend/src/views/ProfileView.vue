@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { changePassword } from '../api/index'
-import GenericList from '../components/GenericList.vue'
 
 const router = useRouter()
 
@@ -107,7 +106,7 @@ const handleChangePassword = async () => {
     await changePassword({
       old_password: passwordForm.value.old_password,
       new_password: passwordForm.value.new_password
-    }, token)
+    })
 
     passwordSuccess.value = '密码修改成功！'
 

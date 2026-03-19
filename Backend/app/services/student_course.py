@@ -248,3 +248,49 @@ class StudentCourseService:
             )
         ).first()
         return enrollment is not None
+
+    @staticmethod
+    def delete_student_course(
+        token: str,
+        student_id: int,
+        course_id: int,
+        session: Session,
+    ):
+        """学生退课"""
+        obj = check_login(token, session)
+
+        # 权限检查
+        if obj["role"] == "student":
+            # 学生只能退自己的课
+            if obj["id"] != student_id:
+                raise HTTPException(status_code=403, detail="Students can only drop their own courses")
+        elif obj["role"] not in ["admin", "teacher"]:
+            # 只有管理员和教师可以退课
+            raise HTTPException(status_code=403, detail="Permission denied")
+
+        # 教师只能退自己课程的学生
+        if obj["role"] == "teacher":
+            course = session.exec(
+                select(Course).where(
+                    Course.course_id == course_id,
+                    Course.teacher_id == obj["id"]
+                )
+            ).first()
+            if not course:
+                raise HTTPException(status_code=403, detail="Not authorized to drop students from this course")
+
+        # 查找选课记录
+        enrollment = session.exec(
+            select(StudentCourse).where(
+                StudentCourse.student_id == student_id,
+                StudentCourse.course_id == course_id
+            )
+        ).first()
+
+        if not enrollment:
+            raise HTTPException(status_code=404, detail="Enrollment not found")
+
+        # 删除选课记录
+        session.delete(enrollment)
+        session.commit()
+        return {"message": "Course dropped successfully"}

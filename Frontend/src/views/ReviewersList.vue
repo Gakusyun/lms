@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import ChangePasswordModal from '../components/ChangePasswordModal.vue'
+import GenericCreateModal from '../components/GenericCreateModal.vue'
 
 // 当前用户角色
 const currentUserRole = computed(() => localStorage.getItem('role'))
@@ -37,12 +38,20 @@ const onPasswordChanged = () => {
 
 <template>
   <div>
-    <GenericList endpoint="/reviewers" title="审核员列表" :columns="[
-      { key: 'reviewer_id', label: '审核员ID' },
-      { key: 'reviewer_name', label: '姓名' },
-      { key: 'role_name', label: '职务' },
-      { key: 'school_name', label: '院系' }
-    ]" item-label="名审核员" :show-actions="isAdmin">
+    <GenericList 
+      endpoint="/reviewers" 
+      title="审核员列表" 
+      :columns="[
+        { key: 'reviewer_id', label: '审核员ID' },
+        { key: 'reviewer_name', label: '姓名' },
+        { key: 'role_name', label: '职务' },
+        { key: 'school_name', label: '院系' }
+      ]" 
+      item-label="名审核员" 
+      :show-actions="isAdmin"
+      :show-create="isAdmin"
+      create-type="reviewer"
+    >
       <template #actions="{ item }">
         <button v-if="isAdmin" @click="openChangePassword(item)" class="btn btn-sm btn-outline" title="修改密码">
           修改密码

@@ -78,10 +78,10 @@ const performHealthCheck = async () => {
     const healthStatus = await checkSystemHealth() as unknown as HealthCheckResponse
     console.log('系统健康状态:', healthStatus)
 
-    // 如果系统状态不健康且没有管理员，跳转到管理员创建页面
+    // 如果系统状态不健康且没有管理员，跳转到初始化页面
     if (healthStatus.status === 'unhealthy' && healthStatus.message === 'No admin found') {
-      console.log('系统未初始化，跳转到管理员创建页面')
-      router.replace('/admin/create')
+      console.log('系统未初始化，跳转到初始化页面')
+      router.replace('/admin/setup')
       return
     }
 

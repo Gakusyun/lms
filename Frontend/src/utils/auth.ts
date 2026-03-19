@@ -10,7 +10,7 @@ export const isAuthenticated = async (): Promise<boolean> => {
 
   try {
     // 验证token是否有效并获取最新用户信息
-    const response = await checkAuth(token) as unknown as CheckAuthResponse
+    const response = await checkAuth() as unknown as CheckAuthResponse
 
     // 更新localStorage中的用户信息（可能已被后端修改）
     if (response.role && response.id && response.name) {

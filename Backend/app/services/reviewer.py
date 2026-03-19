@@ -58,14 +58,17 @@ class ReviewerService:
 
     @staticmethod
     def create_reviewer(
-        token: str,
         reviewer_data: ReviewerCreate,
         session: Session,
     ):
-        obj = check_login(token, session)
-        if obj["role"] not in ["admin"]:
-            raise HTTPException(status_code=403, detail="Permission denied")
         """创建审核员"""
+        # 检查审核员是否已存在
+        existing_reviewer = session.exec(
+            select(Reviewer).where(Reviewer.reviewer_id == reviewer_data.reviewer_id)
+        ).first()
+        if existing_reviewer:
+            raise HTTPException(status_code=400, detail="Reviewer with this ID already exists")
+        
         reviewer = Reviewer(**reviewer_data.model_dump())
         if reviewer.password:
             reviewer.password = hash_password(reviewer.password)
@@ -73,3 +76,49 @@ class ReviewerService:
         session.commit()
         session.refresh(reviewer)
         return reviewer
+
+    @staticmethod
+    def update_reviewer(
+        reviewer_id: int,
+        reviewer_data: ReviewerCreate,
+        session: Session,
+    ):
+        """编辑审核员"""
+        # 获取审核员
+        reviewer = CommonService.get_by_id(session, Reviewer, reviewer_id, "reviewer_id")
+        
+        # 更新审核员信息
+        update_data = reviewer_data.model_dump(exclude_unset=True)
+        
+        # 如果更新密码，需要哈希处理
+        if "password" in update_data and update_data["password"]:
+            update_data["password"] = hash_password(update_data["password"])
+        
+        for key, value in update_data.items():
+            setattr(reviewer, key, value)
+        
+        session.commit()
+        session.refresh(reviewer)
+        return reviewer
+
+    @staticmethod
+    def delete_reviewer(
+        reviewer_id: int,
+        session: Session,
+    ):
+        """删除审核员"""
+        # 获取审核员
+        reviewer = CommonService.get_by_id(session, Reviewer, reviewer_id, "reviewer_id")
+        
+        # 检查是否有学生关联
+        from app.models import Student
+        student_count = session.exec(
+            select(func.count(Student.student_id)).where(Student.reviewer_id == reviewer_id)
+        ).one()
+        
+        if student_count > 0:
+            raise HTTPException(status_code=400, detail="Cannot delete reviewer with assigned students")
+        
+        session.delete(reviewer)
+        session.commit()
+        return {"message": "Reviewer deleted successfully"}

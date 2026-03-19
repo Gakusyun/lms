@@ -23,20 +23,20 @@ class LeaveType(str, Enum):
 
 class Leave(SQLModel, table=True):
     """请假表 - 符合第三范式"""
-    leave_id: int = Field(primary_key=True)
-    student_id: int = Field(foreign_key="student.student_id")
-    leave_date: datetime
+    leave_id: int = Field(primary_key=True, index=True)
+    student_id: int = Field(foreign_key="student.student_id", index=True)
+    leave_date: datetime = Field(index=True)
     leave_hours: Optional[str] = Field(max_length=8, default=None)
-    status: str = Field(max_length=8)  # LeaveStatus 枚举值
-    leave_type: Optional[str] = Field(max_length=8, default=None)  # LeaveType 枚举值
+    status: str = Field(max_length=8, index=True)  # LeaveStatus 枚举值
+    leave_type: Optional[str] = Field(max_length=8, default=None, index=True)  # LeaveType 枚举值
     remarks: Optional[str] = Field(max_length=100, default=None)
     materials: Optional[str] = Field(max_length=100, default=None)
-    reviewer_id: Optional[int] = Field(foreign_key="reviewer.reviewer_id", default=None)
-    teacher_id: Optional[int] = Field(foreign_key="teacher.teacher_id", default=None)
+    reviewer_id: Optional[int] = Field(foreign_key="reviewer.reviewer_id", default=None, index=True)
+    teacher_id: Optional[int] = Field(foreign_key="teacher.teacher_id", default=None, index=True)
     audit_remarks: Optional[str] = Field(max_length=100, default=None)
-    audit_time: Optional[datetime] = Field(default=None)
-    course_id: Optional[int] = Field(foreign_key="course.course_id", default=None)
+    audit_time: Optional[datetime] = Field(default=None, index=True)
+    course_id: Optional[int] = Field(foreign_key="course.course_id", default=None, index=True)
     is_modified: bool = Field(default=False)  # 改为布尔类型
     guarantee_student_id: Optional[int] = Field(
-        foreign_key="student.student_id", default=None
+        foreign_key="student.student_id", default=None, index=True
     )

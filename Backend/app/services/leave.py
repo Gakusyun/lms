@@ -342,3 +342,91 @@ class LeaveService:
         session.commit()
         session.refresh(leave)
         return leave
+
+    @staticmethod
+    def approve_leave(
+        token: str,
+        leave_id: int,
+        audit_remarks: str,
+        session: Session,
+    ):
+        """批准请假"""
+        # 验证登录状态并获取用户信息
+        obj = check_login(token, session)
+
+        # 获取要审批的请假记录
+        leave = session.exec(
+            select(Leave).where(Leave.leave_id == leave_id)
+        ).first()
+
+        if not leave:
+            raise HTTPException(status_code=404, detail="Leave record not found")
+
+        # 检查状态：只有待审批的记录可以审批
+        if leave.status != "待审批":
+            raise HTTPException(status_code=403, detail="Only pending leave requests can be approved")
+
+        # 权限验证
+        if obj["role"] == "reviewer":
+            # 审核员只能审批自己名下学生的记录
+            if leave.reviewer_id != obj["id"]:
+                raise HTTPException(status_code=403, detail="Reviewers can only approve leave requests of their assigned students")
+        elif obj["role"] == "admin":
+            # 管理员可以审批所有记录
+            pass
+        else:
+            # 其他角色无权限审批
+            raise HTTPException(status_code=403, detail="Permission denied")
+
+        # 更新请假记录
+        leave.status = "已批准"
+        leave.audit_remarks = audit_remarks
+        leave.audit_time = datetime.now()
+
+        session.commit()
+        session.refresh(leave)
+        return leave
+
+    @staticmethod
+    def reject_leave(
+        token: str,
+        leave_id: int,
+        audit_remarks: str,
+        session: Session,
+    ):
+        """拒绝请假"""
+        # 验证登录状态并获取用户信息
+        obj = check_login(token, session)
+
+        # 获取要拒绝的请假记录
+        leave = session.exec(
+            select(Leave).where(Leave.leave_id == leave_id)
+        ).first()
+
+        if not leave:
+            raise HTTPException(status_code=404, detail="Leave record not found")
+
+        # 检查状态：只有待审批的记录可以拒绝
+        if leave.status != "待审批":
+            raise HTTPException(status_code=403, detail="Only pending leave requests can be rejected")
+
+        # 权限验证
+        if obj["role"] == "reviewer":
+            # 审核员只能拒绝自己名下学生的记录
+            if leave.reviewer_id != obj["id"]:
+                raise HTTPException(status_code=403, detail="Reviewers can only reject leave requests of their assigned students")
+        elif obj["role"] == "admin":
+            # 管理员可以拒绝所有记录
+            pass
+        else:
+            # 其他角色无权限拒绝
+            raise HTTPException(status_code=403, detail="Permission denied")
+
+        # 更新请假记录
+        leave.status = "已拒绝"
+        leave.audit_remarks = audit_remarks
+        leave.audit_time = datetime.now()
+
+        session.commit()
+        session.refresh(leave)
+        return leave

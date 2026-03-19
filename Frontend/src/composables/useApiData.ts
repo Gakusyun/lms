@@ -2,7 +2,6 @@
 
 import { ref, type Ref } from 'vue'
 import { getData } from '../api'
-import type { DataState, ApiResponse } from '../types'
 
 /**
  * 通用的API数据获取组合式函数

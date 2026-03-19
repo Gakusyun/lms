@@ -37,6 +37,27 @@ def read_course(course_id: int, session: Session = Depends(get_session)):
 
 @router.post("/courses", response_model=Course)
 def create_course_endpoint(
-    course: Course, session: Session = Depends(get_session)
+    course: Course,
+    session: Session = Depends(get_session)
 ):
     return CourseService.create_course(course, session)
+
+
+@router.put("/courses/{course_id}", response_model=Course)
+def update_course_endpoint(
+    course_id: int,
+    course: Course,
+    session: Session = Depends(get_session)
+):
+    """编辑课程"""
+    course_data = course.model_dump(exclude_unset=True)
+    return CourseService.update_course(course_id, course_data, session)
+
+
+@router.delete("/courses/{course_id}")
+def delete_course_endpoint(
+    course_id: int,
+    session: Session = Depends(get_session)
+):
+    """删除课程"""
+    return CourseService.delete_course(course_id, session)

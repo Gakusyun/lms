@@ -3,15 +3,8 @@ import http from '../utils/http'
 // GET请求示例
 export const getData = async (url: string, params?: any) => {
   try {
-    // 自动添加token参数
-    const token = localStorage.getItem('token')
-    const requestParams = { ...params }
-    if (token) {
-      requestParams.token = token
-    }
-
-    console.log(`GET请求 ${url}，参数:`, requestParams)
-    const response = await http.get(url, { params: requestParams })
+    console.log(`GET请求 ${url}，参数:`, params)
+    const response = await http.get(url, { params })
     console.log(`GET请求成功 ${url}，响应:`, response)
     return response
   } catch (error) {
@@ -23,16 +16,10 @@ export const getData = async (url: string, params?: any) => {
 // 分页数据请求 - 仅使用GET方法
 export const getPagedData = async (url: string, page: number = 1, pageSize: number = 20, params?: any) => {
   try {
-    // 自动添加token参数
-    const token = localStorage.getItem('token')
     const requestData = {
       page,
       page_size: pageSize,
       ...params
-    }
-
-    if (token) {
-      requestData.token = token
     }
 
     // 直接使用GET方法
@@ -57,13 +44,16 @@ export const postData = async (url: string, data?: any) => {
 
 // 登录API
 export const login = async (loginData: {
-  role: string
   id: string
   password: string
-  token: string
 }) => {
   try {
-    const response = await http.post('/login', loginData)
+    // 转换id为数字类型，因为后端期望的是整数
+    const data = {
+      id: parseInt(loginData.id),
+      password: loginData.password
+    }
+    const response = await http.post('/login', data)
     return response
   } catch (error) {
     console.error('登录失败:', error)
@@ -72,9 +62,9 @@ export const login = async (loginData: {
 }
 
 // 检查登录状态API
-export const checkAuth = async (token: string) => {
+export const checkAuth = async () => {
   try {
-    const response = await http.get(`/login/check?token=${token}`)
+    const response = await http.get('/login/check')
     return response
   } catch (error) {
     console.error('检查登录状态失败:', error)
@@ -83,9 +73,9 @@ export const checkAuth = async (token: string) => {
 }
 
 // 退出登录API
-export const logout = async (token: string) => {
+export const logout = async () => {
   try {
-    const response = await http.get(`/logout?token=${token}`)
+    const response = await http.get('/logout')
     return response
   } catch (error) {
     console.error('退出登录失败:', error)
@@ -97,11 +87,9 @@ export const logout = async (token: string) => {
 export const changePassword = async (data: {
   old_password: string
   new_password: string
-}, token: string) => {
+}) => {
   try {
-    const response = await http.post('/change-password', data, {
-      params: { token }
-    })
+    const response = await http.post('/change-password', data)
     return response
   } catch (error) {
     console.error('修改密码失败:', error)
@@ -113,11 +101,9 @@ export const changePassword = async (data: {
 export const changeUserPassword = async (userId: number, data: {
   old_password: string
   new_password: string
-}, token: string) => {
+}) => {
   try {
-    const response = await http.post(`/change-password/${userId}`, data, {
-      params: { token }
-    })
+    const response = await http.post(`/change-password/${userId}`, data)
     return response
   } catch (error) {
     console.error('修改用户密码失败:', error)
@@ -154,15 +140,8 @@ export const createAdmin = async (adminData: {
 // 获取所有课程API
 export const getAllCourses = async () => {
   try {
-    // 自动添加token参数
-    const token = localStorage.getItem('token')
-    const requestParams: any = {}
-    if (token) {
-      requestParams.token = token
-    }
-
-    console.log('获取所有课程，参数:', requestParams)
-    const response = await http.get('/courses', { params: requestParams })
+    console.log('获取所有课程')
+    const response = await http.get('/courses')
     console.log('获取所有课程成功:', response)
     return response
   } catch (error) {
@@ -174,20 +153,8 @@ export const getAllCourses = async () => {
 // 创建请假条API
 export const createLeave = async (leaveData: any) => {
   try {
-    // 获取token作为查询参数
-    const token = localStorage.getItem('token')
-
-    // 构建查询参数
-    const params: any = {}
-    if (token) {
-      params.token = token
-    }
-
     console.log('创建请假条数据:', leaveData)
-    console.log('查询参数:', params)
-
-    // POST请求，token通过查询参数传递
-    const response = await http.post('/leaves', leaveData, { params })
+    const response = await http.post('/leaves', leaveData)
     console.log('创建请假条成功:', response)
     return response
   } catch (error: any) {
@@ -216,19 +183,8 @@ export const createStudentCourse = async (studentCourseData: {
   status?: string
 }) => {
   try {
-    // 获取token作为查询参数
-    const token = localStorage.getItem('token')
-
-    // 构建查询参数
-    const params: any = {}
-    if (token) {
-      params.token = token
-    }
-
     console.log('学生选课数据:', studentCourseData)
-
-    // POST请求，token通过查询参数传递
-    const response = await http.post('/student-courses', studentCourseData, { params })
+    const response = await http.post('/student-courses', studentCourseData)
     console.log('学生选课成功:', response)
     return response
   } catch (error) {
@@ -240,14 +196,8 @@ export const createStudentCourse = async (studentCourseData: {
 // 获取学生的选课列表API
 export const getStudentCourses = async (studentId: number) => {
   try {
-    const token = localStorage.getItem('token')
-    const params: any = {}
-    if (token) {
-      params.token = token
-    }
-
     console.log(`获取学生 ${studentId} 的选课列表`)
-    const response = await http.get(`/student-courses/student/${studentId}`, { params })
+    const response = await http.get(`/student-courses/student/${studentId}`)
     console.log('获取学生选课列表成功:', response)
     return response
   } catch (error) {
@@ -259,14 +209,8 @@ export const getStudentCourses = async (studentId: number) => {
 // 获取课程的学生列表API
 export const getCourseStudents = async (courseId: number) => {
   try {
-    const token = localStorage.getItem('token')
-    const params: any = {}
-    if (token) {
-      params.token = token
-    }
-
     console.log(`获取课程 ${courseId} 的学生列表`)
-    const response = await http.get(`/student-courses/course/${courseId}`, { params })
+    const response = await http.get(`/student-courses/course/${courseId}`)
     console.log('获取课程学生列表成功:', response)
     return response
   } catch (error) {
@@ -278,14 +222,8 @@ export const getCourseStudents = async (courseId: number) => {
 // 获取课程的选课人数API
 export const getCourseEnrollmentCount = async (courseId: number) => {
   try {
-    const token = localStorage.getItem('token')
-    const params: any = {}
-    if (token) {
-      params.token = token
-    }
-
     console.log(`获取课程 ${courseId} 的选课人数`)
-    const response = await http.get(`/student-courses/course/${courseId}/count`, { params })
+    const response = await http.get(`/student-courses/course/${courseId}/count`)
     console.log('获取课程选课人数成功:', response)
     return response
   } catch (error) {
@@ -297,20 +235,8 @@ export const getCourseEnrollmentCount = async (courseId: number) => {
 // 编辑请假条API
 export const editLeave = async (leaveId: number, leaveData: any) => {
   try {
-    // 获取token作为查询参数
-    const token = localStorage.getItem('token')
-
-    // 构建查询参数
-    const params: any = {}
-    if (token) {
-      params.token = token
-    }
-
     console.log(`编辑请假条 ${leaveId} 数据:`, leaveData)
-    console.log('查询参数:', params)
-
-    // POST请求，token通过查询参数传递
-    const response = await http.post(`/leaves/edit/${leaveId}`, leaveData, { params })
+    const response = await http.post(`/leaves/edit/${leaveId}`, leaveData)
     console.log('编辑请假条成功:', response)
     return response
   } catch (error: any) {
@@ -337,20 +263,8 @@ export const auditLeave = async (leaveId: number, auditData: {
   audit_remarks?: string
 }) => {
   try {
-    // 获取token作为查询参数
-    const token = localStorage.getItem('token')
-
-    // 构建查询参数
-    const params: any = {}
-    if (token) {
-      params.token = token
-    }
-
     console.log(`审核请假条 ${leaveId} 数据:`, auditData)
-    console.log('查询参数:', params)
-
-    // POST请求，token通过查询参数传递
-    const response = await http.post(`/leaves/edit/${leaveId}`, auditData, { params })
+    const response = await http.post(`/leaves/edit/${leaveId}`, auditData)
     console.log('审核请假条成功:', response)
     return response
   } catch (error: any) {

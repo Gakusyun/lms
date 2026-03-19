@@ -1,5 +1,5 @@
 from app.schemas.pagination import PaginatedResponse
-from app.schemas.login import UserLogin, ChangePassword
+from app.schemas.login import UserLogin, ChangePassword, UserRegister, PasswordResetRequest, PasswordResetConfirm
 from app.schemas.admin import AdminCreate
 from app.schemas.reviewer import ReviewerCreate
 from app.schemas.student import StudentCreate
@@ -11,6 +11,9 @@ __all__ = [
     "PaginatedResponse",
     "UserLogin",
     "ChangePassword",
+    "UserRegister",
+    "PasswordResetRequest",
+    "PasswordResetConfirm",
     "AdminCreate",
     "ReviewerCreate",
     "StudentCreate",

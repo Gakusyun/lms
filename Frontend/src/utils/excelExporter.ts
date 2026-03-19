@@ -48,7 +48,7 @@ export const exportToExcel = (data: any[], filename: string, headers?: string[])
   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData)
 
   // 设置列宽
-  const columnWidths = excelHeaders.map((header, index) => {
+  const columnWidths = excelHeaders.map((header, _index) => {
     // 计算该列的最大宽度
     let maxLength = header.length
     data.forEach(row => {
@@ -128,7 +128,7 @@ export const exportMultipleSheetsToExcel = (
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData)
 
     // 设置列宽
-    const columnWidths = sheetHeaders.map((header, index) => {
+    const columnWidths = sheetHeaders.map((header, _index) => {
       let maxLength = header.length
       sheet.data.forEach(row => {
         const value = row[header] || ''

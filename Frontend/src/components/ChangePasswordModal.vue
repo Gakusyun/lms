@@ -74,13 +74,13 @@ const handleSubmit = async () => {
       await changeUserPassword(props.userId, {
         old_password: passwordForm.value.old_password,
         new_password: passwordForm.value.new_password
-      }, token)
+      })
     } else {
       // 用户修改自己的密码
       await changePassword({
         old_password: passwordForm.value.old_password,
         new_password: passwordForm.value.new_password
-      }, token)
+      })
     }
 
     success.value = '密码修改成功！'

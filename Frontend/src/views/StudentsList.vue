@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import ChangePasswordModal from '../components/ChangePasswordModal.vue'
+import GenericCreateModal from '../components/GenericCreateModal.vue'
 import { formatDate } from '../utils/formatters'
 
 // 当前用户角色
@@ -9,6 +10,7 @@ const currentUserRole = computed(() => localStorage.getItem('role'))
 
 // 是否为管理员
 const isAdmin = computed(() => currentUserRole.value === 'admin')
+const isReviewer = computed(() => currentUserRole.value === 'reviewer')
 
 // 修改密码模态框状态
 const showPasswordModal = ref(false)
@@ -38,14 +40,22 @@ const onPasswordChanged = () => {
 
 <template>
   <div>
-    <GenericList endpoint="/students" title="学生列表" :columns="[
-      { key: 'student_id', label: '学号' },
-      { key: 'student_name', label: '学生姓名' },
-      { key: 'school_name', label: '院系' },
-      { key: 'guarantee_permission', label: '担保权限到期时间', formatter: formatDate },
-      { key: 'reviewer_id', label: '审核人ID' },
-      { key: 'reviewer_name', label: '审核人姓名' }
-    ]" item-label="名学生" :show-actions="isAdmin">
+    <GenericList 
+      endpoint="/students" 
+      title="学生列表" 
+      :columns="[
+        { key: 'student_id', label: '学号' },
+        { key: 'student_name', label: '学生姓名' },
+        { key: 'school_name', label: '院系' },
+        { key: 'guarantee_permission', label: '担保权限生效时间', formatter: formatDate },
+        { key: 'reviewer_id', label: '审核人ID' },
+        { key: 'reviewer_name', label: '审核人姓名' }
+      ]" 
+      item-label="名学生" 
+      :show-actions="isAdmin"
+      :show-create="isAdmin || isReviewer"
+      create-type="student"
+    >
       <template #actions="{ item }">
         <button v-if="isAdmin" @click="openChangePassword(item)" class="btn btn-sm btn-outline" title="修改密码">
           修改密码

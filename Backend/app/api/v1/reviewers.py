@@ -41,3 +41,20 @@ def create_reviewer_endpoint(
     session: Session = Depends(get_session),
 ):
     return ReviewerService.create_reviewer(reviewer_data, session)
+
+
+@router.put("/reviewers/{reviewer_id}", response_model=Reviewer, summary="编辑审核员")
+def update_reviewer_endpoint(
+    reviewer_id: int,
+    reviewer_data: ReviewerCreate,
+    session: Session = Depends(get_session),
+):
+    return ReviewerService.update_reviewer(reviewer_id, reviewer_data, session)
+
+
+@router.delete("/reviewers/{reviewer_id}", summary="删除审核员")
+def delete_reviewer_endpoint(
+    reviewer_id: int,
+    session: Session = Depends(get_session),
+):
+    return ReviewerService.delete_reviewer(reviewer_id, session)

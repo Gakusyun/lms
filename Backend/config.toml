@@ -1,2 +1,11 @@
 [database]
-path = "lms.db"
+path = "./test.db"
+type = "sqlite"
+host = "localhost"
+port = 3306
+name = "leave_management"
+user = "root"
+password = ""
+
+[cors]
+origins = [ "http://localhost:5173", "http://127.0.0.1:5173", "http://gxj62.cn", "https://gxj62.cn", "http://*.gxj62.cn", "https://*.gxj62.cn", "http://gkux.cn", "https://gkux.cn", "http://*.gkux.cn", "https://*.gkux.cn",]

@@ -5,9 +5,9 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/admin/create',
-      name: 'admin-create',
-      component: () => import('../views/AdminCreateView.vue'),
+      path: '/admin/setup',
+      name: 'admin-setup',
+      component: () => import('../views/InitialSetupView.vue'),
       meta: { requiresAuth: false }
     },
     {
@@ -68,7 +68,7 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   // 如果路由不需要认证，直接通过
   if (to.meta.requiresAuth === false) {
     // 如果已登录，访问登录页时重定向到首页

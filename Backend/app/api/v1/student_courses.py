@@ -48,3 +48,14 @@ def get_similar_course_students_endpoint(
 ):
     """获取同一教师下相似课程的学生列表（防止请错课程）"""
     return StudentCourseService.get_similar_course_students(token, teacher_id, course_id, session)
+
+
+@router.delete("/student-courses/student/{student_id}/course/{course_id}")
+def delete_student_course_endpoint(
+    token: str,
+    student_id: int,
+    course_id: int,
+    session=Depends(get_session),
+):
+    """学生退课"""
+    return StudentCourseService.delete_student_course(token, student_id, course_id, session)

@@ -1,9 +1,13 @@
 from sqlmodel import Session, select, func
 from fastapi import HTTPException
+from datetime import timedelta
 
 from app.schemas import UserLogin, ChangePassword
 from app.models import Admin, Teacher, Student, Reviewer, Login
-from app.utils.password import verify_password, hash_password
+from app.utils.jwt import verify_password, get_password_hash, create_access_token, verify_token
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class AuthService:
@@ -45,33 +49,53 @@ class AuthService:
     @staticmethod
     def login(user: UserLogin, session: Session):
         """用户登录"""
-        # 自动检测用户角色
-        obj, user_role, model_cls, id_field = AuthService.find_user_by_id(user.id, session)
+        try:
+            logger.info(f"Login attempt for user ID: {user.id}")
+            
+            # 自动检测用户角色
+            obj, user_role, model_cls, id_field = AuthService.find_user_by_id(user.id, session)
 
-        if not obj.password:
-            raise HTTPException(401, "User has no password set")
+            if not obj.password:
+                logger.warning(f"User {user.id} has no password set")
+                raise HTTPException(401, "User has no password set")
 
-        if not verify_password(user.password, obj.password):
-            raise HTTPException(401, "Invalid credentials")
+            if not verify_password(user.password, obj.password):
+                logger.warning(f"Invalid credentials for user {user.id}")
+                raise HTTPException(401, "Invalid credentials")
 
-        # 获取用户名
-        user_name = AuthService.get_user_name_by_role(obj, user_role)
+            # 获取用户名
+            user_name = AuthService.get_user_name_by_role(obj, user_role)
 
-        login_record = Login(
-            user_role=user_role,
-            user_id=user.id,
-            user_name=user_name,
-            token=user.token,
-        )
-        session.add(login_record)
-        session.commit()
+            # 生成JWT token
+            access_token_expires = timedelta(minutes=30)
+            access_token = create_access_token(
+                data={"sub": str(user.id), "role": user_role, "name": user_name},
+                expires_delta=access_token_expires
+            )
 
-        return {
-            "role": user_role,
-            "id": user.id,
-            "name": user_name,
-            "token": user.token,  # 返回 token，前端需保存
-        }
+            # 记录登录信息（可选，用于审计）
+            login_record = Login(
+                user_role=user_role,
+                user_id=user.id,
+                user_name=user_name,
+                token=access_token,
+            )
+            session.add(login_record)
+            session.commit()
+
+            logger.info(f"Login successful for user {user.id} ({user_name}, role: {user_role})")
+            
+            return {
+                "role": user_role,
+                "id": user.id,
+                "name": user_name,
+                "token": access_token,  # 返回 JWT token，前端需保存
+            }
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error during login for user {user.id}: {str(e)}")
+            raise HTTPException(500, "Internal server error")
 
     @staticmethod
     def get_by_id(session: Session, model, id_value: int, id_field: str):
@@ -124,7 +148,7 @@ class AuthService:
                 raise HTTPException(400, "Original password is incorrect")
 
         # 更新密码
-        target_user.password = hash_password(password_data.new_password)
+        target_user.password = get_password_hash(password_data.new_password)
         session.commit()
 
         return {
@@ -132,3 +156,124 @@ class AuthService:
             "target_user_id": target_user_id,
             "target_role": target_role
         }
+
+    @staticmethod
+    def register(user: UserRegister, session: Session):
+        """用户注册"""
+        try:
+            logger.info(f"Registration attempt for user ID: {user.id}, role: {user.role}")
+
+            role_model_map = AuthService.get_role_model_map()
+            if user.role not in role_model_map:
+                raise HTTPException(400, "Invalid role")
+
+            model_cls, id_field = role_model_map[user.role]
+
+            # 检查用户是否已存在
+            field = getattr(model_cls, id_field)
+            stmt = select(model_cls).where(field == user.id)
+            existing_user = session.exec(stmt).first()
+            if existing_user:
+                raise HTTPException(400, f"User with ID {user.id} already exists")
+
+            # 创建新用户
+            name_field = {
+                "teacher": "teacher_name",
+                "student": "student_name",
+                "reviewer": "reviewer_name",
+                "admin": "name"
+            }[user.role]
+
+            user_data = {
+                id_field: user.id,
+                name_field: user.name,
+                "password": get_password_hash(user.password)
+            }
+
+            new_user = model_cls(**user_data)
+            session.add(new_user)
+            session.commit()
+            session.refresh(new_user)
+
+            logger.info(f"Registration successful for user {user.id} ({user.name}, role: {user.role})")
+
+            return {
+                "message": "Registration successful",
+                "role": user.role,
+                "id": user.id,
+                "name": user.name
+            }
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error during registration: {str(e)}")
+            raise HTTPException(500, "Internal server error")
+
+    @staticmethod
+    def request_password_reset(user_id: int, role: str, session: Session):
+        """请求密码重置"""
+        try:
+            logger.info(f"Password reset request for user ID: {user_id}, role: {role}")
+
+            role_model_map = AuthService.get_role_model_map()
+            if role not in role_model_map:
+                raise HTTPException(400, "Invalid role")
+
+            # 查找用户
+            user, _, _, _ = AuthService.find_user_by_id(user_id, session)
+
+            # 生成重置令牌
+            reset_token_expires = timedelta(hours=1)
+            reset_token = create_access_token(
+                data={"sub": str(user_id), "role": role, "reset": True},
+                expires_delta=reset_token_expires
+            )
+
+            # 这里可以添加发送邮件的逻辑
+            # 暂时只返回重置令牌
+
+            logger.info(f"Password reset token generated for user {user_id}")
+
+            return {
+                "message": "Password reset token generated",
+                "reset_token": reset_token
+            }
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error during password reset request: {str(e)}")
+            raise HTTPException(500, "Internal server error")
+
+    @staticmethod
+    def confirm_password_reset(reset_token: str, new_password: str, session: Session):
+        """确认密码重置"""
+        try:
+            logger.info("Password reset confirmation attempt")
+
+            # 验证重置令牌
+            payload = verify_token(reset_token)
+            if not payload or payload.get("reset") != True:
+                raise HTTPException(400, "Invalid or expired reset token")
+
+            user_id = int(payload.get("sub"))
+            role = payload.get("role")
+
+            # 查找用户
+            user, _, _, _ = AuthService.find_user_by_id(user_id, session)
+
+            # 更新密码
+            user.password = get_password_hash(new_password)
+            session.commit()
+
+            logger.info(f"Password reset successful for user {user_id}")
+
+            return {
+                "message": "Password reset successful",
+                "user_id": user_id,
+                "role": role
+            }
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error during password reset confirmation: {str(e)}")
+            raise HTTPException(500, "Internal server error")

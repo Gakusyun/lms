@@ -4,9 +4,9 @@ import { requireAuth } from '@/utils/auth';
 
 interface Course {
   course_id: number;
-  name: string;
-  role: string;
-  school: string;
+  course_name: string;
+  teacher_id: number;
+  teacher_name: string;
 }
 
 export default defineComponent(() => {
@@ -17,7 +17,7 @@ export default defineComponent(() => {
   const total = ref(0);
   const totalPages = ref(0);
 
-  // 获取审核员数据
+  // 获取课程数据
   const fetchCourses = (isRefresh = false) => {
     if (isRefresh) {
       page.value = 1;
@@ -39,7 +39,7 @@ export default defineComponent(() => {
         page_size: pageSize
       },
       success: (res) => {
-        console.log('审核员API返回数据:', res.data);
+        console.log('课程API返回数据:', res.data);
         const data = res.data as any;
 
         // 处理分页响应格式
@@ -60,7 +60,7 @@ export default defineComponent(() => {
           coursesData = [data];
         }
 
-        console.log('处理后的审核员数据:', coursesData);
+        console.log('处理后的课程数据:', coursesData);
         console.log('分页信息:', { page: page.value, total: total.value, totalPages: totalPages.value });
 
         if (isRefresh) {
@@ -71,7 +71,7 @@ export default defineComponent(() => {
         wx.stopPullDownRefresh();
       },
       fail: (error) => {
-        console.error('获取审核员数据失败:', error);
+        console.error('获取课程数据失败:', error);
         wx.showToast({
           title: '加载失败',
           icon: 'error'

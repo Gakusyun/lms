@@ -5,8 +5,14 @@ description = "the backend for Leave Management System"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "alembic>=1.18.4",
     "bcrypt>=5.0.0",
     "fastapi>=0.123.0",
+    "httpx>=0.28.1",
+    "passlib[bcrypt]>=1.7.4",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "python-jose[cryptography]>=3.5.0",
     "requests>=2.32.5",
     "sqlmodel>=0.0.27",
     "toml>=0.10.2",
@@ -14,5 +20,5 @@ dependencies = [
 ]
 
 [[tool.uv.index]]
-url = "https://mirrors.ustc.edu.cn/pypi/simple"
+url = "https://mirrors.hust.edu.cn/pypi/web/simple"
 default = true

@@ -4,7 +4,7 @@ from fastapi import Depends, Query
 from app.models import Teacher
 from app.schemas import TeacherCreate
 from app.services.common import CommonService
-from app.utils.password import hash_password
+from app.utils.jwt import get_password_hash
 
 
 class TeacherService:
@@ -36,9 +36,23 @@ class TeacherService:
         session: Session,
     ):
         """创建教师"""
-        teacher = Teacher(**teacher_data.model_dump())
+        # 检查教师是否已存在
+        existing_teacher = session.exec(
+            select(Teacher).where(Teacher.teacher_id == teacher_data.teacher_id)
+        ).first()
+        if existing_teacher:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=400, detail="Teacher already exists")
+        
+        # 转换字段名：name -> teacher_name
+        teacher_data_dict = teacher_data.model_dump()
+        teacher_name = teacher_data_dict.pop("name")
+        teacher = Teacher(
+            **teacher_data_dict,
+            teacher_name=teacher_name
+        )
         if teacher.password:
-            teacher.password = hash_password(teacher.password)
+            teacher.password = get_password_hash(teacher.password)
         session.add(teacher)
         session.commit()
         session.refresh(teacher)

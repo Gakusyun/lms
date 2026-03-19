@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import ChangePasswordModal from '../components/ChangePasswordModal.vue'
+import GenericCreateModal from '../components/GenericCreateModal.vue'
 
 // 当前用户角色
 const currentUserRole = computed(() => localStorage.getItem('role'))
@@ -46,6 +47,8 @@ const onPasswordChanged = () => {
       ]"
       item-label="名教师"
       :show-actions="isAdmin"
+      :show-create="isAdmin"
+      create-type="teacher"
     >
       <template #actions="{ item }">
         <button

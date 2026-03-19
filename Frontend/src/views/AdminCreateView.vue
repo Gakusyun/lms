@@ -86,11 +86,11 @@ const handleCreateAdmin = async () => {
     const response = await createAdmin(adminData)
 
     console.log('创建管理员成功:', response)
-    successMessage.value = '管理员创建成功！正在跳转到登录页面...'
+    successMessage.value = '管理员创建成功！正在跳转到数据库配置页面...'
 
-    // 延迟跳转到登录页面
+    // 延迟跳转到数据库配置页面
     setTimeout(() => {
-      router.push('/login')
+      router.push('/admin/configure-db')
     }, 2000)
 
   } catch (error: any) {

@@ -63,3 +63,43 @@ class CourseService:
         session.commit()
         session.refresh(course)
         return course
+
+    @staticmethod
+    def update_course(
+        course_id: int,
+        course_data: dict,
+        session: Session
+    ):
+        """编辑课程"""
+        course = CommonService.get_by_id(session, Course, course_id, "course_id")
+        
+        # 更新课程信息
+        for key, value in course_data.items():
+            setattr(course, key, value)
+        
+        session.commit()
+        session.refresh(course)
+        return course
+
+    @staticmethod
+    def delete_course(
+        course_id: int,
+        session: Session
+    ):
+        """删除课程"""
+        course = CommonService.get_by_id(session, Course, course_id, "course_id")
+        
+        # 检查是否有学生选课
+        enrollment_count = session.exec(
+            select(func.count(StudentCourse.student_id)).where(
+                StudentCourse.course_id == course_id
+            )
+        ).one()
+        
+        if enrollment_count > 0:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=400, detail="Cannot delete course with enrolled students")
+        
+        session.delete(course)
+        session.commit()
+        return {"message": "Course deleted successfully"}

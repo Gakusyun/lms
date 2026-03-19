@@ -325,7 +325,7 @@ const refreshData = () => {
       </div>
     </div> -->
 
-    <GenericList endpoint="/leaves" title="请假条列表" item-label="张请假条" :show-actions="true" :show-create-leaves="true"
+    <GenericList endpoint="/leaves" title="请假条列表" item-label="张请假条" :show-actions="true" :show-create="true" create-type="leave"
       :columns="[
         { key: 'leave_id', label: '请假ID' },
         { key: 'student_name', label: '学生名称' },

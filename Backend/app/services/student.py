@@ -5,7 +5,7 @@ from app.models import Student, Reviewer, School
 from app.schemas import StudentCreate
 from app.api.deps import check_login
 from app.services.common import CommonService
-from app.utils.password import hash_password
+from app.utils.jwt import get_password_hash
 
 
 class StudentService:
@@ -110,9 +110,16 @@ class StudentService:
         if obj["role"] not in ["reviewer", "admin"]:
             raise HTTPException(status_code=403, detail="Permission denied")
 
+        # 检查学生是否已存在
+        existing_student = session.exec(
+            select(Student).where(Student.student_id == student_data.student_id)
+        ).first()
+        if existing_student:
+            raise HTTPException(status_code=400, detail="Student already exists")
+
         student = Student(**student_data.model_dump())
         if student.password:
-            student.password = hash_password(student.password)
+            student.password = get_password_hash(student.password)
         session.add(student)
         session.commit()
         session.refresh(student)

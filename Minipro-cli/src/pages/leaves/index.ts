@@ -37,7 +37,7 @@ export default defineComponent(() => {
   const isCreating = ref(false);
   const createError = ref('');
   const courses = ref<Course[]>([]);
-  const courseOptions = ref<{label: string, value: number}[]>([]);
+  const courseOptions = ref<{ label: string, value: number }[]>([]);
   const selectedCourseIndex = ref(-1);
 
   // 创建请假条表单数据
@@ -93,14 +93,14 @@ export default defineComponent(() => {
 
     const token = wx.getStorageSync('token');
     let url = BASE_URL + '/leaves';
-    
+
     // 根据用户角色获取不同的数据
     if (userInfo.value?.role === 'student') {
       url = BASE_URL + '/leaves/student'; // 获取自己的请假条
     } else if (userInfo.value?.role === 'reviewer' || userInfo.value?.role === 'admin') {
       url = BASE_URL + '/leaves/reviewer'; // 获取需要审核的请假条
     }
-    
+
     wx.request({
       url: url,
       method: 'GET',
@@ -192,14 +192,14 @@ export default defineComponent(() => {
         success: (res) => {
           console.log('课程API返回数据:', res.data);
           const data = res.data as any;
-          
+
           let coursesData = [];
           if (data && data.items && Array.isArray(data.items)) {
             coursesData = data.items;
           } else if (data && Array.isArray(data)) {
             coursesData = data;
           }
-          
+
           courses.value = coursesData;
           courseOptions.value = [
             { label: '请选择课程', value: 0 },
@@ -222,16 +222,16 @@ export default defineComponent(() => {
   const openCreateModal = async () => {
     showCreateModal.value = true;
     createError.value = '';
-    
+
     // 获取课程数据
     await fetchCourses();
-    
+
     // 获取当前用户信息
     const userInfo = wx.getStorageSync('userInfo');
     if (userInfo) {
       leaveForm.student_id = parseInt(userInfo.id);
     }
-    
+
     // 重置表单
     Object.assign(leaveForm, {
       student_id: userInfo ? parseInt(userInfo.id) : 0,
@@ -244,7 +244,7 @@ export default defineComponent(() => {
       materials: '',
       status: '待审批'
     });
-    
+
     selectedCourseIndex.value = 0;
   };
 
@@ -302,7 +302,7 @@ export default defineComponent(() => {
       }
 
       const token = wx.getStorageSync('token');
-      const formattedData = {
+      const formattedData: any = {
         student_id: leaveForm.student_id,
         leave_date: leaveForm.leave_date,
         leave_hours: leaveForm.leave_hours,
@@ -339,10 +339,10 @@ export default defineComponent(() => {
           closeCreateModal();
           fetchLeaves(true);
         },
-        fail: (error) => {
+        fail: (error: any) => {
           console.error('创建请假条失败:', error);
           let errorMessage = '创建失败，请重试';
-          if (error.response?.data) {
+          if (error && error.response && error.response.data) {
             const errorData = error.response.data;
             if (errorData.detail && Array.isArray(errorData.detail)) {
               errorMessage = errorData.detail.map((item: any) => `${item.loc?.join('.')}: ${item.msg}`).join('; ');
@@ -371,7 +371,7 @@ export default defineComponent(() => {
   const approveLeave = (e: any) => {
     const leaveId = e.currentTarget.dataset.id;
     const token = wx.getStorageSync('token');
-    
+
     wx.showModal({
       title: '确认通过',
       content: '确定要通过这条请假申请吗？',
@@ -404,7 +404,7 @@ export default defineComponent(() => {
   const rejectLeave = (e: any) => {
     const leaveId = e.currentTarget.dataset.id;
     const token = wx.getStorageSync('token');
-    
+
     wx.showModal({
       title: '确认拒绝',
       content: '确定要拒绝这条请假申请吗？',

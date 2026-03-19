@@ -383,17 +383,16 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { login, checkAuth } from '../api'
+import { login } from '../api'
+import http from '../utils/http'
 import { toDataURL } from 'qrcode'
 import type { LoginResponse, CheckAuthResponse } from '../types'
 
 const router = useRouter()
 
 const loginForm = reactive({
-  role: '',
   id: '',
-  password: '',
-  token: ''
+  password: ''
 })
 
 const isLoading = ref(false)
@@ -424,9 +423,6 @@ const handleLogin = async () => {
   try {
     isLoading.value = true
     errorMessage.value = ''
-
-    // 生成唯一token
-    loginForm.token = generateToken()
 
     // 调用登录API
     const response = await login(loginForm) as unknown as LoginResponse
@@ -483,8 +479,8 @@ const handleQRCodeCheck = async () => {
     qrChecking.value = true
     qrErrorMessage.value = ''
 
-    // 调用登录检查API
-    const response = await checkAuth(qrToken.value) as unknown as CheckAuthResponse
+    // 调用登录二维码验证API
+    const response = await http.get(`/login/orcode?login_token=${qrToken.value}`) as unknown as CheckAuthResponse
 
     // 分别存储到localStorage
     storeLoginInfo(qrToken.value, response.role, response.id, response.name)
