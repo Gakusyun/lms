@@ -27,7 +27,7 @@ class Settings:
                     "path": "./leave_management.db"
                 },
                 "cors": {
-                    "origins": ["http://localhost:3000", "http://127.0.0.1:3000"]
+                    "origins": ["http://localhost:3000", "http://127.0.0.1:3000", "https://lms.gxj62.cn"]
                 }
             }
             self.save()

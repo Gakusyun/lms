@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from fastapi.testclient import TestClient
-from sqlmodel import Session, create_engine
+from sqlmodel import Session, create_engine, select, func
 from sqlmodel.pool import StaticPool
 
 from app.main import app
@@ -37,7 +37,7 @@ def setup_database():
     """设置测试数据库"""
     from sqlmodel import SQLModel
     # 确保所有模型都被导入，以便SQLModel能够创建所有表
-    from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role
+    from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role, Login
     SQLModel.metadata.create_all(engine)
     
     # 创建测试学校和角色

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import GenericList from '../components/GenericList.vue'
-import GenericCreateModal from '../components/GenericCreateModal.vue'
 
 const router = useRouter()
 

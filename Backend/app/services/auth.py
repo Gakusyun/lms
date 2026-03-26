@@ -32,6 +32,9 @@ class AuthService:
                 return obj, role, model, field
             except HTTPException:
                 continue
+            except Exception:
+                # 忽略数据库表不存在的错误，继续尝试其他角色
+                continue
 
         raise HTTPException(404, "User not found")
 

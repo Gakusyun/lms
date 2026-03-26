@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import ChangePasswordModal from '../components/ChangePasswordModal.vue'
-import GenericCreateModal from '../components/GenericCreateModal.vue'
 import { formatDate } from '../utils/formatters'
 
 // 当前用户角色

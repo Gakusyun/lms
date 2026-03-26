@@ -4,7 +4,7 @@ from jose import JWTError, jwt
 import bcrypt
 
 # 配置
-SECRET_KEY = "your-secret-key-change-this-in-production"
+SECRET_KEY = "LXah6-fGpXGsVig2sHVBDIXa3_h4N0nIbjVlv3dC7Vk"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

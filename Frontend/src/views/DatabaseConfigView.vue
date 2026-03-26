@@ -141,7 +141,7 @@ onMounted(async () => {
     const healthResponse = await http.get('/')
     
     // If system is healthy, redirect to login
-    if (healthResponse.status === 'healthy') {
+    if (healthResponse.data.status === 'healthy') {
       router.replace('/login')
       return
     }

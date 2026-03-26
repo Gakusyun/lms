@@ -228,7 +228,7 @@ onMounted(async () => {
     const healthResponse = await http.get('/')
     
     // If system is healthy, redirect to login
-    if (healthResponse.status === 'healthy') {
+    if (healthResponse.data.status === 'healthy') {
       console.log('系统已初始化，跳转到登录页面')
       router.replace('/login')
       return

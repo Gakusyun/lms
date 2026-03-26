@@ -16,8 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Current user role
 const currentUserRole = computed(() => localStorage.getItem('role'))
-const isAdmin = computed(() => currentUserRole.value === 'admin')
-const isReviewer = computed(() => currentUserRole.value === 'reviewer')
+
 
 // Modal state
 const isSubmitting = ref(false)
@@ -40,13 +39,13 @@ const fetchOptions = async () => {
   try {
     if (props.type === 'student') {
       const response = await http.get('/reviewers')
-      reviewers.value = response.items || []
+      reviewers.value = response.data.items || []
     } else if (props.type === 'course') {
       const response = await http.get('/teachers')
-      teachers.value = response.items || []
+      teachers.value = response.data.items || []
     } else if (props.type === 'leave') {
       const response = await http.get('/courses')
-      courses.value = response.items || []
+      courses.value = response.data.items || []
     }
   } catch (error) {
     console.error('获取选项数据失败:', error)

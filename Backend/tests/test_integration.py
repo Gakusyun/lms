@@ -11,7 +11,7 @@ from sqlmodel.pool import StaticPool
 
 from app.main import app
 from app.database.connection import get_session
-from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role
+from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role, Login
 from app.utils.password import hash_password
 
 # 创建内存数据库用于测试
@@ -36,7 +36,7 @@ client = TestClient(app)
 def setup_database():
     """设置测试数据库"""
     # 确保所有模型都被导入，以便SQLModel能够创建所有表
-    from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role
+    from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role, Login
     SQLModel.metadata.create_all(engine)
     
     # 创建测试学校和角色

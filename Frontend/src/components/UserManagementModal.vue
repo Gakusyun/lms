@@ -11,10 +11,8 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// Current user role
-const currentUserRole = computed(() => localStorage.getItem('role'))
-const isAdmin = computed(() => currentUserRole.value === 'admin')
-const isReviewer = computed(() => currentUserRole.value === 'reviewer')
+
+
 
 // Modal state
 const isSubmitting = ref(false)
@@ -70,7 +68,7 @@ const fetchOptions = async () => {
     try {
       loadingOptions.value = true
       const response = await http.get('/reviewers')
-      reviewers.value = response.items || []
+      reviewers.value = response.data.items || []
     } catch (error) {
       console.error('获取审核人列表失败:', error)
     } finally {
@@ -80,7 +78,7 @@ const fetchOptions = async () => {
     try {
       loadingOptions.value = true
       const response = await http.get('/teachers')
-      teachers.value = response.items || []
+      teachers.value = response.data.items || []
     } catch (error) {
       console.error('获取教师列表失败:', error)
     } finally {

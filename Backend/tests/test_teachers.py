@@ -36,6 +36,8 @@ client = TestClient(app)
 def setup_database():
     """设置测试数据库"""
     from sqlmodel import SQLModel
+    # 确保所有模型都被导入，以便SQLModel能够创建所有表
+    from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role, Login
     SQLModel.metadata.create_all(engine)
     
     # 创建测试管理员
