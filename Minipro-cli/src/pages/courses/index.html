@@ -1,5 +1,4 @@
 <view class="list-page">
-  <!-- 页面头部 -->
   <view class="page-header">
     <view class="header-content">
       <text class="page-title">课程管理</text>
@@ -9,54 +8,44 @@
     </view>
   </view>
 
-  <!-- 统计卡片 -->
   <view class="stats-card">
     <text class="stats-text">共 {{total}} 门课程 (第 {{page}} / {{totalPages || 1}} 页)</text>
   </view>
 
-  <!-- 内容卡片 -->
-  <view class="content-card">
-    <scroll-view scroll-y class="table-scroll" bindscrolltolower="loadMore">
-      <!-- 表格头部 -->
-      <view class="table-header">
-        <text class="header-cell">课程ID</text>
-        <text class="header-cell">课程名称</text>
-        <text class="header-cell">课时</text>
-        <text class="header-cell">教师姓名</text>
-        <text class="header-cell">选课人数</text>
-        <text class="header-cell action-col">操作</text>
-      </view>
-
-      <!-- 表格内容 -->
-      <view wx:if="{{courses.length > 0}}" class="table-body">
-        <view wx:for="{{courses}}" wx:key="course_id" class="table-row">
-          <text class="cell">{{item.course_id}}</text>
-          <text class="cell">{{item.course_name}}</text>
-          <text class="cell">{{item.class_hours}}</text>
-          <text class="cell">{{item.teacher_name}}</text>
-          <text class="cell">{{item.enrollment_count || 0}} 人</text>
-          <view class="cell action-cell">
-            <button
-              class="btn btn-action btn-primary"
-              data-course-id="{{item.course_id}}"
-              bindtap="viewStudents">
-              查看学生
-            </button>
-          </view>
+  <scroll-view scroll-y class="scroll-container" bindscrolltolower="loadMore">
+    <view wx:if="{{courses.length > 0}}" class="card-list">
+      <view wx:for="{{courses}}" wx:key="course_id" class="card">
+        <view class="card-header">
+          <text class="card-title">{{item.course_name}}</text>
+          <button class="btn btn-primary btn-sm" data-course-id="{{item.course_id}}" bindtap="viewStudents">查看学生</button>
+        </view>
+        <view class="card-row">
+          <text class="card-label">课程ID</text>
+          <text class="card-value">{{item.course_id}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">课时</text>
+          <text class="card-value">{{item.class_hours || '-'}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">教师</text>
+          <text class="card-value">{{item.teacher_name || '-'}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">选课人数</text>
+          <text class="card-value">{{item.enrollment_count || 0}} 人</text>
         </view>
       </view>
+    </view>
 
-      <!-- 加载状态 -->
-      <view wx:if="{{loading}}" class="loading">
-        <text>正在加载...</text>
-      </view>
+    <view wx:if="{{loading}}" class="loading">
+      <text>正在加载...</text>
+    </view>
 
-      <!-- 空状态 -->
-      <view wx:if="{{!loading && courses.length === 0}}" class="empty-state">
-        <text class="empty-icon">📋</text>
-        <text class="empty-title">暂无课程数据</text>
-        <text class="empty-desc">请等待课程添加完成后再来查看</text>
-      </view>
-    </scroll-view>
-  </view>
+    <view wx:if="{{!loading && courses.length === 0}}" class="empty-state">
+      <text class="empty-icon">📋</text>
+      <text class="empty-title">暂无课程数据</text>
+      <text class="empty-desc">请等待课程添加完成后再来查看</text>
+    </view>
+  </scroll-view>
 </view>
