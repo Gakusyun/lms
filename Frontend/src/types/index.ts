@@ -2,8 +2,9 @@
 
 export interface Student {
   student_id: number
-  name: string
-  school: string
+  student_name: string
+  school_name: string
+  school_id?: number
   reviewer_id: number
   reviewer_name: string
   password: string
@@ -26,8 +27,11 @@ export interface Leave {
   course_id?: number
   teacher_id?: number
   audit_time?: string | null
-  is_modified?: string
+  is_modified?: boolean
   guarantee_student_id?: number
+  guarantee_student_name?: string
+  course_name?: string
+  teacher_name?: string
 }
 
 export interface LeaveCreate {
@@ -43,21 +47,24 @@ export interface LeaveCreate {
   audit_remarks?: string
   audit_time?: string | null
   course_id?: number
-  is_modified?: string
+  is_modified?: boolean
   guarantee_student_id?: number
 }
 
 export interface Reviewer {
-  reviewer_id: string
-  name: string
-  role: string
-  school: string
+  reviewer_id: number
+  reviewer_name: string
+  role_name: string
+  school_name: string
+  school_id?: number
+  role_id?: number
+  password?: string
 }
 
 export interface Course {
   course_id: number
   course_name: string
-  class_hours: number
+  class_hours: string
   teacher_id: number
   teacher_name: string
   enrollment_count?: number // 可选的选课人数字段
@@ -65,7 +72,7 @@ export interface Course {
 
 export interface Teacher {
   teacher_id: number
-  name: string
+  teacher_name: string
   password: string
 }
 

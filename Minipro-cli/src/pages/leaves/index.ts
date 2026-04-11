@@ -4,15 +4,19 @@ import { requireAuth } from '@/utils/auth';
 
 interface Leave {
   leave_id: number;
-  student_id: string;
+  student_id: number;
+  student_name?: string;
   leave_type: string;
-  leave_days: number;
   leave_hours: string;
   leave_date: string;
   status: string;
-  reviewer_id: string;
-  audit_remarks: string;
-  remarks: string;
+  reviewer_id: number;
+  reviewer_name?: string;
+  audit_remarks?: string;
+  remarks?: string;
+  materials?: string;
+  course_id?: number;
+  teacher_id?: number;
   leave_date_formatted?: string;
 }
 
@@ -92,14 +96,8 @@ export default defineComponent(() => {
     });
 
     const token = wx.getStorageSync('token');
-    let url = BASE_URL + '/leaves';
-
-    // 根据用户角色获取不同的数据
-    if (userInfo.value?.role === 'student') {
-      url = BASE_URL + '/leaves/student'; // 获取自己的请假条
-    } else if (userInfo.value?.role === 'reviewer' || userInfo.value?.role === 'admin') {
-      url = BASE_URL + '/leaves/reviewer'; // 获取需要审核的请假条
-    }
+    // 统一使用 /leaves 端点，后端会根据 token 中的角色自动过滤数据并注入关联字段
+    const url = BASE_URL + '/leaves';
 
     wx.request({
       url: url,

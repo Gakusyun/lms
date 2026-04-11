@@ -4,9 +4,11 @@ import { requireAuth } from '@/utils/auth';
 
 interface Reviewer {
   reviewer_id: number;
-  name: string;
-  role: string;
-  school: string;
+  reviewer_name: string;
+  role_name: string;
+  school_name: string;
+  school_id?: number;
+  role_id?: number;
 }
 
 export default defineComponent(() => {

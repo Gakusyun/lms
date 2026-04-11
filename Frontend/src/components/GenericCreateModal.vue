@@ -31,6 +31,8 @@ const isUploading = ref(false)
 const reviewers = ref<any[]>([])
 const teachers = ref<any[]>([])
 const courses = ref<any[]>([])
+const schools = ref<any[]>([])
+const roles = ref<any[]>([])
 const loadingOptions = ref(false)
 
 // Get options data
@@ -38,14 +40,25 @@ const fetchOptions = async () => {
   loadingOptions.value = true
   try {
     if (props.type === 'student') {
-      const response = await http.get('/reviewers')
-      reviewers.value = response.data.items || []
+      const [reviewersRes, schoolsRes] = await Promise.all([
+        http.get('/reviewers'),
+        http.get('/schools', { params: { page_size: 100 } })
+      ])
+      reviewers.value = (reviewersRes as any).items || []
+      schools.value = (schoolsRes as any).items || []
+    } else if (props.type === 'reviewer') {
+      const [schoolsRes, rolesRes] = await Promise.all([
+        http.get('/schools', { params: { page_size: 100 } }),
+        http.get('/roles', { params: { page_size: 100 } })
+      ])
+      schools.value = (schoolsRes as any).items || []
+      roles.value = (rolesRes as any).items || []
     } else if (props.type === 'course') {
       const response = await http.get('/teachers')
-      teachers.value = response.data.items || []
+      teachers.value = (response as any).items || []
     } else if (props.type === 'leave') {
       const response = await http.get('/courses')
-      courses.value = response.data.items || []
+      courses.value = (response as any).items || []
     }
   } catch (error) {
     console.error('获取选项数据失败:', error)
@@ -88,7 +101,7 @@ const getDefaultFormData = () => {
       return {
         student_id: '',
         student_name: '',
-        school: '',
+        school_id: '',
         reviewer_id: '',
         password: '',
         guarantee_permission: ''
@@ -97,14 +110,14 @@ const getDefaultFormData = () => {
       return {
         reviewer_id: '',
         reviewer_name: '',
-        school: '',
+        school_id: '',
+        role_id: '',
         password: ''
       }
     case 'teacher':
       return {
         teacher_id: '',
-        teacher_name: '',
-        school: '',
+        name: '',
         password: ''
       }
     case 'course':
@@ -121,6 +134,12 @@ const getDefaultFormData = () => {
 
 // Form data
 const formData = ref(getDefaultFormData())
+
+// Helper: safely parse int from form data
+const toInt = (v: any): number | null => {
+  const n = parseInt(String(v ?? ''))
+  return isNaN(n) ? null : n
+}
 
 // Handle file change
 const handleFileChange = (event: Event) => {
@@ -207,30 +226,30 @@ const handleCreate = async () => {
       case 'student':
         endpoint = '/students'
         payload = {
-          student_id: formData.value.student_id,
+          student_id: toInt(formData.value.student_id) || 0,
           student_name: formData.value.student_name,
-          school: formData.value.school,
-          reviewer_id: formData.value.reviewer_id,
-          password: formData.value.password,
-          guarantee_permission: formData.value.guarantee_permission
+          school_id: toInt(formData.value.school_id),
+          reviewer_id: toInt(formData.value.reviewer_id),
+          password: formData.value.password || null,
+          guarantee_permission: formData.value.guarantee_permission || null
         }
         break
       case 'reviewer':
         endpoint = '/reviewers'
         payload = {
-          reviewer_id: formData.value.reviewer_id,
+          reviewer_id: toInt(formData.value.reviewer_id) || 0,
           reviewer_name: formData.value.reviewer_name,
-          school: formData.value.school,
-          password: formData.value.password
+          school_id: toInt(formData.value.school_id),
+          role_id: toInt(formData.value.role_id),
+          password: formData.value.password || null
         }
         break
       case 'teacher':
         endpoint = '/teachers'
         payload = {
-          teacher_id: formData.value.teacher_id,
-          teacher_name: formData.value.teacher_name,
-          school: formData.value.school,
-          password: formData.value.password
+          teacher_id: toInt(formData.value.teacher_id) || 0,
+          name: formData.value.name,
+          password: formData.value.password || null
         }
         break
       case 'course':
@@ -285,23 +304,15 @@ watch(() => props.type, () => {
 
 // Get current user ID for leave creation
 const currentUserId = computed(() => {
-  const userInfo = localStorage.getItem('userInfo')
-  if (userInfo) {
-    try {
-      const user = JSON.parse(userInfo)
-      return user.id
-    } catch (e) {
-      console.error('解析用户信息失败:', e)
-    }
-  }
-  return null
+  const id = localStorage.getItem('id')
+  return id ? parseInt(id) : null
 })
 
 // Auto-fill student ID for leave creation if current user is a student
 watch(() => props.type, (newType) => {
-  if (newType === 'leave' && currentUserRole.value === 'student' && currentUserId.value) {
-    formData.value.student_id = currentUserId.value
-  }
+    if (newType === 'leave' && currentUserRole.value === 'student' && currentUserId.value) {
+      formData.value.student_id = String(currentUserId.value)
+    }
 })
 </script>
 
@@ -398,7 +409,7 @@ watch(() => props.type, (newType) => {
             <div class="form-row">
               <div class="form-group">
                 <label>学号 *</label>
-                <input type="text" v-model="formData.student_id" required />
+                <input type="number" v-model="formData.student_id" required min="1" />
               </div>
               <div class="form-group">
                 <label>姓名 *</label>
@@ -409,15 +420,21 @@ watch(() => props.type, (newType) => {
             <div class="form-row">
               <div class="form-group">
                 <label>院系 *</label>
-                <input type="text" v-model="formData.school" required />
+                <select v-model="formData.school_id" required>
+                  <option value="">请选择院系</option>
+                  <option v-if="loadingOptions" value="">加载中...</option>
+                  <option v-for="school in schools" :key="school.school_id" :value="school.school_id">
+                    {{ school.school_name }}
+                  </option>
+                </select>
               </div>
               <div class="form-group">
-                <label>审核人 *</label>
-                <select v-model="formData.reviewer_id" required>
+                <label>审核人</label>
+                <select v-model="formData.reviewer_id">
                   <option value="">请选择审核人</option>
                   <option v-if="loadingOptions" value="">加载中...</option>
                   <option v-for="reviewer in reviewers" :key="reviewer.reviewer_id" :value="reviewer.reviewer_id">
-                    {{ reviewer.reviewer_name }} ({{ reviewer.school }})
+                    {{ reviewer.reviewer_name }} ({{ reviewer.school_name }})
                   </option>
                 </select>
               </div>
@@ -444,7 +461,7 @@ watch(() => props.type, (newType) => {
             <div class="form-row">
               <div class="form-group">
                 <label>审核人ID *</label>
-                <input type="text" v-model="formData.reviewer_id" required />
+                <input type="number" v-model="formData.reviewer_id" required min="1" />
               </div>
               <div class="form-group">
                 <label>姓名 *</label>
@@ -454,9 +471,28 @@ watch(() => props.type, (newType) => {
             
             <div class="form-row">
               <div class="form-group">
-                <label>院系 *</label>
-                <input type="text" v-model="formData.school" required />
+                <label>院系</label>
+                <select v-model="formData.school_id">
+                  <option value="">请选择院系</option>
+                  <option v-if="loadingOptions" value="">加载中...</option>
+                  <option v-for="school in schools" :key="school.school_id" :value="school.school_id">
+                    {{ school.school_name }}
+                  </option>
+                </select>
               </div>
+              <div class="form-group">
+                <label>职务</label>
+                <select v-model="formData.role_id">
+                  <option value="">请选择职务</option>
+                  <option v-if="loadingOptions" value="">加载中...</option>
+                  <option v-for="role in roles" :key="role.role_id" :value="role.role_id">
+                    {{ role.role_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-row">
               <div class="form-group">
                 <label>密码 *</label>
                 <input type="password" v-model="formData.password" required />
@@ -473,19 +509,15 @@ watch(() => props.type, (newType) => {
             <div class="form-row">
               <div class="form-group">
                 <label>教师ID *</label>
-                <input type="text" v-model="formData.teacher_id" required />
+                <input type="number" v-model="formData.teacher_id" required min="1" />
               </div>
               <div class="form-group">
                 <label>姓名 *</label>
-                <input type="text" v-model="formData.teacher_name" required />
+                <input type="text" v-model="formData.name" required />
               </div>
             </div>
             
             <div class="form-row">
-              <div class="form-group">
-                <label>院系 *</label>
-                <input type="text" v-model="formData.school" required />
-              </div>
               <div class="form-group">
                 <label>密码 *</label>
                 <input type="password" v-model="formData.password" required />
@@ -517,7 +549,7 @@ watch(() => props.type, (newType) => {
                   <option value="">请选择教师</option>
                   <option v-if="loadingOptions" value="">加载中...</option>
                   <option v-for="teacher in teachers" :key="teacher.teacher_id" :value="teacher.teacher_id">
-                    {{ teacher.teacher_name }} ({{ teacher.school }})
+                    {{ teacher.teacher_name }}
                   </option>
                 </select>
               </div>

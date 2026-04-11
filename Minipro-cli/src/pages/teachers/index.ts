@@ -4,9 +4,7 @@ import { requireAuth } from '@/utils/auth';
 
 interface Teacher {
   teacher_id: number;
-  name: string;
-  role: string;
-  school: string;
+  teacher_name: string;
 }
 
 export default defineComponent(() => {

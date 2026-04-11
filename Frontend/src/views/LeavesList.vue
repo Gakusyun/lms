@@ -55,7 +55,7 @@ const fetchCourses = async () => {
       courses.value = studentCoursesResponse.map((sc: StudentCourseResponse) => ({
         course_id: sc.course_id,
         course_name: sc.course_name || `课程 ${sc.course_id}`,
-        class_hours: 0,
+        class_hours: '0',
         teacher_id: 0,
         teacher_name: sc.teacher_name || '未知教师'
       }))

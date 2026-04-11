@@ -3,11 +3,12 @@ import { BASE_URL } from '@/app';
 import { requireAuth } from '@/utils/auth';
 
 interface Student {
-  id?: number;
-  student_id: string;
-  name: string;
-  school: string;
-  reviewer_id: string;
+  student_id: number;
+  student_name: string;
+  school_name: string;
+  school_id?: number;
+  reviewer_id: number;
+  reviewer_name: string;
   guarantee_permission: string;
   guarantee_permission_formatted?: string;
 }
