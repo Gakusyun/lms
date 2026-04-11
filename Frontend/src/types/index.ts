@@ -112,6 +112,7 @@ export interface LoginResponse {
 }
 
 export interface CheckAuthResponse {
+  token: string
   role: string
   id: number
   name: string
