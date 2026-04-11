@@ -1,53 +1,40 @@
-<view class="login">
+<view class="login-page">
   <view class="login-container">
-    <view class="login-header">
-      <text class="login-title">登录系统</text>
-    </view>
-
-    <view class="login-form">
-      <!-- 账号输入 -->
-      <view class="form-group">
-        <text class="form-label">账号</text>
-        <input
-          class="form-input"
-          placeholder="请输入账号"
-          value="{{loginForm.id}}"
-          bindinput="onIdInput"
-        />
+    <view class="login-card">
+      <!-- Logo区域 - 与 Web App 对齐 -->
+      <view class="login-header">
+        <view class="login-logo">
+          <text class="logo-icon">📚</text>
+        </view>
+        <text class="login-title">请假管理系统</text>
+        <text class="login-subtitle">欢迎回来，请登录您的账户</text>
       </view>
 
-      <!-- 密码输入 -->
-      <view class="form-group">
-        <text class="form-label">密码</text>
-        <input
-          class="form-input"
-          placeholder="请输入密码"
-          password="{{true}}"
-          value="{{loginForm.password}}"
-          bindinput="onPasswordInput"
-        />
-      </view>
+      <!-- 登录表单 -->
+      <view class="login-form-container">
+        <view class="login-form">
+          <!-- 账号输入 -->
+          <view class="form-group">
+            <text class="form-label">账号</text>
+            <input class="form-input" placeholder="请输入用户ID" value="{{loginForm.id}}" bindinput="onIdInput" />
+          </view>
 
-      <!-- 记住密码 -->
-      <view class="form-group">
-        <label class="checkbox-container">
-          <checkbox
-            class="checkbox"
-            checked="{{rememberPassword}}"
-            bindchange="onRememberPasswordChange"
-          />
-          <text class="checkbox-label">记住密码</text>
-        </label>
-      </view>
+          <!-- 密码输入 -->
+          <view class="form-group">
+            <text class="form-label">密码</text>
+            <input class="form-input" placeholder="请输入密码" password="{{true}}" value="{{loginForm.password}}"
+              bindinput="onPasswordInput" />
+          </view>
 
-      <!-- 登录按钮 -->
-      <button
-        class="login-btn {{loading ? 'loading' : ''}}"
-        bindtap="handleLogin"
-        disabled="{{loading}}"
-      >
-        {{loading ? '登录中...' : '登录'}}
-      </button>
+          <button class="login-btn {{loading ? 'loading' : ''}}" bindtap="handleLogin" disabled="{{loading}}">
+            {{loading ? '登录中...' : '登录'}}
+          </button>
+
+          <view wx:if="{{errorMessage}}" class="alert alert-danger">
+            <text>{{errorMessage}}</text>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </view>

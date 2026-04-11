@@ -1,29 +1,54 @@
-<view class="container">
-
-  <view class="content">
-    <view class="table-header">
-      <text class="header-cell">学号</text>
-      <text class="header-cell">姓名</text>
-      <text class="header-cell">院系</text>
-      <text class="header-cell">审核人ID</text>
-      <text class="header-cell">担保权限到期时间</text>
+<view class="list-page">
+  <!-- 页面头部 - 与 Web App 对齐 -->
+  <view class="page-header">
+    <view class="header-content">
+      <text class="page-title">学生管理</text>
+      <view class="header-buttons">
+        <button class="btn btn-back btn-sm" bindtap="goBack">返回</button>
+      </view>
     </view>
+  </view>
 
-    <scroll-view scroll-y class="table-body" bindscrolltolower="loadMore">
-      <view wx:for="{{students}}" wx:key="student_id" class="table-row">
-        <text class="cell">{{item.student_id}}</text>
-        <text class="cell">{{item.student_name}}</text>
-        <text class="cell">{{item.school}}</text>
-        <text class="cell">{{item.reviewer_id}}</text>
-        <text class="cell">{{item.guarantee_permission_formatted}}</text>
+  <!-- 统计卡片 - 与 Web App 对齐 -->
+  <view class="stats-card">
+    <text class="stats-text">共 {{total}} 名学生 (第 {{page}} / {{totalPages || 1}} 页)</text>
+  </view>
+
+  <!-- 内容卡片 -->
+  <view class="content-card">
+    <scroll-view scroll-y class="table-scroll" bindscrolltolower="loadMore">
+      <!-- 表格头部 -->
+      <view class="table-header">
+        <text class="header-cell">学生ID</text>
+        <text class="header-cell">姓名</text>
+        <text class="header-cell">院系</text>
+        <text class="header-cell">审核员ID</text>
+        <text class="header-cell">操作</text>
       </view>
 
+      <!-- 表格内容 -->
+      <view wx:if="{{students.length > 0}}" class="table-body">
+        <view wx:for="{{students}}" wx:key="student_id" class="table-row">
+          <text class="cell">{{item.student_id}}</text>
+          <text class="cell">{{item.name}}</text>
+          <text class="cell">{{item.school}}</text>
+          <text class="cell">{{item.reviewer_id}}</text>
+          <view class="cell action-cell">
+            <button class="btn btn-action btn-primary" data-student-id="{{item.student_id}}" bindtap="viewDetail">详情</button>
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载状态 -->
       <view wx:if="{{loading}}" class="loading">
-        <text>加载中...</text>
+        <text>正在加载...</text>
       </view>
 
-      <view wx:if="{{!loading && students.length === 0}}" class="empty">
-        <text>暂无数据</text>
+      <!-- 空状态 -->
+      <view wx:if="{{!loading && students.length === 0}}" class="empty-state">
+        <text class="empty-icon">👨‍🎓</text>
+        <text class="empty-title">暂无学生数据</text>
+        <text class="empty-desc">请等待学生添加完成后再来查看</text>
       </view>
     </scroll-view>
   </view>

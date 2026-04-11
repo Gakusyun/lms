@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.database.connection import get_session
 from app.schemas import UserLogin, AdminCreate, ChangePassword, UserRegister, PasswordResetRequest, PasswordResetConfirm
@@ -28,27 +28,48 @@ def log_out(token: str, session: Session = Depends(get_session)):
 
 @router.get("/login/orcode")
 def login_qrcode(
-    token: str,
     login_token: str,
+    token: str | None = None,
     session_check: Session = Depends(get_session),
     session_login: Session = Depends(get_session),
 ):
-    obj = check_login(token, session_check)
-    if "detail" not in obj:
-        login_record = Login(
-            user_role=obj["role"],
-            user_id=obj["id"],
-            user_name=obj["name"],
-            token=login_token,
-        )
-        session_login.add(login_record)
-        session_login.commit()
-        return {
-            "role": obj["role"],
-            "id": obj["id"],
-            "name": obj["name"],
-            "token": login_token,
-        }
+    # 小程序端扫码：有 token 参数，创建登录记录
+    if token:
+        obj = check_login(token, session_check)
+        if "detail" not in obj:
+            login_record = Login(
+                user_role=obj["role"],
+                user_id=obj["id"],
+                user_name=obj["name"],
+                token=login_token,  # 存储二维码 token，用于前端查询
+                jwt_token=token,  # 存储管理员的 JWT token，用于前端后续请求
+            )
+            session_login.add(login_record)
+            session_login.commit()
+            return {
+                "role": obj["role"],
+                "id": obj["id"],
+                "name": obj["name"],
+                "token": token,  # 返回 JWT token 而不是 login_token
+            }
+    # 前端轮询：只有 login_token，查询数据库
+    else:
+        login_record = session_login.exec(
+            select(Login).where(Login.token == login_token, Login.can_be_used == True)
+        ).first()
+
+        if login_record:
+            # 标记为已使用，防止重复登录
+            login_record.can_be_used = False
+            session_login.commit()
+            return {
+                "role": login_record.user_role,
+                "id": login_record.user_id,
+                "name": login_record.user_name,
+                "token": login_record.jwt_token,  # 返回 JWT token 而不是 login_token
+            }
+        else:
+            raise HTTPException(status_code=422, detail="未扫码或二维码已过期")
 
 
 @router.post("/create/admin")

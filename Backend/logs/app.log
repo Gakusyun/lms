@@ -2204,3 +2204,7 @@ TypeError: create_engine() got an unexpected keyword argument 'echo'
 2026-03-19 16:20:45,903 - app.main - INFO - 应用关闭
 2026-03-19 16:20:47,959 - app.main - INFO - 数据库表创建成功
 2026-03-19 16:20:47,959 - app.main - INFO - 数据库表创建成功
+2026-04-11 17:09:48,065 - app.main - INFO - 数据库表创建成功
+2026-04-11 17:09:48,065 - app.main - INFO - 数据库表创建成功
+2026-04-11 17:09:48,067 - app.main - INFO - jwt_token 字段已存在
+2026-04-11 17:09:48,067 - app.main - INFO - jwt_token 字段已存在

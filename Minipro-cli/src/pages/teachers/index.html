@@ -1,25 +1,43 @@
-<view class="container">
-
-  <view class="content">
-    <view class="table-header">
-      <text class="header-cell">教师ID</text>
-      <text class="header-cell">姓名</text>
-      <text class="header-cell">密码</text>
+<view class="list-page">
+  <view class="page-header">
+    <view class="header-content">
+      <text class="page-title">教师管理</text>
+      <view class="header-buttons">
+        <button class="btn btn-back btn-sm" bindtap="goBack">返回</button>
+      </view>
     </view>
+  </view>
 
-    <scroll-view scroll-y class="table-body" bindscrolltolower="loadMore">
-      <view wx:for="{{teachers}}" wx:key="teacher_id" class="table-row">
-        <text class="cell">{{item.teacher_id}}</text>
-        <text class="cell">{{item.teacher_name}}</text>
-        <text class="cell">{{item.password}}</text>
+  <view class="stats-card">
+    <text class="stats-text">共 {{total}} 名教师 (第 {{page}} / {{totalPages || 1}} 页)</text>
+  </view>
+
+  <view class="content-card">
+    <scroll-view scroll-y class="table-scroll" bindscrolltolower="loadMore">
+      <view class="table-header">
+        <text class="header-cell">教师ID</text>
+        <text class="header-cell">姓名</text>
+        <text class="header-cell">操作</text>
+      </view>
+
+      <view wx:if="{{teachers.length > 0}}" class="table-body">
+        <view wx:for="{{teachers}}" wx:key="teacher_id" class="table-row">
+          <text class="cell">{{item.teacher_id}}</text>
+          <text class="cell">{{item.name}}</text>
+          <view class="cell action-cell">
+            <button class="btn btn-action btn-primary" data-teacher-id="{{item.teacher_id}}" bindtap="viewDetail">详情</button>
+          </view>
+        </view>
       </view>
 
       <view wx:if="{{loading}}" class="loading">
-        <text>加载中...</text>
+        <text>正在加载...</text>
       </view>
 
-      <view wx:if="{{!loading && teachers.length === 0}}" class="empty">
-        <text>暂无数据</text>
+      <view wx:if="{{!loading && teachers.length === 0}}" class="empty-state">
+        <text class="empty-icon">👨‍🏫</text>
+        <text class="empty-title">暂无教师数据</text>
+        <text class="empty-desc">请等待教师添加完成后再来查看</text>
       </view>
     </scroll-view>
   </view>

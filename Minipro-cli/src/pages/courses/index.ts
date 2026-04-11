@@ -7,6 +7,8 @@ interface Course {
   course_name: string;
   teacher_id: number;
   teacher_name: string;
+  class_hours: number;
+  enrollment_count?: number;
 }
 
 export default defineComponent(() => {
@@ -98,6 +100,17 @@ export default defineComponent(() => {
     }
   };
 
+  // 查看课程的学生名单 - 与 Web App 对齐
+  const viewStudents = (e: any) => {
+    const courseId = e.currentTarget.dataset.courseId;
+    console.log('查看课程学生名单:', courseId);
+
+    // 跳转到课程学生详情页面
+    wx.navigateTo({
+      url: `/pages/courses/students?id=${courseId}`
+    });
+  };
+
   // 刷新数据
   const refreshData = () => {
     fetchCourses(true);
@@ -108,9 +121,11 @@ export default defineComponent(() => {
     fetchCourses(true);
   };
 
-  // 返回上一页
+  // 返回首页 - 与 Web App 对齐
   const goBack = () => {
-    wx.navigateBack();
+    wx.switchTab({
+      url: '/pages/home/index'
+    });
   };
 
   // 检查登录状态并获取数据
@@ -135,6 +150,7 @@ export default defineComponent(() => {
     page,
     fetchCourses,
     loadMore,
+    viewStudents,
     refreshData,
     onPullDownRefresh,
     goBack,

@@ -1,13 +1,62 @@
-<view class="home">
-  <view class="data-section">
-    <view class="data-grid">
-      <view class="data-item clickable" bindtap="goToLeaves">
-        <text class="data-label">请假条</text>
-        <text class="data-number">{{leaveCount}}</text>
+<view class="dashboard-page">
+  <!-- 用户信息卡片（替代冗余的header） -->
+  <view class="user-info-card">
+    <view class="user-avatar">
+      <text class="avatar-text">{{avatarText}}</text>
+    </view>
+    <view class="user-details">
+      <text class="user-name">{{displayName}}</text>
+      <text class="user-role">{{roleDisplayName}}</text>
+    </view>
+  </view>
+
+  <!-- 主要内容 -->
+  <view class="dashboard-main">
+    <!-- 功能网格 - 与 Web App 对齐 -->
+    <view class="features-section">
+      <view class="features-grid">
+        <view class="feature-card" bindtap="goToStudents">
+          <view class="card-icon">👨‍🎓</view>
+          <text class="card-title">学生管理</text>
+          <text class="card-count">{{studentCount}}</text>
+          <text class="card-desc">查看和管理所有学生信息</text>
+        </view>
+
+        <view class="feature-card" bindtap="goToLeaves">
+          <view class="card-icon">📝</view>
+          <text class="card-title">请假条管理</text>
+          <text class="card-count">{{leaveCount}}</text>
+          <text class="card-desc">处理和审核请假申请</text>
+        </view>
+
+        <view class="feature-card" bindtap="goToReviewers">
+          <view class="card-icon">✅</view>
+          <text class="card-title">审核员管理</text>
+          <text class="card-count">{{reviewerCount}}</text>
+          <text class="card-desc">管理审核员权限和设置</text>
+        </view>
+
+        <view class="feature-card" bindtap="goToTeachers">
+          <view class="card-icon">👨‍🏫</view>
+          <text class="card-title">教师管理</text>
+          <text class="card-count">{{teacherCount}}</text>
+          <text class="card-desc">维护教师信息档案</text>
+        </view>
+
+        <view class="feature-card" bindtap="goToCourses">
+          <view class="card-icon">📚</view>
+          <text class="card-title">课程管理</text>
+          <text class="card-count">{{courseCount}}</text>
+          <text class="card-desc">设置和管理课程信息</text>
+        </view>
       </view>
     </view>
 
-    <button class="refresh-btn" bindtap="getLeaveCount">刷新数据</button>
-    <button class="scan-btn" bindtap="scanCode">扫一扫</button>
+    <!-- 退出登录按钮 -->
+    <view class="logout-section">
+      <button class="btn btn-outline btn-block" bindtap="handleLogout">
+        退出登录
+      </button>
+    </view>
   </view>
 </view>

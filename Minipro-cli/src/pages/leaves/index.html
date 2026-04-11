@@ -1,41 +1,63 @@
-<view class="container">
-  <view class="content">
-    <!-- 根据角色显示不同的表头 -->
-    <view class="table-header">
-      <text class="header-cell">请假ID</text>
-      <text class="header-cell">请假类型</text>
-      <text class="header-cell">请假课时</text>
-      <text class="header-cell">请假时间</text>
-      <text class="header-cell">状态</text>
-      <text wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="header-cell">学生ID</text>
-      <text wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="header-cell">操作</text>
+<view class="list-page">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <view class="header-content">
+      <text class="page-title">请假条管理</text>
+      <view class="header-buttons">
+        <button class="btn btn-back btn-sm" bindtap="goBack">返回</button>
+      </view>
     </view>
+  </view>
 
-    <scroll-view scroll-y class="table-body" bindscrolltolower="loadMore">
-      <view wx:for="{{leaves}}" wx:key="leave_id" class="table-row">
-        <text class="cell">{{item.leave_id}}</text>
-        <text class="cell">{{item.leave_type || '-'}}</text>
-        <text class="cell">{{item.leave_hours || item.leave_days || '-'}}</text>
-        <text class="cell">{{item.leave_date_formatted}}</text>
-        <text class="cell status-{{item.status}}">{{item.status}}</text>
-        <text wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="cell">{{item.student_id}}</text>
-        <view wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="cell">
-          <view wx:if="{{item.status === '待审批'}}" class="action-buttons">
-            <button class="btn-approve" bindtap="approveLeave" data-id="{{item.leave_id}}">通过</button>
-            <button class="btn-reject" bindtap="rejectLeave" data-id="{{item.leave_id}}">拒绝</button>
+  <!-- 统计卡片 -->
+  <view class="stats-card">
+    <text class="stats-text">共 {{total}} 条请假 (第 {{page}} / {{totalPages || 1}} 页)</text>
+  </view>
+
+  <!-- 内容卡片 -->
+  <view class="content-card">
+    <scroll-view scroll-y class="table-scroll" bindscrolltolower="loadMore">
+      <!-- 表格头部 -->
+      <view class="table-header">
+        <text class="header-cell">请假ID</text>
+        <text class="header-cell">请假类型</text>
+        <text class="header-cell">请假课时</text>
+        <text class="header-cell">请假时间</text>
+        <text class="header-cell">状态</text>
+        <text wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="header-cell">学生ID</text>
+        <text wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="header-cell action-col">操作</text>
+      </view>
+
+      <!-- 表格内容 -->
+      <view wx:if="{{leaves.length > 0}}" class="table-body">
+        <view wx:for="{{leaves}}" wx:key="leave_id" class="table-row">
+          <text class="cell">{{item.leave_id}}</text>
+          <text class="cell">{{item.leave_type || '-'}}</text>
+          <text class="cell">{{item.leave_hours || item.leave_days || '-'}}</text>
+          <text class="cell">{{item.leave_date_formatted}}</text>
+          <view class="cell">
+            <view class="badge badge-{{item.status === '已批准' ? 'success' : item.status === '已拒绝' ? 'danger' : 'warning'}}">
+              {{item.status}}
+            </view>
           </view>
-          <view wx:else class="action-text">
-            <text>{{item.status}}</text>
+          <text wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="cell">{{item.student_id}}</text>
+          <view wx:if="{{userInfo.role === 'reviewer' || userInfo.role === 'admin'}}" class="cell action-cell">
+            <button wx:if="{{item.status === '待审批'}}" class="btn btn-action btn-primary" data-id="{{item.leave_id}}" data-status="approve" bindtap="auditLeave">通过</button>
+            <button wx:if="{{item.status === '待审批'}}" class="btn btn-action" style="background-color: var(--error); color: white;" data-id="{{item.leave_id}}" data-status="reject" bindtap="auditLeave">拒绝</button>
           </view>
         </view>
       </view>
 
+      <!-- 加载状态 -->
       <view wx:if="{{loading}}" class="loading">
-        <text>加载中...</text>
+        <text>正在加载...</text>
       </view>
 
-      <view wx:if="{{!loading && leaves.length === 0}}" class="empty">
-        <text>暂无数据</text>
+      <!-- 空状态 -->
+      <view wx:if="{{!loading && leaves.length === 0}}" class="empty-state">
+        <text class="empty-icon">📝</text>
+        <text class="empty-title">暂无请假条数据</text>
+        <text class="empty-desc">请等待请假条添加完成后再来查看</text>
       </view>
     </scroll-view>
   </view>

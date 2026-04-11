@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p ~/.pua)",
+      "Bash(echo '{\"always_on\": true}')",
+      "Read(//c/Users/i/.pua/**)",
+      "Bash(npm run:*)",
+      "Bash(grep -r \"?\\\\.\" src/pages/*/index.html)",
+      "Bash(xargs grep:*)",
+      "Bash(ls -lh dist/pages/*/index.html)",
+      "Bash(ls -lh dist/pages/*/index.wxml)"
+    ]
+  }
+}

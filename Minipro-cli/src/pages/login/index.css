@@ -1,95 +1,121 @@
-.login {
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+/* 页面容器 - 小程序适配 */
+.login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, var(--primary-100) 0%, var(--bg-secondary) 100%);
   padding: var(--spacing);
+  z-index: 1;
 }
 
 .login-container {
   width: 100%;
   max-width: 640rpx;
+}
+
+.login-card {
   background-color: var(--bg-primary);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--border-light);
+  position: relative;
   overflow: hidden;
 }
 
+/* Logo区域 - 与 Web App 对齐 */
 .login-header {
-  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
-  padding: var(--spacing-xl) var(--spacing);
   text-align: center;
+  margin-bottom: var(--spacing-xl);
 }
 
-.login-title {
-  font-size: var(--text-3xl);
-  font-weight: 600;
+.login-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 128rpx;
+  height: 128rpx;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  border-radius: var(--radius-xl);
+  margin: 0 auto var(--spacing);
+  box-shadow: var(--shadow-lg);
+}
+
+.logo-icon {
+  font-size: 48rpx;
   color: var(--text-inverse);
 }
 
-.login-form {
-  padding: var(--spacing-xl) var(--spacing) var(--spacing-lg);
-}
-
-.form-group {
-  margin-bottom: var(--spacing);
-}
-
-.form-label {
+.login-title {
   display: block;
-  font-size: var(--text-sm);
+  font-size: var(--text-2xl);
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+  line-height: var(--leading-tight);
+}
+
+.login-subtitle {
+  display: block;
+  font-size: var(--text-base);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
-.form-input {
-  width: 100%;
-  height: 88rpx;
-  padding: 0 var(--spacing-sm);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-md);
-  font-size: var(--text-base);
-  background-color: var(--bg-secondary);
+/* 表单容器 */
+.login-form-container {
+  margin-bottom: var(--spacing);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+/* 表单组 - 与 Web App 对齐 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
   color: var(--text-primary);
+}
+
+.form-input {
+  padding: var(--spacing-sm) var(--spacing);
+  font-size: var(--text-base);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all var(--transition);
+  height: 88rpx;
   box-sizing: border-box;
-  transition: border-color var(--transition), background-color var(--transition);
 }
 
 .form-input:focus {
   border-color: var(--primary-500);
-  background-color: var(--bg-primary);
-  outline: none;
+  box-shadow: 0 0 0 6rpx rgba(14, 165, 233, 0.1);
 }
 
-.picker {
-  width: 100%;
-  height: 88rpx;
-  padding: 0 var(--spacing-sm);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-md);
-  font-size: var(--text-base);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  transition: border-color var(--transition), background-color var(--transition);
-}
-
-.picker:focus {
-  border-color: var(--primary-500);
-  background-color: var(--bg-primary);
-}
-
+/* 登录按钮 - 与 Web App 对齐 */
 .login-btn {
   width: 100%;
   height: 88rpx;
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
   color: var(--text-inverse);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-size: var(--text-base);
   font-weight: 600;
   margin-top: var(--spacing);
@@ -112,18 +138,24 @@
   opacity: 0.6;
 }
 
-.checkbox-container {
+/* 错误提示 - 与 Web App 对齐 */
+.alert {
+  padding: var(--spacing);
+  border-radius: var(--radius);
+  margin-top: var(--spacing);
+  border: 1px solid;
   display: flex;
   align-items: center;
-  margin-top: var(--spacing-xs);
+  justify-content: center;
 }
 
-.checkbox {
-  margin-right: var(--spacing-xs);
-  transform: scale(0.8);
+.alert-danger {
+  background-color: var(--error-light);
+  color: #991b1b;
+  border-color: #fca5a5;
 }
 
-.checkbox-label {
+.alert text {
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  font-weight: 500;
 }

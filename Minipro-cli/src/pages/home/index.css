@@ -1,96 +1,168 @@
-.home {
-  padding: var(--spacing);
+/* 页面容器 - 小程序适配 */
+.dashboard-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--gray-50) 100%);
+  padding-bottom: 120rpx; /* 避免被tabBar遮挡 */
 }
 
-.data-section {
-  max-width: 100%;
-}
-
-.data-grid {
+/* 用户信息卡片 - 替代冗余header */
+.user-info-card {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-xl);
-  gap: var(--spacing);
+  align-items: center;
+  gap: 32rpx;
+  background: var(--bg-primary);
+  margin: 32rpx;
+  padding: 48rpx;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
 }
 
-.data-item {
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 128rpx;
+  height: 128rpx;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+}
+
+.avatar-text {
+  font-size: 64rpx;
+  font-weight: bold;
+  color: var(--text-inverse);
+}
+
+.user-details {
   flex: 1;
-  min-width: 200rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.user-role {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+/* 主要内容区域 */
+.dashboard-main {
+  padding: 0 32rpx;
+}
+
+/* 功能区域 */
+.features-section {
+  margin-bottom: 48rpx;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+}
+
+/* 功能卡片 - 与 Web App 对齐 */
+.feature-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: 48rpx 32rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--spacing-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  transition: all var(--transition);
-  cursor: pointer;
+  gap: 16rpx;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.data-item:active {
-  transform: translateY(-4rpx);
-  box-shadow: var(--shadow-lg);
-  background-color: var(--gray-50);
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.data-number {
-  font-size: var(--text-3xl);
+.feature-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-md);
+}
+
+.feature-card:active::before {
+  opacity: 1;
+}
+
+.card-icon {
+  font-size: 64rpx;
+  margin-bottom: 8rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
   font-weight: 600;
-  color: var(--primary-600);
-  margin-bottom: var(--spacing-xs);
-}
-
-.data-label {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--text-primary);
   text-align: center;
 }
 
-.refresh-btn {
-  display: block;
-  margin: 0 auto;
-  padding: var(--spacing) var(--spacing-xl);
-  background-color: var(--primary-600);
-  color: var(--text-inverse);
-  border: none;
+.card-count {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: var(--primary-600);
+  text-align: center;
+}
+
+.card-desc {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* 退出登录区域 */
+.logout-section {
+  margin-top: 48rpx;
+  padding: 0 32rpx;
+}
+
+/* 按钮样式 - 与 Web App 对齐 */
+.btn {
+  padding: 24rpx 48rpx;
   border-radius: var(--radius-lg);
-  font-size: var(--text-base);
-  font-weight: 500;
-  transition: all var(--transition);
-}
-
-.refresh-btn:active {
-  background-color: var(--primary-700);
-  transform: translateY(2rpx);
-}
-
-.scan-btn {
-  display: block;
-  margin: var(--spacing) auto 0;
-  padding: var(--spacing) var(--spacing-xl);
-  background-color: var(--success-600);
-  color: var(--text-inverse);
+  font-size: 32rpx;
+  font-weight: 600;
   border: none;
-  border-radius: var(--radius-lg);
-  font-size: var(--text-base);
-  font-weight: 500;
-  transition: all var(--transition);
+  transition: all 0.3s ease;
 }
 
-.scan-btn:active {
-  background-color: var(--success-700);
-  transform: translateY(2rpx);
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  color: var(--text-inverse);
 }
 
-@media (prefers-color-scheme: dark) {
-  .data-item {
-    background-color: var(--gray-800);
-  }
-  
-  .data-item:active {
-    background-color: var(--gray-700);
-  }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--border-medium);
+  color: var(--text-primary);
+}
+
+.btn-outline:active {
+  background: var(--bg-secondary);
+  border-color: var(--border-heavy);
+}
+
+.btn-block {
+  width: 100%;
+  display: block;
 }

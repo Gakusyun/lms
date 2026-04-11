@@ -7,6 +7,7 @@ class Login(SQLModel, table=True):
     user_role: str
     user_id: int
     user_name: str
-    token: str
+    token: str  # 二维码 login_token，用于查询
+    jwt_token: str | None = None  # 管理员的 JWT token，用于返回给前端
     login_time: datetime = Field(default_factory=datetime.now)
     can_be_used: bool = Field(default=True)

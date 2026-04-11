@@ -1,27 +1,47 @@
-<view class="container">
-
-  <view class="content">
-    <view class="table-header">
-      <text class="header-cell">审核员ID</text>
-      <text class="header-cell">姓名</text>
-      <text class="header-cell">职务</text>
-      <text class="header-cell">部门</text>
+<view class="list-page">
+  <view class="page-header">
+    <view class="header-content">
+      <text class="page-title">审核员管理</text>
+      <view class="header-buttons">
+        <button class="btn btn-back btn-sm" bindtap="goBack">返回</button>
+      </view>
     </view>
+  </view>
 
-    <scroll-view scroll-y class="table-body" bindscrolltolower="loadMore">
-      <view wx:for="{{reviewers}}" wx:key="reviewer_id" class="table-row">
-        <text class="cell">{{item.reviewer_id}}</text>
-        <text class="cell">{{item.reviewer_name}}</text>
-        <text class="cell">{{item.role}}</text>
-        <text class="cell">{{item.school}}</text>
+  <view class="stats-card">
+    <text class="stats-text">共 {{total}} 名审核员 (第 {{page}} / {{totalPages || 1}} 页)</text>
+  </view>
+
+  <view class="content-card">
+    <scroll-view scroll-y class="table-scroll" bindscrolltolower="loadMore">
+      <view class="table-header">
+        <text class="header-cell">审核员ID</text>
+        <text class="header-cell">姓名</text>
+        <text class="header-cell">角色</text>
+        <text class="header-cell">院系</text>
+        <text class="header-cell">操作</text>
+      </view>
+
+      <view wx:if="{{reviewers.length > 0}}" class="table-body">
+        <view wx:for="{{reviewers}}" wx:key="reviewer_id" class="table-row">
+          <text class="cell">{{item.reviewer_id}}</text>
+          <text class="cell">{{item.name}}</text>
+          <text class="cell">{{item.role}}</text>
+          <text class="cell">{{item.school}}</text>
+          <view class="cell action-cell">
+            <button class="btn btn-action btn-primary" data-reviewer-id="{{item.reviewer_id}}" bindtap="viewDetail">详情</button>
+          </view>
+        </view>
       </view>
 
       <view wx:if="{{loading}}" class="loading">
-        <text>加载中...</text>
+        <text>正在加载...</text>
       </view>
 
-      <view wx:if="{{!loading && reviewers.length === 0}}" class="empty">
-        <text>暂无数据</text>
+      <view wx:if="{{!loading && reviewers.length === 0}}" class="empty-state">
+        <text class="empty-icon">✅</text>
+        <text class="empty-title">暂无审核员数据</text>
+        <text class="empty-desc">请等待审核员添加完成后再来查看</text>
       </view>
     </scroll-view>
   </view>

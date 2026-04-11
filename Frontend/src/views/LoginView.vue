@@ -473,22 +473,46 @@ const generateQRCode = async () => {
   }
 }
 
-// 验证扫码登录
+// 验证扫码登录 - 添加轮询机制
 const handleQRCodeCheck = async () => {
   try {
     qrChecking.value = true
     qrErrorMessage.value = ''
 
-    // 调用登录二维码验证API
-    const response = await http.get(`/login/orcode?login_token=${qrToken.value}`) as unknown as CheckAuthResponse
+    // 轮询检查登录状态，最多30秒
+    const maxAttempts = 30 // 最多尝试30次（30秒）
+    const pollInterval = 1000 // 每秒检查一次
 
-    // 分别存储到localStorage
-    storeLoginInfo(qrToken.value, response.role, response.id, response.name)
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        // 调用登录二维码验证API
+        const response = await http.get(`/login/orcode?login_token=${qrToken.value}`) as unknown as CheckAuthResponse
 
-    console.log('扫码登录成功:', response)
+        // 登录成功，停止轮询
+        console.log('扫码登录成功:', response)
 
-    // 登录成功后跳转到首页
-    router.push('/')
+        // 分别存储到localStorage
+        storeLoginInfo(response.token, response.role, response.id, response.name)
+
+        // 登录成功后跳转到首页
+        router.push('/')
+        return // 成功后退出函数
+
+      } catch (error: any) {
+        // 如果是422错误，说明还没有扫码，继续轮询
+        if (error.response?.status === 422) {
+          console.log(`等待扫码... (${attempt + 1}/${maxAttempts})`)
+          // 等待1秒后继续下一次轮询
+          await new Promise(resolve => setTimeout(resolve, pollInterval))
+        } else {
+          // 其他错误，停止轮询
+          throw error
+        }
+      }
+    }
+
+    // 30秒后仍未扫码
+    qrErrorMessage.value = '扫码超时，请重试或使用账号密码登录'
 
   } catch (error: any) {
     console.error('扫码登录验证失败:', error)

@@ -367,20 +367,56 @@ export default defineComponent(() => {
     }
   };
 
-  // 审核请假条
-  const approveLeave = (e: any) => {
-    const leaveId = e.currentTarget.dataset.id;
-    const token = wx.getStorageSync('token');
+  // 审核请假条 - 使用与 Web App 相同的 API 端点
+  const auditLeave = (e: any) => {
+    const { id, status } = e.currentTarget.dataset;
+    const leave = leaves.value.find(l => l.leave_id === id);
+
+    if (!leave) return;
+
+    // 审核状态映射
+    const statusMap: { [key: string]: string } = {
+      'approve': '已批准',
+      'reject': '已拒绝'
+    };
+
+    const auditStatus = statusMap[status];
+    if (!auditStatus) return;
 
     wx.showModal({
-      title: '确认通过',
-      content: '确定要通过这条请假申请吗？',
+      title: `确认${auditStatus === '已批准' ? '通过' : '拒绝'}`,
+      editable: true,
+      placeholderText: '请输入审核意见（可选）',
       success: (res) => {
         if (res.confirm) {
+          const token = wx.getStorageSync('token');
+
+          // 准备审核数据 - 与 Web App 保持一致
+          const auditData: any = {
+            status: auditStatus,
+            audit_remarks: res.content || '',
+            leave_hours: leave.leave_hours || ''
+          };
+
+          // 添加必要的原始数据字段
+          if (leave.student_id) auditData.student_id = leave.student_id;
+          if (leave.leave_date) auditData.leave_date = leave.leave_date;
+          if (leave.leave_type) auditData.leave_type = leave.leave_type;
+          if (leave.remarks) auditData.remarks = leave.remarks;
+          if (leave.materials) auditData.materials = leave.materials;
+          if (leave.course_id) {
+            auditData.course_id = leave.course_id;
+            auditData.teacher_id = leave.teacher_id;
+          }
+
           wx.request({
-            url: `${BASE_URL}/leaves/${leaveId}/approve`,
+            url: `${BASE_URL}/leaves/edit/${id}`,
             method: 'POST',
-            data: { token },
+            data: { ...auditData, token },
+            header: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
             success: () => {
               wx.showToast({
                 title: '审核成功',
@@ -401,37 +437,13 @@ export default defineComponent(() => {
     });
   };
 
-  const rejectLeave = (e: any) => {
-    const leaveId = e.currentTarget.dataset.id;
-    const token = wx.getStorageSync('token');
+  // 审核请假条（保留原方法兼容旧代码）
+  const approveLeave = (e: any) => {
+    auditLeave({ currentTarget: { dataset: { id: e.currentTarget.dataset.id, status: 'approve' } } });
+  };
 
-    wx.showModal({
-      title: '确认拒绝',
-      content: '确定要拒绝这条请假申请吗？',
-      success: (res) => {
-        if (res.confirm) {
-          wx.request({
-            url: `${BASE_URL}/leaves/${leaveId}/reject`,
-            method: 'POST',
-            data: { token },
-            success: () => {
-              wx.showToast({
-                title: '审核成功',
-                icon: 'success'
-              });
-              fetchLeaves(true);
-            },
-            fail: (error) => {
-              console.error('审核失败:', error);
-              wx.showToast({
-                title: '审核失败',
-                icon: 'error'
-              });
-            }
-          });
-        }
-      }
-    });
+  const rejectLeave = (e: any) => {
+    auditLeave({ currentTarget: { dataset: { id: e.currentTarget.dataset.id, status: 'reject' } } });
   };
 
   // 返回上一页

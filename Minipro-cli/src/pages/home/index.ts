@@ -1,109 +1,197 @@
-import { defineComponent, ref } from '@vue-mini/core';
+import { defineComponent, ref, computed } from '@vue-mini/core';
 import { BASE_URL } from '@/app';
-import { requireAuth } from '@/utils/auth';
+import { requireAuth, logout } from '@/utils/auth';
 
 export default defineComponent(() => {
-    const leaveCount = ref(0);
+  const userInfo = ref<any>(null);
+  const studentCount = ref(0);
+  const leaveCount = ref(0);
+  const reviewerCount = ref(0);
+  const teacherCount = ref(0);
+  const courseCount = ref(0);
 
-    
-
-    // 获取请假条数量
-    const getLeaveCount = () => {
-        console.log('获取请假条数量');
-        const token = wx.getStorageSync('token');
-        wx.request({
-            url: BASE_URL + '/leaves/count',
-            method: 'GET',
-            data: { token },
-            success: (res) => {
-                console.log('请假条数量获取成功:', res.data);
-                const data = res.data as any;
-                leaveCount.value = data?.leaves_count ?? data?.count ?? data ?? 0;
-            },
-            fail: (error) => {
-                console.error('请假条数量获取失败:', error);
-                leaveCount.value = 0;
-            }
-        });
+  // 角色显示名称映射 - 与 Web App 对齐
+  const roleDisplayName = computed(() => {
+    const roleMap: { [key: string]: string } = {
+      'admin': '管理员',
+      'teacher': '教师',
+      'student': '学生',
+      'reviewer': '审核员'
     };
+    return roleMap[userInfo.value?.role] || '用户';
+  });
 
-    
-    // 检查登录状态并获取数据
-    const initializePage = async () => {
-        const userInfo = await requireAuth();
-        if (userInfo) {
-            console.log('页面加载完成，自动获取数据');
-            getLeaveCount();
+  // 头像文字 - 处理 undefined 情况
+  const avatarText = computed(() => {
+    if (!userInfo.value?.name) return 'U';
+    return userInfo.value.name.charAt(0).toUpperCase();
+  });
+
+  // 显示名称 - 处理 undefined 情况
+  const displayName = computed(() => {
+    return userInfo.value?.name || '用户';
+  });
+
+  // 获取各模块数量 - 与 Web App 对齐
+  const getStudentCount = () => {
+    const token = wx.getStorageSync('token');
+    wx.request({
+      url: `${BASE_URL}/students/count`,
+      method: 'GET',
+      data: { token },
+      success: (res) => {
+        const data = res.data as any;
+        studentCount.value = data?.students_count ?? data?.count ?? 0;
+      }
+    });
+  };
+
+  const getLeaveCount = () => {
+    const token = wx.getStorageSync('token');
+    wx.request({
+      url: `${BASE_URL}/leaves/count`,
+      method: 'GET',
+      data: { token },
+      success: (res) => {
+        const data = res.data as any;
+        leaveCount.value = data?.leaves_count ?? data?.count ?? 0;
+      }
+    });
+  };
+
+  const getReviewerCount = () => {
+    const token = wx.getStorageSync('token');
+    wx.request({
+      url: `${BASE_URL}/reviewers/count`,
+      method: 'GET',
+      data: { token },
+      success: (res) => {
+        const data = res.data as any;
+        reviewerCount.value = data?.reviewers_count ?? data?.count ?? 0;
+      }
+    });
+  };
+
+  const getTeacherCount = () => {
+    const token = wx.getStorageSync('token');
+    wx.request({
+      url: `${BASE_URL}/teachers/count`,
+      method: 'GET',
+      data: { token },
+      success: (res) => {
+        const data = res.data as any;
+        teacherCount.value = data?.teachers_count ?? data?.count ?? 0;
+      }
+    });
+  };
+
+  const getCourseCount = () => {
+    const token = wx.getStorageSync('token');
+    wx.request({
+      url: `${BASE_URL}/courses/count`,
+      method: 'GET',
+      data: { token },
+      success: (res) => {
+        const data = res.data as any;
+        courseCount.value = data?.courses_count ?? data?.count ?? 0;
+      }
+    });
+  };
+
+  // 刷新所有数据
+  const refreshAllData = () => {
+    getStudentCount();
+    getLeaveCount();
+    getReviewerCount();
+    getTeacherCount();
+    getCourseCount();
+  };
+
+  // 导航方法 - 与 Web App 对齐
+  const goToStudents = () => {
+    wx.navigateTo({
+      url: '/pages/students/index'
+    });
+  };
+
+  const goToLeaves = () => {
+    wx.navigateTo({
+      url: '/pages/leaves/index'
+    });
+  };
+
+  const goToReviewers = () => {
+    wx.navigateTo({
+      url: '/pages/reviewers/index'
+    });
+  };
+
+  const goToTeachers = () => {
+    wx.navigateTo({
+      url: '/pages/teachers/index'
+    });
+  };
+
+  const goToCourses = () => {
+    wx.navigateTo({
+      url: '/pages/courses/index'
+    });
+  };
+
+  // 退出登录 - 与 Web App 对齐
+  const handleLogout = () => {
+    wx.showModal({
+      title: '提示',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          logout();
         }
-    };
+      }
+    });
+  };
 
-    // 页面加载时自动获取数据
-    const onReady = () => {
-        initializePage();
-    };
+  // 检查登录状态并获取数据
+  const initializePage = async () => {
+    const user = await requireAuth();
+    if (user) {
+      userInfo.value = user;
+      refreshAllData();
+    }
+  };
 
-    // 页面显示时检查登录状态
-    const onShow = () => {
-        initializePage();
-    };
+  // 页面加载时获取数据
+  const onReady = () => {
+    initializePage();
+  };
 
-    // 扫一扫功能
-    const scanCode = () => {
-        wx.scanCode({
-            success: (res) => {
-                const token = wx.getStorageSync('token');
-                const loginToken = res.result; // 扫码结果作为 login_token
+  // 页面显示时刷新数据
+  const onShow = () => {
+    const user = wx.getStorageSync('userInfo');
+    if (user) {
+      userInfo.value = user;
+    }
+  };
 
-                wx.request({
-                    url: `${BASE_URL}/login/orcode`,
-                    method: 'GET',
-                    data: {
-                        token: token,
-                        login_token: loginToken
-                    },
-                    success: (response) => {
-                        console.log('二维码登录成功:', response.data);
-                        wx.showToast({
-                            title: '登录成功',
-                            icon: 'success'
-                        });
-                    },
-                    fail: (error) => {
-                        console.error('二维码登录失败:', error);
-                        wx.showToast({
-                            title: '登录失败',
-                            icon: 'error'
-                        });
-                    }
-                });
-            },
-            fail: (error) => {
-                console.error('扫码失败:', error);
-                wx.showToast({
-                    title: '扫码失败',
-                    icon: 'error'
-                });
-            }
-        });
-    };
-
-    // 跳转到请假条页面
-    const goToLeaves = () => {
-        wx.navigateTo({
-            url: '/pages/leaves/index'
-        });
-    };
-
-    
-
-    return {
-        leaveCount,
-        getLeaveCount,
-        onReady,
-        onShow,
-        goToLeaves,
-        scanCode,
-    };
+  return {
+    userInfo,
+    roleDisplayName,
+    avatarText,
+    displayName,
+    studentCount,
+    leaveCount,
+    reviewerCount,
+    teacherCount,
+    courseCount,
+    goToStudents,
+    goToLeaves,
+    goToReviewers,
+    goToTeachers,
+    goToCourses,
+    handleLogout,
+    onReady,
+    onShow
+  };
 });
 
 

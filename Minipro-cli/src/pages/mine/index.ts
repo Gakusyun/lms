@@ -1,16 +1,20 @@
 import { defineComponent, ref, reactive } from '@vue-mini/core';
-import { UserInfo, requireAuth, logout } from '@/utils/auth';
+import { UserInfo, requireAuth, logout, getLocalUserInfo } from '@/utils/auth';
 import { BASE_URL } from '@/app';
 
 defineComponent(() => {
   const userInfo = ref<UserInfo | null>(null);
   const loading = ref(true);
-  
+
   // 修改密码相关状态
   const showChangePassword = ref(false);
   const isChangingPassword = ref(false);
   const passwordError = ref('');
-  
+
+  // 扫码登录相关状态
+  const qrChecking = ref(false);
+  const qrErrorMessage = ref('');
+
   // 修改密码表单数据
   const passwordForm = reactive({
     old_password: '',
@@ -18,17 +22,29 @@ defineComponent(() => {
     confirm_password: ''
   });
 
-  // 加载用户信息
-  const loadUserInfo = async () => {
+  // 加载用户信息 - 与Web App对齐（只读本地存储，不验证token）
+  const loadUserInfo = () => {
     try {
-      const result = await requireAuth();
-      if (result) {
-        userInfo.value = result;
+      // 直接从本地存储读取用户信息，不调用API
+      const id = wx.getStorageSync('id');
+      const name = wx.getStorageSync('name');
+      const role = wx.getStorageSync('role');
+
+      if (id && name && role) {
+        userInfo.value = { id, name, role };
       }
     } catch (error) {
       console.error('加载用户信息失败:', error);
     } finally {
       loading.value = false;
+    }
+  };
+
+  // 刷新本地用户信息（不验证token）
+  const refreshLocalUserInfo = () => {
+    const localUser = getLocalUserInfo();
+    if (localUser) {
+      userInfo.value = localUser;
     }
   };
 
@@ -45,9 +61,9 @@ defineComponent(() => {
     });
   };
 
-  // 页面显示时重新检查登录状态
+  // 页面显示时刷新本地用户信息（不重复验证token）
   const onShow = () => {
-    loadUserInfo();
+    refreshLocalUserInfo();
   };
 
   // 显示修改密码模态框
@@ -145,6 +161,81 @@ defineComponent(() => {
     loadUserInfo();
   };
 
+  // 处理扫码登录 - 扫描Web App的二维码
+  const handleScanQRCode = () => {
+    qrChecking.value = true;
+    qrErrorMessage.value = '';
+
+    // 调用微信扫码API
+    wx.scanCode({
+      onlyFromCamera: false,
+      scanType: ['qrCode'],
+      success: (res) => {
+        console.log('扫码成功:', res);
+
+        // 获取二维码中的token（Web App的token）
+        const scannedToken = res.result;
+
+        if (!scannedToken) {
+          qrErrorMessage.value = '二维码无效，请重试';
+          qrChecking.value = false;
+          return;
+        }
+
+        // 调用后端API验证扫码登录
+        wx.request({
+          url: `${BASE_URL}/login/orcode`,
+          method: 'GET',
+          data: {
+            token: wx.getStorageSync('token'), // 当前小程序用户的token
+            login_token: scannedToken // Web App二维码中的token
+          },
+          success: (loginRes) => {
+            if (loginRes.statusCode === 200) {
+              console.log('扫码登录成功:', loginRes.data);
+              wx.showToast({
+                title: 'Web App登录成功',
+                icon: 'success'
+              });
+            } else {
+              console.error('扫码登录验证失败:', loginRes);
+              qrErrorMessage.value = '登录验证失败，请确认二维码是否正确';
+            }
+          },
+          fail: (err) => {
+            console.error('扫码登录请求失败:', err);
+            qrErrorMessage.value = '网络错误，请重试';
+          },
+          complete: () => {
+            qrChecking.value = false;
+            // 3秒后清除错误提示
+            if (qrErrorMessage.value) {
+              setTimeout(() => {
+                qrErrorMessage.value = '';
+              }, 3000);
+            }
+          }
+        });
+      },
+      fail: (err) => {
+        console.error('扫码失败:', err);
+        qrErrorMessage.value = '扫码失败，请重试';
+        qrChecking.value = false;
+        // 3秒后清除错误提示
+        setTimeout(() => {
+          qrErrorMessage.value = '';
+        }, 3000);
+      }
+    });
+  };
+
+  // 返回首页 - 与 Web App 对齐
+  const goHome = () => {
+    wx.switchTab({
+      url: '/pages/home/index'
+    });
+  };
+
   return {
     userInfo,
     loading,
@@ -152,6 +243,8 @@ defineComponent(() => {
     isChangingPassword,
     passwordError,
     passwordForm,
+    qrChecking,
+    qrErrorMessage,
     handleLogout,
     onShow,
     onLoad,
@@ -160,6 +253,8 @@ defineComponent(() => {
     onOldPasswordInput,
     onNewPasswordInput,
     onConfirmPasswordInput,
-    handleChangePassword
+    handleChangePassword,
+    handleScanQRCode,
+    goHome
   };
 });

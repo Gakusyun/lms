@@ -9,16 +9,17 @@ export const request = (options: {
 }) => {
   const token = wx.getStorageSync('token');
 
-  // 默认配置
+  // 默认配置 - 与 Web App 保持一致
   const defaultOptions = {
     url: `${BASE_URL}${options.url}`,
     method: options.method || 'GET',
     data: {
       ...options.data,
-      token // 自动添加 token
+      token // 自动添加 token 到 params
     },
     header: {
       'content-type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : '', // 添加 Authorization 头
       ...options.header
     }
   };

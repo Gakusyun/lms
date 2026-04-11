@@ -1,87 +1,103 @@
-<view class="mine">
+<view class="profile-page">
+  <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading">
     <text>加载中...</text>
   </view>
 
-  <view wx:else class="user-info">
-    <view class="user-header">
-      <view class="avatar">
-        <text class="avatar-text">{{userInfo.name ? userInfo.name.charAt(0) : '用'}}</text>
-      </view>
-      <view class="user-details">
+  <!-- 用户信息卡片 - 与 Web App 对齐 -->
+  <view wx:else class="container">
+    <view class="profile-card">
+      <!-- 头像和基本信息 -->
+      <view class="profile-header">
+        <view class="avatar">
+          <text class="avatar-text">{{userInfo.name ? userInfo.name.charAt(0).toUpperCase() : 'U'}}</text>
+        </view>
         <text class="user-name">{{userInfo.name || '未知用户'}}</text>
-        <text class="user-role">{{userInfo.role === 'student' ? '学生' : userInfo.role === 'teacher' ? '教师' : '管理员'}}</text>
+        <view class="user-role-badge">
+          <text class="role-text">{{userInfo.role === 'student' ? '学生' : userInfo.role === 'teacher' ? '教师' : userInfo.role === 'reviewer' ? '审核员' : '管理员'}}</text>
+        </view>
+      </view>
+
+      <!-- 详细信息 -->
+      <view class="profile-info">
+        <view class="info-item">
+          <text class="info-label">用户ID</text>
+          <text class="info-value">{{userInfo.id || '暂无'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">角色</text>
+          <text class="info-value">{{userInfo.role === 'student' ? '学生' : userInfo.role === 'teacher' ? '教师' : userInfo.role === 'reviewer' ? '审核员' : '管理员'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">姓名</text>
+          <text class="info-value">{{userInfo.name || '暂无'}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="profile-actions">
+        <button class="btn btn-success btn-block" bindtap="handleScanQRCode">扫码登录Web App</button>
+        <button class="btn btn-primary btn-block" bindtap="showChangePasswordModal">修改密码</button>
+        <button class="btn btn-danger btn-block" bindtap="handleLogout">退出登录</button>
       </view>
     </view>
+  </view>
 
-    <view class="info-list">
-      <view class="info-item">
-        <text class="info-label">姓名</text>
-        <text class="info-value">{{userInfo.name || '暂无'}}</text>
-      </view>
-      <view class="info-item">
-        <text class="info-label">角色</text>
-        <text class="info-value">{{userInfo.role === 'student' ? '学生' : userInfo.role === 'teacher' ? '教师' : '管理员'}}</text>
-      </view>
-      <view class="info-item">
-        <text class="info-label">学号/工号</text>
-        <text class="info-value">{{userInfo.id || '暂无'}}</text>
-      </view>
-    </view>
+  <!-- 扫码登录提示 -->
+  <view wx:if="{{qrChecking}}" class="scanning-toast">
+    <text>正在扫码...</text>
+  </view>
+  <view wx:if="{{qrErrorMessage}}" class="error-toast">
+    <text>{{qrErrorMessage}}</text>
+  </view>
 
-    <view class="actions">
-      <button class="change-password-btn" bindtap="showChangePasswordModal">修改密码</button>
-      <button class="logout-btn" bindtap="handleLogout">退出登录</button>
-    </view>
-
-    <!-- 修改密码模态框 -->
-    <view wx:if="{{showChangePassword}}" class="modal-overlay" bindtap="hideChangePasswordModal">
-      <view class="modal-content" catchtap="">
-        <view class="modal-header">
-          <text class="modal-title">修改密码</text>
-          <view class="modal-close" bindtap="hideChangePasswordModal">×</view>
+  <!-- 修改密码模态框 -->
+  <view wx:if="{{showChangePassword}}" class="modal-overlay" bindtap="hideChangePasswordModal">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">修改密码</text>
+        <view class="modal-close" bindtap="hideChangePasswordModal">×</view>
+      </view>
+      <view class="modal-body">
+        <view class="form-group">
+          <text class="form-label">当前密码</text>
+          <input
+            class="form-input"
+            type="password"
+            placeholder="请输入当前密码"
+            value="{{passwordForm.old_password}}"
+            bindinput="onOldPasswordInput"
+          />
         </view>
-        <view class="modal-body">
-          <view class="form-group">
-            <text class="form-label">原密码</text>
-            <input 
-              class="form-input" 
-              type="password" 
-              placeholder="请输入原密码" 
-              value="{{passwordForm.old_password}}" 
-              bindinput="onOldPasswordInput" 
-            />
-          </view>
-          <view class="form-group">
-            <text class="form-label">新密码</text>
-            <input 
-              class="form-input" 
-              type="password" 
-              placeholder="请输入新密码" 
-              value="{{passwordForm.new_password}}" 
-              bindinput="onNewPasswordInput" 
-            />
-          </view>
-          <view class="form-group">
-            <text class="form-label">确认新密码</text>
-            <input 
-              class="form-input" 
-              type="password" 
-              placeholder="请再次输入新密码" 
-              value="{{passwordForm.confirm_password}}" 
-              bindinput="onConfirmPasswordInput" 
-            />
-          </view>
-          <view wx:if="{{passwordError}}" class="error-message">
-            <text>{{passwordError}}</text>
-          </view>
+        <view class="form-group">
+          <text class="form-label">新密码</text>
+          <input
+            class="form-input"
+            type="password"
+            placeholder="请输入新密码（至少6位）"
+            value="{{passwordForm.new_password}}"
+            bindinput="onNewPasswordInput"
+          />
         </view>
-        <view class="modal-footer">
-          <button class="btn btn-secondary" bindtap="hideChangePasswordModal">取消</button>
-          <button class="btn btn-primary" bindtap="handleChangePassword" disabled="{{isChangingPassword}}">
-            {{isChangingPassword ? '修改中...' : '确认修改'}}
-          </button>
+        <view class="form-group">
+          <text class="form-label">确认新密码</text>
+          <input
+            class="form-input"
+            type="password"
+            placeholder="请再次输入新密码"
+            value="{{passwordForm.confirm_password}}"
+            bindinput="onConfirmPasswordInput"
+          />
         </view>
+        <view wx:if="{{passwordError}}" class="error-message">
+          <text>{{passwordError}}</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="btn btn-secondary" bindtap="hideChangePasswordModal">取消</button>
+        <button class="btn btn-primary" bindtap="handleChangePassword" disabled="{{isChangingPassword}}">
+          {{isChangingPassword ? '修改中...' : '确认修改'}}
+        </button>
       </view>
     </view>
   </view>

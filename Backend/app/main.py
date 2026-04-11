@@ -20,6 +20,26 @@ async def lifespan(app: FastAPI):
     try:
         SQLModel.metadata.create_all(engine, checkfirst=True)
         logger.info("数据库表创建成功")
+
+        # 自动迁移：为 Login 表添加 jwt_token 字段
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            try:
+                # 检查字段是否已存在
+                if settings.db_type == 'sqlite':
+                    result = conn.execute(text("PRAGMA table_info(login)"))
+                    columns = [row[1] for row in result.fetchall()]
+
+                    if 'jwt_token' not in columns:
+                        logger.info("正在添加 jwt_token 字段...")
+                        conn.execute(text("ALTER TABLE login ADD COLUMN jwt_token VARCHAR"))
+                        conn.commit()
+                        logger.info("jwt_token 字段添加成功")
+                    else:
+                        logger.info("jwt_token 字段已存在")
+            except Exception as e:
+                logger.warning(f"字段迁移跳过: {str(e)}")
+
     except Exception as e:
         logger.error(f"数据库表创建失败: {str(e)}")
         raise
