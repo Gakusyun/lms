@@ -18,7 +18,7 @@ def reset_admin_password():
             # 查询管理员
             stmt = select(Admin)
             admin = session.exec(stmt).first()
-            
+
             if admin:
                 # 重置密码为 admin123
                 admin.password = get_password_hash("admin123")
@@ -34,7 +34,7 @@ def reset_admin_password():
                 session.add(new_admin)
                 session.commit()
                 logger.info("✅ 新管理员账户创建成功，密码为 admin123")
-                
+
     except Exception as e:
         logger.error(f"❌ 重置管理员密码失败: {str(e)}")
         raise

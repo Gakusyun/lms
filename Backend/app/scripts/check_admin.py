@@ -17,14 +17,14 @@ def check_admin():
             # 查询所有管理员
             stmt = select(Admin)
             admins = session.exec(stmt).all()
-            
+
             if admins:
                 logger.info(f"✅ 发现 {len(admins)} 个管理员账户:")
                 for admin in admins:
                     logger.info(f"  - ID: {admin.admin_id}, 姓名: {admin.name}")
             else:
                 logger.info("❌ 未发现管理员账户")
-                
+
     except Exception as e:
         logger.error(f"❌ 检查管理员账户失败: {str(e)}")
         raise
