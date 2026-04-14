@@ -18,6 +18,11 @@ interface Leave {
   course_id?: number;
   teacher_id?: number;
   leave_date_formatted?: string;
+  qr_code?: string;
+  qr_valid_from?: string;
+  qr_valid_until?: string;
+  qr_use_count?: number;
+  qr_max_uses?: number;
 }
 
 interface Course {
@@ -441,6 +446,136 @@ export default defineComponent(() => {
     wx.navigateBack();
   };
 
+  // ===== 二维码凭证展示 =====
+  const showQRModal = ref(false);
+  const qrLeaveItem = ref<Leave | null>(null);
+  const qrCodeBase64 = ref('');
+  const qrLoading = ref(false);
+  const qrError = ref('');
+  const qrValidInfo = ref<{ from: string; until: string; used: number; max: number }>({ from: '', until: '', used: 0, max: 0 });
+
+  // 点击查看请假二维码凭证
+  const showLeaveQR = (e: any) => {
+    const { id } = e.currentTarget.dataset;
+    const leave = leaves.value.find((l) => l.leave_id === id);
+    if (!leave) return;
+
+    if (leave.status !== '已批准') {
+      wx.showToast({ title: '仅已批准的请假可查看凭证', icon: 'none' });
+      return;
+    }
+
+    // 如果列表数据中已有 qr_code，直接展示
+    if (leave.qr_code) {
+      qrLeaveItem.value = leave;
+      qrCodeBase64.value = leave.qr_code;
+      qrValidInfo.value = {
+        from: leave.qr_valid_from || '',
+        until: leave.qr_valid_until || '',
+        used: leave.qr_use_count || 0,
+        max: leave.qr_max_uses || 1,
+      };
+      showQRModal.value = true;
+      return;
+    }
+
+    // 否则请求后端获取
+    qrLoading.value = true;
+    qrError.value = '';
+    qrLeaveItem.value = leave;
+    showQRModal.value = true;
+
+    const token = wx.getStorageSync('token');
+    wx.request({
+      url: `${BASE_URL}/leaves/${id}/qr`,
+      method: 'GET',
+      header: { Authorization: `Bearer ${token}` },
+      success: (res) => {
+        const data = res.data as any;
+        if (data && data.qr_code) {
+          qrCodeBase64.value = data.qr_code;
+          qrValidInfo.value = {
+            from: data.qr_valid_from || '',
+            until: data.qr_valid_until || '',
+            used: data.qr_use_count || 0,
+            max: data.qr_max_uses || 1,
+          };
+        } else {
+          qrError.value = '未找到请假凭证二维码';
+        }
+      },
+      fail: () => {
+        qrError.value = '获取二维码失败';
+      },
+      complete: () => {
+        qrLoading.value = false;
+      },
+    });
+  };
+
+  // 关闭二维码弹窗
+  const closeQRModal = () => {
+    showQRModal.value = false;
+    qrCodeBase64.value = '';
+    qrLeaveItem.value = null;
+    qrError.value = '';
+  };
+
+  // ===== 教师扫码核验 =====
+  const handleScanVerify = () => {
+    wx.scanCode({
+      onlyFromCamera: false,
+      scanType: ['qrCode'],
+      success: (scanRes) => {
+        const qrContent = scanRes.result;
+        if (!qrContent) {
+          wx.showToast({ title: '未识别到二维码', icon: 'none' });
+          return;
+        }
+
+        const token = wx.getStorageSync('token');
+        wx.showLoading({ title: '核验中...' });
+
+        wx.request({
+          url: `${BASE_URL}/leaves/verify-qr`,
+          method: 'POST',
+          data: { qr_content: qrContent },
+          header: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          success: (res) => {
+            const data = res.data as any;
+            if (data && data.valid) {
+              wx.showModal({
+                title: '核验通过',
+                content: `学生：${data.student_name || '-'}\n日期：${(data.leave_date || '').substring(0, 10)}\n类型：${data.leave_type || '-'}\n状态：${data.status || '-'}`,
+                showCancel: false,
+                confirmText: '确定',
+              });
+            } else {
+              wx.showModal({
+                title: '核验失败',
+                content: data?.error_msg || '二维码无效',
+                showCancel: false,
+                confirmText: '确定',
+              });
+            }
+          },
+          fail: () => {
+            wx.showToast({ title: '核验请求失败', icon: 'error' });
+          },
+          complete: () => {
+            wx.hideLoading();
+          },
+        });
+      },
+      fail: () => {
+        wx.showToast({ title: '扫码失败', icon: 'none' });
+      },
+    });
+  };
+
   // 检查登录状态并获取数据
   const initializePage = async () => {
     const user = await requireAuth();
@@ -485,6 +620,15 @@ export default defineComponent(() => {
     onCourseChange,
     handleCreateLeave,
     approveLeave,
-    rejectLeave
+    rejectLeave,
+    showQRModal,
+    qrLeaveItem,
+    qrCodeBase64,
+    qrLoading,
+    qrError,
+    qrValidInfo,
+    showLeaveQR,
+    closeQRModal,
+    handleScanVerify,
   };
 });

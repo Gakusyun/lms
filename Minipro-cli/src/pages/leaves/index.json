@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "请假管理",
-  "enablePullDownRefresh": true
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
 }

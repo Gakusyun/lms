@@ -148,3 +148,79 @@
   background-color: var(--error-light);
   border-radius: var(--radius);
 }
+
+/* 扫码核验按钮栏 */
+.scan-verify-bar {
+  padding: var(--spacing-sm) var(--spacing);
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* 二维码凭证弹窗 */
+.qr-modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-xl) var(--spacing);
+}
+
+.qr-loading,
+.qr-error {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--text-secondary);
+}
+
+.qr-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.qr-image {
+  width: 400rpx;
+  height: 400rpx;
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+}
+
+.qr-info {
+  width: 100%;
+  padding: var(--spacing);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius);
+  margin-bottom: var(--spacing);
+}
+
+.qr-info-text {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+.qr-expiry {
+  color: var(--warning, #f59e0b);
+}
+
+.qr-usage {
+  color: var(--text-secondary);
+}
+
+.qr-tip {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* 信息按钮 */
+.btn-info {
+  background-color: var(--info, #3b82f6);
+  color: var(--text-inverse);
+}
+
+.btn-info:active {
+  background-color: var(--info-dark, #2563eb);
+}

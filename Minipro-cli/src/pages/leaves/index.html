@@ -14,6 +14,11 @@
     <text class="stats-text">共 {{total}} 条请假 (第 {{page}} / {{totalPages || 1}} 页)</text>
   </view>
 
+  <!-- 教师扫码核验按钮 -->
+  <view wx:if="{{userInfo.role === 'teacher' || userInfo.role === 'admin' || userInfo.role === 'reviewer'}}" class="scan-verify-bar">
+    <button class="btn btn-success btn-sm" bindtap="handleScanVerify">扫一扫核验请假凭证</button>
+  </view>
+
   <!-- 卡片列表 -->
   <scroll-view scroll-y class="scroll-container" bindscrolltolower="loadMore">
     <view wx:if="{{leaves.length > 0}}" class="card-list">
@@ -24,6 +29,7 @@
             <view class="badge badge-{{item.status === '已批准' ? 'success' : item.status === '已拒绝' ? 'danger' : 'warning'}}">{{item.status}}</view>
             <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}" class="btn btn-success btn-sm" data-id="{{item.leave_id}}" data-status="approve" bindtap="auditLeave">通过</button>
             <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}" class="btn btn-danger btn-sm" data-id="{{item.leave_id}}" data-status="reject" bindtap="auditLeave">拒绝</button>
+            <button wx:if="{{item.status === '已批准'}}" class="btn btn-info btn-sm" data-id="{{item.leave_id}}" bindtap="showLeaveQR">查看凭证</button>
           </view>
         </view>
         <view class="card-row">
@@ -120,6 +126,37 @@
         <button class="btn btn-primary" bindtap="handleCreateLeave" disabled="{{isCreating}}">
           {{isCreating ? '创建中...' : '创建'}}
         </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 二维码凭证弹窗 -->
+  <view wx:if="{{showQRModal}}" class="modal-overlay" bindtap="closeQRModal">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">请假凭证</text>
+        <view class="modal-close" bindtap="closeQRModal">×</view>
+      </view>
+      <view class="modal-body qr-modal-body">
+        <view wx:if="{{qrLoading}}" class="qr-loading">
+          <text>加载二维码中...</text>
+        </view>
+        <view wx:elif="{{qrError}}" class="qr-error">
+          <text>{{qrError}}</text>
+        </view>
+        <view wx:else class="qr-display">
+          <image wx:if="{{qrCodeBase64}}" class="qr-image" src="{{qrCodeBase64}}" mode="aspectFit" />
+          <view class="qr-info">
+            <text class="qr-info-text">请假ID: #{{qrLeaveItem.leave_id}}</text>
+            <text class="qr-info-text">学生: {{qrLeaveItem.student_name || qrLeaveItem.student_id}}</text>
+            <text class="qr-info-text">类型: {{qrLeaveItem.leave_type || '-'}}</text>
+            <text class="qr-info-text">日期: {{qrLeaveItem.leave_date_formatted || qrLeaveItem.leave_date}}</text>
+            <text class="qr-info-text">课时: {{qrLeaveItem.leave_hours || '-'}}</text>
+            <text wx:if="{{qrValidInfo.until}}" class="qr-info-text qr-expiry">有效期至: {{qrValidInfo.until}}</text>
+            <text wx:if="{{qrValidInfo.max > 0}}" class="qr-info-text qr-usage">已使用: {{qrValidInfo.used}} / {{qrValidInfo.max}}</text>
+          </view>
+          <text class="qr-tip">请将二维码出示给教师核验</text>
+        </view>
       </view>
     </view>
   </view>
