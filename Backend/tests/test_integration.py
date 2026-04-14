@@ -111,7 +111,7 @@ def test_user_authentication_flow(setup_database):
     # 测试管理员登录
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     admin_token = login_response.json()["token"]
@@ -120,7 +120,7 @@ def test_user_authentication_flow(setup_database):
     # 测试学生登录
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 2001, "password": "student123", "token": "test_token"}
+        json={"id": 2001, "password": "student123"}
     )
     assert login_response.status_code == 200
     student_token = login_response.json()["token"]
@@ -129,7 +129,7 @@ def test_user_authentication_flow(setup_database):
     # 测试教师登录
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 3001, "password": "teacher123", "token": "test_token"}
+        json={"id": 3001, "password": "teacher123"}
     )
     assert login_response.status_code == 200
     teacher_token = login_response.json()["token"]
@@ -138,7 +138,7 @@ def test_user_authentication_flow(setup_database):
     # 测试审核员登录
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 4001, "password": "reviewer123", "token": "test_token"}
+        json={"id": 4001, "password": "reviewer123"}
     )
     assert login_response.status_code == 200
     reviewer_token = login_response.json()["token"]
@@ -150,7 +150,7 @@ def test_leave_application_flow(setup_database):
     # 登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 2001, "password": "student123", "token": "test_token"}
+        json={"id": 2001, "password": "student123"}
     )
     assert login_response.status_code == 200
     student_token = login_response.json()["token"]
@@ -161,8 +161,9 @@ def test_leave_application_flow(setup_database):
         "course_id": 101
     }
     create_association_response = client.post(
-        f"/api/v1/student-courses?token={student_token}",
-        json=association_data
+        "/api/v1/student-courses",
+        json=association_data,
+        headers={"Authorization": f"Bearer {student_token}"}
     )
     assert create_association_response.status_code == 200
     
@@ -177,8 +178,9 @@ def test_leave_application_flow(setup_database):
         "course_id": 101
     }
     create_leave_response = client.post(
-        f"/api/v1/leaves?token={student_token}",
-        json=leave_data
+        "/api/v1/leaves",
+        json=leave_data,
+        headers={"Authorization": f"Bearer {student_token}"}
     )
     assert create_leave_response.status_code == 200
     leave_id = create_leave_response.json()["leave_id"]
@@ -186,14 +188,16 @@ def test_leave_application_flow(setup_database):
     # 登录审核员账号
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 4001, "password": "reviewer123", "token": "test_token"}
+        json={"id": 4001, "password": "reviewer123"}
     )
     assert login_response.status_code == 200
     reviewer_token = login_response.json()["token"]
     
     # 审批请假申请
     approve_response = client.post(
-        f"/api/v1/leaves/approve/{leave_id}?token={reviewer_token}&audit_remarks=同意请假"
+        "/api/v1/leaves/approve/" + str(leave_id),
+        params={"audit_remarks": "同意请假"},
+        headers={"Authorization": f"Bearer {reviewer_token}"}
     )
     assert approve_response.status_code == 200
     assert approve_response.json()["status"] == "已批准"
@@ -204,7 +208,7 @@ def test_course_management_flow(setup_database):
     # 登录管理员账号
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     admin_token = login_response.json()["token"]
@@ -217,8 +221,9 @@ def test_course_management_flow(setup_database):
         "class_hours": "48"
     }
     create_course_response = client.post(
-        f"/api/v1/courses?token={admin_token}",
-        json=course_data
+        "/api/v1/courses",
+        json=course_data,
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert create_course_response.status_code == 200
     assert create_course_response.json()["course_name"] == "英语"
@@ -231,8 +236,9 @@ def test_course_management_flow(setup_database):
         "class_hours": "60"
     }
     update_course_response = client.put(
-        f"/api/v1/courses/102?token={admin_token}",
-        json=update_data
+        "/api/v1/courses/102",
+        json=update_data,
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert update_course_response.status_code == 200
     assert update_course_response.json()["course_name"] == "英语口语"
@@ -244,7 +250,7 @@ def test_student_course_association_flow(setup_database):
     # 登录管理员账号
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     admin_token = login_response.json()["token"]
@@ -255,8 +261,9 @@ def test_student_course_association_flow(setup_database):
         "course_id": 101
     }
     create_association_response = client.post(
-        f"/api/v1/student-courses?token={admin_token}",
-        json=association_data
+        "/api/v1/student-courses",
+        json=association_data,
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert create_association_response.status_code == 200
     assert create_association_response.json()["student_id"] == 2001
@@ -264,7 +271,8 @@ def test_student_course_association_flow(setup_database):
     
     # 查询学生的课程
     get_courses_response = client.get(
-        f"/api/v1/student-courses/student/2001?token={admin_token}"
+        "/api/v1/student-courses/student/2001",
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert get_courses_response.status_code == 200
     assert len(get_courses_response.json()) > 0
@@ -275,7 +283,7 @@ def test_reviewer_management_flow(setup_database):
     # 登录管理员账号
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     admin_token = login_response.json()["token"]
@@ -289,8 +297,9 @@ def test_reviewer_management_flow(setup_database):
         "password": "password123"
     }
     create_reviewer_response = client.post(
-        f"/api/v1/reviewers?token={admin_token}",
-        json=reviewer_data
+        "/api/v1/reviewers",
+        json=reviewer_data,
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert create_reviewer_response.status_code == 200
     assert create_reviewer_response.json()["reviewer_name"] == "新审核员"
@@ -304,8 +313,9 @@ def test_reviewer_management_flow(setup_database):
         "password": "newpassword123"
     }
     update_reviewer_response = client.put(
-        f"/api/v1/reviewers/4002?token={admin_token}",
-        json=update_data
+        "/api/v1/reviewers/4002",
+        json=update_data,
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert update_reviewer_response.status_code == 200
     assert update_reviewer_response.json()["reviewer_name"] == "更新后的审核员"
@@ -316,21 +326,23 @@ def test_statistics_flow(setup_database):
     # 登录管理员账号
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     admin_token = login_response.json()["token"]
     
     # 获取用户统计
     user_stats_response = client.get(
-        f"/api/v1/statistics/users?token={admin_token}"
+        "/api/v1/statistics/users",
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert user_stats_response.status_code == 200
     assert "user_statistics" in user_stats_response.json()
     
     # 获取课程选课统计
     course_stats_response = client.get(
-        f"/api/v1/statistics/courses/enrollment?token={admin_token}"
+        "/api/v1/statistics/courses/enrollment",
+        headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert course_stats_response.status_code == 200
     assert "enrollment_statistics" in course_stats_response.json()

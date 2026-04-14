@@ -38,7 +38,7 @@ export default defineComponent(() => {
     wx.request({
       url: `${BASE_URL}/students/count`,
       method: 'GET',
-      data: { token },
+      header: { 'Authorization': `Bearer ${token}` },
       success: (res) => {
         const data = res.data as any;
         studentCount.value = data?.students_count ?? data?.count ?? 0;
@@ -51,7 +51,7 @@ export default defineComponent(() => {
     wx.request({
       url: `${BASE_URL}/leaves/count`,
       method: 'GET',
-      data: { token },
+      header: { 'Authorization': `Bearer ${token}` },
       success: (res) => {
         const data = res.data as any;
         leaveCount.value = data?.leaves_count ?? data?.count ?? 0;
@@ -64,7 +64,7 @@ export default defineComponent(() => {
     wx.request({
       url: `${BASE_URL}/reviewers/count`,
       method: 'GET',
-      data: { token },
+      header: { 'Authorization': `Bearer ${token}` },
       success: (res) => {
         const data = res.data as any;
         reviewerCount.value = data?.reviewers_count ?? data?.count ?? 0;
@@ -77,7 +77,7 @@ export default defineComponent(() => {
     wx.request({
       url: `${BASE_URL}/teachers/count`,
       method: 'GET',
-      data: { token },
+      header: { 'Authorization': `Bearer ${token}` },
       success: (res) => {
         const data = res.data as any;
         teacherCount.value = data?.teachers_count ?? data?.count ?? 0;
@@ -90,7 +90,7 @@ export default defineComponent(() => {
     wx.request({
       url: `${BASE_URL}/courses/count`,
       method: 'GET',
-      data: { token },
+      header: { 'Authorization': `Bearer ${token}` },
       success: (res) => {
         const data = res.data as any;
         courseCount.value = data?.courses_count ?? data?.count ?? 0;

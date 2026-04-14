@@ -132,7 +132,7 @@ def test_create_leave(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 2001, "password": "student123", "token": "test_token"}
+        json={"id": 2001, "password": "student123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
@@ -147,8 +147,9 @@ def test_create_leave(setup_database):
         "course_id": 101
     }
     response = client.post(
-        f"/api/v1/leaves?token={token}",
-        json=leave_data
+        "/api/v1/leaves",
+        json=leave_data,
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -162,13 +163,16 @@ def test_get_leaves(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token访问请假列表
-    response = client.get(f"/api/v1/leaves?token={token}")
+    response = client.get(
+        "/api/v1/leaves",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "items" in data
@@ -181,13 +185,16 @@ def test_get_leaves_count(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token获取请假记录数量
-    response = client.get(f"/api/v1/leaves/count?token={token}")
+    response = client.get(
+        "/api/v1/leaves/count",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "leaves_count" in data
@@ -199,14 +206,16 @@ def test_approve_leave(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 4001, "password": "reviewer123", "token": "test_token"}
+        json={"id": 4001, "password": "reviewer123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token批准请假
     response = client.post(
-        f"/api/v1/leaves/approve/1?token={token}&audit_remarks=同意请假"
+        "/api/v1/leaves/approve/1",
+        params={"audit_remarks": "同意请假"},
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -219,14 +228,16 @@ def test_reject_leave(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 4001, "password": "reviewer123", "token": "test_token"}
+        json={"id": 4001, "password": "reviewer123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token拒绝请假
     response = client.post(
-        f"/api/v1/leaves/reject/1?token={token}&audit_remarks=不同意请假"
+        "/api/v1/leaves/reject/1",
+        params={"audit_remarks": "不同意请假"},
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -239,7 +250,7 @@ def test_edit_leave(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 2001, "password": "student123", "token": "test_token"}
+        json={"id": 2001, "password": "student123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
@@ -254,8 +265,9 @@ def test_edit_leave(setup_database):
         "course_id": 101
     }
     create_response = client.post(
-        f"/api/v1/leaves?token={token}",
-        json=leave_data
+        "/api/v1/leaves",
+        json=leave_data,
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert create_response.status_code == 200
     leave_id = create_response.json()["leave_id"]
@@ -266,9 +278,10 @@ def test_edit_leave(setup_database):
         "remarks": "家中有急事",
         "status": "待审批"
     }
-    response = client.post(
-        f"/api/v1/leaves/edit/{leave_id}?token={token}",
-        json=update_data
+    response = client.put(
+        f"/api/v1/leaves/edit/{leave_id}",
+        json=update_data,
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()

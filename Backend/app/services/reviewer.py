@@ -39,7 +39,9 @@ class ReviewerService:
                 )
             },
         )
-
+        # 过滤password字段
+        for item in items:
+            item.pop("password", None)
         return items, total, total_pages
 
     @staticmethod

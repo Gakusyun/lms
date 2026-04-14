@@ -102,7 +102,7 @@ def test_login_admin(setup_database):
     """测试管理员登录"""
     response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -116,7 +116,7 @@ def test_login_student(setup_database):
     """测试学生登录"""
     response = client.post(
         "/api/v1/login",
-        json={"id": 2001, "password": "student123", "token": "test_token"}
+        json={"id": 2001, "password": "student123"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -130,7 +130,7 @@ def test_login_teacher(setup_database):
     """测试教师登录"""
     response = client.post(
         "/api/v1/login",
-        json={"id": 3001, "password": "teacher123", "token": "test_token"}
+        json={"id": 3001, "password": "teacher123"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -144,7 +144,7 @@ def test_login_reviewer(setup_database):
     """测试审核员登录"""
     response = client.post(
         "/api/v1/login",
-        json={"id": 4001, "password": "reviewer123", "token": "test_token"}
+        json={"id": 4001, "password": "reviewer123"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -158,7 +158,7 @@ def test_login_invalid_credentials(setup_database):
     """测试无效的登录凭证"""
     response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "wrong_password", "token": "test_token"}
+        json={"id": 1001, "password": "wrong_password"}
     )
     assert response.status_code == 401
     assert response.json()["detail"] == "Invalid credentials"
@@ -168,7 +168,7 @@ def test_login_nonexistent_user(setup_database):
     """测试不存在的用户"""
     response = client.post(
         "/api/v1/login",
-        json={"id": 999, "password": "password123", "token": "test_token"}
+        json={"id": 999, "password": "password123"}
     )
     assert response.status_code == 404
 

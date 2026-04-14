@@ -4,12 +4,14 @@ from sqlmodel import Session
 from app.database.connection import get_session
 from app.services.role import RoleService
 from app.schemas import PaginatedResponse
+from app.api.deps import check_login
 
 router = APIRouter()
 
 
 @router.get("/roles", response_model=PaginatedResponse)
 def read_roles(
+    current_user: dict = Depends(check_login),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     session: Session = Depends(get_session),
@@ -25,5 +27,8 @@ def read_roles(
 
 
 @router.get("/roles/count")
-def roles_count(session: Session = Depends(get_session)):
+def roles_count(
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
+):
     return RoleService.get_roles_count(session)

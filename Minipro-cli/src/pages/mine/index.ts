@@ -123,12 +123,12 @@ defineComponent(() => {
         url: `${BASE_URL}/change-password`,
         method: 'POST',
         data: {
-          token,
           old_password: passwordForm.old_password,
           new_password: passwordForm.new_password
         },
         header: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         success: (res) => {
           if (res.statusCode === 200) {
@@ -187,8 +187,10 @@ defineComponent(() => {
           url: `${BASE_URL}/login/orcode`,
           method: 'GET',
           data: {
-            token: wx.getStorageSync('token'), // 当前小程序用户的token
-            login_token: scannedToken // Web App二维码中的token
+            login_token: scannedToken
+          },
+          header: {
+            'Authorization': `Bearer ${wx.getStorageSync('token')}`
           },
           success: (loginRes) => {
             if (loginRes.statusCode === 200) {

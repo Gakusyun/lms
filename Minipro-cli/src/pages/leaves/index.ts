@@ -103,9 +103,11 @@ export default defineComponent(() => {
       url: url,
       method: 'GET',
       data: {
-        token,
         page: page.value,
         page_size: pageSize
+      },
+      header: {
+        'Authorization': `Bearer ${token}`
       },
       success: (res) => {
         console.log('请假API返回数据:', res.data);
@@ -186,7 +188,9 @@ export default defineComponent(() => {
       wx.request({
         url: `${BASE_URL}/courses`,
         method: 'GET',
-        data: { token },
+        header: {
+          'Authorization': `Bearer ${token}`
+        },
         success: (res) => {
           console.log('课程API返回数据:', res.data);
           const data = res.data as any;
@@ -324,9 +328,10 @@ export default defineComponent(() => {
       wx.request({
         url: `${BASE_URL}/leaves`,
         method: 'POST',
-        data: { ...formattedData, token },
+        data: formattedData,
         header: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         success: (res) => {
           console.log('创建请假条成功:', res);
@@ -388,29 +393,16 @@ export default defineComponent(() => {
       success: (res) => {
         if (res.confirm) {
           const token = wx.getStorageSync('token');
+          const remarks = res.content || '';
 
-          // 准备审核数据 - 与 Web App 保持一致
-          const auditData: any = {
-            status: auditStatus,
-            audit_remarks: res.content || '',
-            leave_hours: leave.leave_hours || ''
-          };
-
-          // 添加必要的原始数据字段
-          if (leave.student_id) auditData.student_id = leave.student_id;
-          if (leave.leave_date) auditData.leave_date = leave.leave_date;
-          if (leave.leave_type) auditData.leave_type = leave.leave_type;
-          if (leave.remarks) auditData.remarks = leave.remarks;
-          if (leave.materials) auditData.materials = leave.materials;
-          if (leave.course_id) {
-            auditData.course_id = leave.course_id;
-            auditData.teacher_id = leave.teacher_id;
-          }
+          // 使用专用 approve/reject 端点
+          const endpoint = auditStatus === '已批准'
+            ? `${BASE_URL}/leaves/approve/${id}?audit_remarks=${encodeURIComponent(remarks)}`
+            : `${BASE_URL}/leaves/reject/${id}?audit_remarks=${encodeURIComponent(remarks)}`;
 
           wx.request({
-            url: `${BASE_URL}/leaves/edit/${id}`,
+            url: endpoint,
             method: 'POST',
-            data: { ...auditData, token },
             header: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`

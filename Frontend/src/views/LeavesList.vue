@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import { formatDate } from '../utils/formatters'
-import { getAllCourses, getStudentCourses, editLeave, auditLeave } from '../api'
+import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave } from '../api'
 import type { Leave, LeaveCreate, Course, StudentCourseResponse } from '../types'
 
 // 课程列表
@@ -48,10 +48,8 @@ const fetchCourses = async () => {
     coursesLoading.value = true
 
     if (currentUserRole === 'student') {
-      // 学生角色：只获取已选的课程
       const studentCoursesResponse = await getStudentCourses(currentUserId) as unknown as StudentCourseResponse[]
 
-      // 将StudentCourseResponse转换为Course格式
       courses.value = studentCoursesResponse.map((sc: StudentCourseResponse) => ({
         course_id: sc.course_id,
         course_name: sc.course_name || `课程 ${sc.course_id}`,
@@ -59,13 +57,9 @@ const fetchCourses = async () => {
         teacher_id: 0,
         teacher_name: sc.teacher_name || '未知教师'
       }))
-
-      console.log('学生已选课程:', courses.value)
     } else {
-      // 其他角色：获取所有课程
       const response = await getAllCourses() as unknown as { items: Course[] }
       courses.value = response.items || []
-      console.log('所有课程:', courses.value)
     }
   } catch (error) {
     console.error('获取课程失败:', error)
@@ -77,15 +71,11 @@ const fetchCourses = async () => {
 
 // 处理课程选择变化
 const handleCourseChange = () => {
-  // 重置教师ID，会根据选择的课程自动设置
   leaveForm.teacher_id = 0
 
-  // 如果选择了课程，显示课程信息
   if (leaveForm.course_id && leaveForm.course_id > 0) {
     const selectedCourse = courses.value.find(c => c.course_id === leaveForm.course_id)
     if (selectedCourse) {
-      console.log('选择课程:', selectedCourse)
-      // 设置教师ID
       leaveForm.teacher_id = selectedCourse.teacher_id
     }
   }
@@ -97,10 +87,8 @@ const openEditModal = async (leave: Leave) => {
   editError.value = ''
   currentEditLeave.value = leave
 
-  // 先获取课程数据
   await fetchCourses()
 
-  // 用请假条当前数据填充表单
   Object.assign(leaveForm, {
     student_id: leave.student_id,
     leave_date: leave.leave_date ? new Date(leave.leave_date).toISOString().split('T')[0] : '',
@@ -128,21 +116,17 @@ const handleEditLeave = async () => {
 
     if (!currentEditLeave.value) return
 
-    // 验证必填字段
     if (!leaveForm.student_id || !leaveForm.leave_date || !leaveForm.leave_hours) {
       editError.value = '请填写必填字段：学生ID、请假日期、请假课时'
       return
     }
 
-    // 格式化数据以符合 API 要求
     const formattedData: any = {
       student_id: parseInt(leaveForm.student_id.toString()),
       leave_date: leaveForm.leave_date,
       leave_hours: leaveForm.leave_hours ? leaveForm.leave_hours.toString() : '',
-      status: currentEditLeave.value.status // 保持原有状态
     }
 
-    // 如果选择了课程，添加课程ID和教师ID
     if (leaveForm.course_id && leaveForm.course_id > 0) {
       formattedData.course_id = parseInt(leaveForm.course_id.toString())
 
@@ -152,7 +136,6 @@ const handleEditLeave = async () => {
       }
     }
 
-    // 只添加有值的可选字段
     if (leaveForm.leave_type) {
       formattedData.leave_type = leaveForm.leave_type.slice(0, 8)
     }
@@ -163,12 +146,8 @@ const handleEditLeave = async () => {
       formattedData.materials = leaveForm.materials.slice(0, 100)
     }
 
-    console.log('提交编辑请假条数据:', formattedData)
-
-    // 调用编辑API
     await editLeave(currentEditLeave.value.leave_id, formattedData)
 
-    // 编辑成功，关闭弹窗并刷新列表
     closeEditModal()
     refreshData()
 
@@ -199,7 +178,6 @@ const openAuditModal = (leave: Leave) => {
   auditError.value = ''
   currentAuditLeave.value = leave
 
-  // 审核表单初始化为空，让审核人重新选择
   Object.assign(auditForm, {
     status: '',
     audit_remarks: ''
@@ -217,7 +195,7 @@ const closeAuditModal = () => {
   })
 }
 
-// 处理审核请假条
+// 处理审核请假条 - 使用专用approve/reject API
 const handleAuditLeave = async () => {
   try {
     isAuditing.value = true
@@ -225,48 +203,19 @@ const handleAuditLeave = async () => {
 
     if (!currentAuditLeave.value) return
 
-    // 验证必填字段
     if (!auditForm.status) {
       auditError.value = '请选择审核状态'
       return
     }
 
-    // 准备审核数据 - 需要包含原始数据的必要字段
-    const auditData: any = {
-      status: auditForm.status,
-      audit_remarks: auditForm.audit_remarks ? auditForm.audit_remarks.slice(0, 100) : null,
-      leave_hours: currentAuditLeave.value.leave_hours ? currentAuditLeave.value.leave_hours.toString() : ''
+    const remarks = auditForm.audit_remarks ? auditForm.audit_remarks.slice(0, 100) : ''
+
+    if (auditForm.status === '已批准') {
+      await approveLeave(currentAuditLeave.value.leave_id, remarks)
+    } else if (auditForm.status === '已拒绝') {
+      await rejectLeave(currentAuditLeave.value.leave_id, remarks)
     }
 
-    // 添加其他必要字段
-    if (currentAuditLeave.value.student_id) {
-      auditData.student_id = currentAuditLeave.value.student_id
-    }
-    if (currentAuditLeave.value.leave_date) {
-      auditData.leave_date = currentAuditLeave.value.leave_date
-    }
-    if (currentAuditLeave.value.leave_type) {
-      auditData.leave_type = currentAuditLeave.value.leave_type.slice(0, 8)
-    }
-    if (currentAuditLeave.value.remarks) {
-      auditData.remarks = currentAuditLeave.value.remarks.slice(0, 100)
-    }
-    if (currentAuditLeave.value.materials) {
-      auditData.materials = currentAuditLeave.value.materials.slice(0, 100)
-    }
-    if (currentAuditLeave.value.course_id) {
-      auditData.course_id = currentAuditLeave.value.course_id
-    }
-    if (currentAuditLeave.value.teacher_id) {
-      auditData.teacher_id = currentAuditLeave.value.teacher_id
-    }
-
-    console.log('提交审核数据:', auditData)
-
-    // 调用审核API
-    await auditLeave(currentAuditLeave.value.leave_id, auditData)
-
-    // 审核成功，关闭弹窗并刷新列表
     closeAuditModal()
     refreshData()
 
@@ -291,7 +240,20 @@ const handleAuditLeave = async () => {
   }
 }
 
-// 判断是否可以编辑（学生只能编辑自己的请假条）
+// 撤销请假条
+const handleCancelLeave = async (leave: Leave) => {
+  if (!confirm('确定要撤销这条请假申请吗？')) return
+
+  try {
+    await cancelLeave(leave.leave_id)
+    refreshData()
+  } catch (error: any) {
+    console.error('撤销请假条失败:', error)
+    alert(error.response?.data?.detail || '撤销失败')
+  }
+}
+
+// 判断是否可以编辑（学生只能编辑自己的待审批请假条）
 const canEdit = (leave: Leave): boolean => {
   return currentUserRole === 'student' && leave.student_id === currentUserId && leave.status === '待审批'
 }
@@ -305,26 +267,20 @@ const canAudit = (leave: Leave): boolean => {
   else return false
 }
 
-// 刷新数据的函数，用于在编辑/审核后刷新列表
+// 判断是否可以撤销（学生可以撤销自己的待审批请假条）
+const canCancel = (leave: Leave): boolean => {
+  return (currentUserRole === 'student' && leave.student_id === currentUserId && leave.status === '待审批') ||
+    currentUserRole === 'admin'
+}
+
+// 刷新数据的函数
 const refreshData = () => {
-  // GenericList组件会自动处理刷新，这里可以添加其他逻辑
   console.log('数据已刷新')
 }
 </script>
 
 <template>
   <div class="leaves-page">
-    <!-- 自定义页面头部，包含创建按钮 -->
-    <!-- <div class="page-header">
-      <h1 class="page-title">请假条列表</h1>
-      <div class="header-buttons">
-        
-        <button @click="handleExportCSV" class="btn btn-export" :disabled="isExporting">
-          {{ isExporting ? '导出中...' : '导出Excel' }}
-        </button>
-      </div>
-    </div> -->
-
     <GenericList endpoint="/leaves" title="请假条列表" item-label="张请假条" :show-actions="true" :show-create="true" create-type="leave"
       :columns="[
         { key: 'leave_id', label: '请假ID' },
@@ -351,6 +307,9 @@ const refreshData = () => {
           </button>
           <button v-if="canAudit(item)" @click="openAuditModal(item)" class="btn btn-primary btn-sm">
             审核
+          </button>
+          <button v-if="canCancel(item)" @click="handleCancelLeave(item)" class="btn btn-danger btn-sm">
+            撤销
           </button>
         </div>
       </template>
@@ -412,7 +371,6 @@ const refreshData = () => {
               maxlength="100"></textarea>
           </div>
 
-          <!-- 错误信息 -->
           <div v-if="editError" class="error-message">
             {{ editError }}
           </div>
@@ -452,7 +410,6 @@ const refreshData = () => {
               maxlength="100"></textarea>
           </div>
 
-          <!-- 错误信息 -->
           <div v-if="auditError" class="error-message">
             {{ auditError }}
           </div>
@@ -650,6 +607,20 @@ const refreshData = () => {
 
 .btn-primary:hover {
   background-color: var(--primary-700);
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
 }
 
 .btn-secondary {

@@ -3,7 +3,6 @@ from fastapi import Depends, HTTPException, Query
 
 from app.models import Student, Reviewer, School
 from app.schemas import StudentCreate
-from app.api.deps import check_login
 from app.services.common import CommonService
 from app.utils.jwt import get_password_hash
 
@@ -11,13 +10,13 @@ from app.utils.jwt import get_password_hash
 class StudentService:
     @staticmethod
     def get_students(
-        token: str,
+        current_user: dict,
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
         session: Session = Depends(lambda: None),
     ):
         """分页获取学生列表"""
-        obj = check_login(token, session)
+        obj = current_user
 
         # 只允许审核员查看全部学生列表
         if obj["role"] == "teacher":
@@ -64,12 +63,15 @@ class StudentService:
                 )
             },
         )
+        # 过滤password字段
+        for item in items:
+            item.pop("password", None)
         return items, total, total_pages
 
     @staticmethod
-    def get_students_count(token: str, session: Session):
+    def get_students_count(current_user: dict, session: Session):
         """获取学生数量"""
-        obj = check_login(token, session)
+        obj = current_user
         if obj["role"] == "admin":
             count = session.exec(select(func.count(Student.student_id))).one()
             return {"students_count": count}
@@ -87,9 +89,9 @@ class StudentService:
             return {"students_count": count}
 
     @staticmethod
-    def get_student_by_id(token: str, student_id: int, session: Session):
+    def get_student_by_id(current_user: dict, student_id: int, session: Session):
         """根据ID获取学生"""
-        obj = check_login(token, session)
+        obj = current_user
         if obj["role"] == "student":
             if obj["id"] != student_id:
                 raise HTTPException(status_code=403, detail="Permission denied")
@@ -101,12 +103,12 @@ class StudentService:
 
     @staticmethod
     def create_student(
-        token: str,
+        current_user: dict,
         student_data: StudentCreate,
         session: Session,
     ):
         """创建学生"""
-        obj = check_login(token, session)
+        obj = current_user
         if obj["role"] not in ["reviewer", "admin"]:
             raise HTTPException(status_code=403, detail="Permission denied")
 

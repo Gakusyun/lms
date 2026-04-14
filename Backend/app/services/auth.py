@@ -118,12 +118,8 @@ class AuthService:
         return session.exec(select(func.count(Admin.admin_id))).one()
 
     @staticmethod
-    def change_password(token: str, password_data: ChangePassword, session: Session, target_user_id: int = None):
+    def change_password(current_user: dict, password_data: ChangePassword, session: Session, target_user_id: int = None):
         """修改密码"""
-        # 验证登录状态并获取用户信息
-        from app.api.deps import check_login
-        current_user = check_login(token, session)
-
         # 验证当前用户角色
         role_model_map = AuthService.get_role_model_map()
         if current_user["role"] not in role_model_map:

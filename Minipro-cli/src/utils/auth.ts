@@ -88,7 +88,7 @@ export const logout = async () => {
     // 使用封装好的request函数调用退出登录API
     request({
       url: '/logout',
-      method: 'GET'
+      method: 'POST'
     }).then(() => {
       // 清除本地存储
       clearAuthData();

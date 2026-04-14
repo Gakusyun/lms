@@ -107,6 +107,20 @@ class Settings:
         self._config_data["database"]["path"] = value
 
     @property
+    def jwt_secret_key(self) -> str:
+        """获取JWT密钥"""
+        import os
+        return os.environ.get("JWT_SECRET_KEY") or self._config_data.get("jwt", {}).get("secret_key", "LXah6-fGpXGsVig2sHVBDIXa3_h4N0nIbjVlv3dC7Vk")
+
+    @property
+    def jwt_algorithm(self) -> str:
+        return self._config_data.get("jwt", {}).get("algorithm", "HS256")
+
+    @property
+    def jwt_expire_minutes(self) -> int:
+        return self._config_data.get("jwt", {}).get("access_token_expire_minutes", 30)
+
+    @property
     def cors_origins(self) -> list:
         """获取CORS允许的来源"""
         return self._config_data.get("cors", {}).get("origins", ["http://localhost:3000", "http://127.0.0.1:3000"])

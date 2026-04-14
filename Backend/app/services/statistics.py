@@ -3,14 +3,13 @@ from fastapi import HTTPException
 from datetime import datetime, timedelta
 
 from app.models import Leave, Student, Teacher, Course, Reviewer, StudentCourse
-from app.api.deps import check_login
 
 
 class StatisticsService:
     @staticmethod
-    def get_leave_statistics(token: str, session: Session):
+    def get_leave_statistics(current_user: dict, session: Session):
         """获取请假统计数据"""
-        obj = check_login(token, session)
+        obj = current_user
         
         # 构建基础查询
         query = select(
@@ -45,9 +44,9 @@ class StatisticsService:
         return {"leave_statistics": leave_statistics}
     
     @staticmethod
-    def get_leave_trend(token: str, days: int, session: Session):
+    def get_leave_trend(current_user: dict, days: int, session: Session):
         """获取请假趋势数据"""
-        obj = check_login(token, session)
+        obj = current_user
         
         # 计算开始日期
         start_date = datetime.now() - timedelta(days=days)
@@ -91,9 +90,9 @@ class StatisticsService:
         return {"leave_trend": leave_trend}
     
     @staticmethod
-    def get_course_enrollment_statistics(token: str, session: Session):
+    def get_course_enrollment_statistics(current_user: dict, session: Session):
         """获取课程选课统计数据"""
-        obj = check_login(token, session)
+        obj = current_user
         
         # 只有管理员和教师可以查看课程选课统计
         if obj["role"] not in ["admin", "teacher"]:
@@ -145,9 +144,9 @@ class StatisticsService:
         }
     
     @staticmethod
-    def get_reviewer_performance(token: str, session: Session):
+    def get_reviewer_performance(current_user: dict, session: Session):
         """获取审核员绩效统计"""
-        obj = check_login(token, session)
+        obj = current_user
         
         # 只有管理员可以查看审核员绩效
         if obj["role"] != "admin":

@@ -14,14 +14,8 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use(
   (config) => {
-    // 可以在这里添加token等
     const token = localStorage.getItem('token')
     if (token) {
-      // 同时添加到 params 和 headers
-      if (!config.params) {
-        config.params = {}
-      }
-      config.params.token = token
       config.headers.Authorization = `Bearer ${token}`
     }
     return config

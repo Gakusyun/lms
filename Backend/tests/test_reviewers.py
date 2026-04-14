@@ -75,12 +75,15 @@ def test_get_reviewers(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
-    response = client.get(f"/api/v1/reviewers?token={token}")
+    response = client.get(
+        "/api/v1/reviewers",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "items" in data
@@ -95,12 +98,15 @@ def test_get_reviewers_count(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
-    response = client.get(f"/api/v1/reviewers/count?token={token}")
+    response = client.get(
+        "/api/v1/reviewers/count",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "reviewers_count" in data
@@ -112,12 +118,15 @@ def test_get_reviewer_by_id_not_found(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
-    response = client.get(f"/api/v1/reviewers/999?token={token}")
+    response = client.get(
+        "/api/v1/reviewers/999",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
     assert "detail" in response.json()
 
@@ -127,7 +136,7 @@ def test_create_reviewer(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
@@ -139,7 +148,7 @@ def test_create_reviewer(setup_database):
         "role_id": 1,
         "password": "password123"
     }
-    response = client.post(f"/api/v1/reviewers?token={token}", json=reviewer_data)
+    response = client.post("/api/v1/reviewers", json=reviewer_data, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
     data = response.json()
     assert data["reviewer_id"] == reviewer_data["reviewer_id"]
@@ -155,7 +164,7 @@ def test_create_duplicate_reviewer(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
@@ -168,11 +177,11 @@ def test_create_duplicate_reviewer(setup_database):
         "role_id": 1,
         "password": "password123"
     }
-    response = client.post(f"/api/v1/reviewers?token={token}", json=reviewer_data)
+    response = client.post("/api/v1/reviewers", json=reviewer_data, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
 
     # 再次尝试创建相同ID的审核员
-    response = client.post(f"/api/v1/reviewers?token={token}", json=reviewer_data)
+    response = client.post("/api/v1/reviewers", json=reviewer_data, headers={"Authorization": f"Bearer {token}"})
     # 应该返回400错误，因为ID重复
     assert response.status_code == 400
 
@@ -182,7 +191,7 @@ def test_update_reviewer(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
@@ -195,7 +204,7 @@ def test_update_reviewer(setup_database):
         "role_id": 1,
         "password": "password123"
     }
-    response = client.post(f"/api/v1/reviewers?token={token}", json=reviewer_data)
+    response = client.post("/api/v1/reviewers", json=reviewer_data, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
 
     # 编辑审核员
@@ -206,7 +215,7 @@ def test_update_reviewer(setup_database):
         "role_id": 2,
         "password": "newpassword123"
     }
-    response = client.put(f"/api/v1/reviewers/3?token={token}", json=update_data)
+    response = client.put("/api/v1/reviewers/3", json=update_data, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
     data = response.json()
     assert data["reviewer_name"] == update_data["reviewer_name"]
@@ -219,7 +228,7 @@ def test_update_non_existent_reviewer(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
@@ -231,7 +240,7 @@ def test_update_non_existent_reviewer(setup_database):
         "role_id": 1,
         "password": "password123"
     }
-    response = client.put(f"/api/v1/reviewers/999?token={token}", json=update_data)
+    response = client.put("/api/v1/reviewers/999", json=update_data, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 404
 
 
@@ -240,7 +249,7 @@ def test_delete_reviewer(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
@@ -253,18 +262,18 @@ def test_delete_reviewer(setup_database):
         "role_id": 1,
         "password": "password123"
     }
-    response = client.post(f"/api/v1/reviewers?token={token}", json=reviewer_data)
+    response = client.post("/api/v1/reviewers", json=reviewer_data, headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
 
     # 删除审核员
-    response = client.delete(f"/api/v1/reviewers/4?token={token}")
+    response = client.delete("/api/v1/reviewers/4", headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
     data = response.json()
     assert "message" in data
     assert data["message"] == "Reviewer deleted successfully"
 
     # 验证审核员已被删除
-    response = client.get(f"/api/v1/reviewers/4?token={token}")
+    response = client.get("/api/v1/reviewers/4", headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 404
 
 
@@ -273,10 +282,10 @@ def test_delete_non_existent_reviewer(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
-    response = client.delete(f"/api/v1/reviewers/999?token={token}")
+    response = client.delete("/api/v1/reviewers/999", headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 404

@@ -75,7 +75,7 @@ export const checkAuth = async () => {
 // 退出登录API
 export const logout = async () => {
   try {
-    const response = await http.get('/logout')
+    const response = await http.post('/logout')
     return response
   } catch (error) {
     console.error('退出登录失败:', error)
@@ -236,7 +236,7 @@ export const getCourseEnrollmentCount = async (courseId: number) => {
 export const editLeave = async (leaveId: number, leaveData: any) => {
   try {
     console.log(`编辑请假条 ${leaveId} 数据:`, leaveData)
-    const response = await http.post(`/leaves/edit/${leaveId}`, leaveData)
+    const response = await http.put(`/leaves/edit/${leaveId}`, leaveData)
     console.log('编辑请假条成功:', response)
     return response
   } catch (error: any) {
@@ -245,7 +245,6 @@ export const editLeave = async (leaveId: number, leaveData: any) => {
       console.error('错误详情:', error.response.data)
       if (error.response.data.detail) {
         console.error('验证错误详情:', error.response.data.detail)
-        // 如果是数组，逐个输出
         if (Array.isArray(error.response.data.detail)) {
           error.response.data.detail.forEach((item: any, index: number) => {
             console.error(`验证错误 ${index + 1}:`, item)
@@ -257,21 +256,39 @@ export const editLeave = async (leaveId: number, leaveData: any) => {
   }
 }
 
-// 审核请假条API (实际上是编辑的一种特殊情况)
-export const auditLeave = async (leaveId: number, auditData: {
-  status: string
-  audit_remarks?: string
-}) => {
+// 批准请假条API
+export const approveLeave = async (leaveId: number, auditRemarks: string = '') => {
   try {
-    console.log(`审核请假条 ${leaveId} 数据:`, auditData)
-    const response = await http.post(`/leaves/edit/${leaveId}`, auditData)
-    console.log('审核请假条成功:', response)
+    const response = await http.post(`/leaves/approve/${leaveId}`, null, {
+      params: { audit_remarks: auditRemarks }
+    })
     return response
-  } catch (error: any) {
-    console.error('审核请假条失败:', error)
-    if (error.response?.data) {
-      console.error('错误详情:', error.response.data)
-    }
+  } catch (error) {
+    console.error('批准请假条失败:', error)
+    throw error
+  }
+}
+
+// 拒绝请假条API
+export const rejectLeave = async (leaveId: number, auditRemarks: string = '') => {
+  try {
+    const response = await http.post(`/leaves/reject/${leaveId}`, null, {
+      params: { audit_remarks: auditRemarks }
+    })
+    return response
+  } catch (error) {
+    console.error('拒绝请假条失败:', error)
+    throw error
+  }
+}
+
+// 撤销请假条API
+export const cancelLeave = async (leaveId: number) => {
+  try {
+    const response = await http.post(`/leaves/cancel/${leaveId}`)
+    return response
+  } catch (error) {
+    console.error('撤销请假条失败:', error)
     throw error
   }
 }

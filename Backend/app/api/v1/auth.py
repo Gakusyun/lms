@@ -16,14 +16,14 @@ def login(user: UserLogin, session: Session = Depends(get_session)):
 
 
 @router.get("/login/check")
-def login_check(token: str, session: Session = Depends(get_session)):
+def login_check(current_user: dict = Depends(check_login)):
     """检查登录状态"""
-    return check_login(token, session)
+    return current_user
 
 
-@router.get("/logout")
-def log_out(token: str, session: Session = Depends(get_session)):
-    return logout(token, session)
+@router.post("/logout")
+def log_out(current_user: dict = Depends(logout)):
+    return current_user
 
 
 @router.get("/login/orcode")
@@ -35,23 +35,30 @@ def login_qrcode(
 ):
     # 小程序端扫码：有 token 参数，创建登录记录
     if token:
-        obj = check_login(token, session_check)
-        if "detail" not in obj:
-            login_record = Login(
-                user_role=obj["role"],
-                user_id=obj["id"],
-                user_name=obj["name"],
-                token=login_token,  # 存储二维码 token，用于前端查询
-                jwt_token=token,  # 存储管理员的 JWT token，用于前端后续请求
-            )
-            session_login.add(login_record)
-            session_login.commit()
-            return {
-                "role": obj["role"],
-                "id": obj["id"],
-                "name": obj["name"],
-                "token": token,  # 返回 JWT token 而不是 login_token
-            }
+        from app.utils.jwt import verify_token as jwt_verify
+        obj = jwt_verify(token)
+        if not obj or not obj.get("sub"):
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
+        user_info = {
+            "role": obj.get("role"),
+            "id": int(obj.get("sub")),
+            "name": obj.get("name"),
+        }
+        login_record = Login(
+            user_role=user_info["role"],
+            user_id=user_info["id"],
+            user_name=user_info["name"],
+            token=login_token,
+            jwt_token=token,
+        )
+        session_login.add(login_record)
+        session_login.commit()
+        return {
+            "role": user_info["role"],
+            "id": user_info["id"],
+            "name": user_info["name"],
+            "token": token,
+        }
     # 前端轮询：只有 login_token，查询数据库
     else:
         login_record = session_login.exec(
@@ -59,14 +66,13 @@ def login_qrcode(
         ).first()
 
         if login_record:
-            # 标记为已使用，防止重复登录
             login_record.can_be_used = False
             session_login.commit()
             return {
                 "role": login_record.user_role,
                 "id": login_record.user_id,
                 "name": login_record.user_name,
-                "token": login_record.jwt_token,  # 返回 JWT token 而不是 login_token
+                "token": login_record.jwt_token,
             }
         else:
             raise HTTPException(status_code=422, detail="未扫码或二维码已过期")
@@ -93,23 +99,24 @@ def create_admin(
 
 @router.post("/change-password", summary="修改密码")
 def change_password(
-    token: str,
-    password_data: ChangePassword,
+    current_user: dict = Depends(check_login),
+    password_data: ChangePassword = None,
     session: Session = Depends(get_session),
 ):
     """修改密码接口 - 修改自己的密码"""
-    return AuthService.change_password(token, password_data, session, None)
+    # 从current_user中获取token相关信息，传递user信息给service
+    return AuthService.change_password(current_user, password_data, session, None)
 
 
 @router.post("/change-password/{user_id}", summary="修改指定用户密码")
 def change_user_password(
     user_id: int,
-    token: str,
-    password_data: ChangePassword,
+    current_user: dict = Depends(check_login),
+    password_data: ChangePassword = None,
     session: Session = Depends(get_session),
 ):
     """修改指定用户密码接口 - 仅管理员可用"""
-    return AuthService.change_password(token, password_data, session, user_id)
+    return AuthService.change_password(current_user, password_data, session, user_id)
 
 
 @router.post("/register", summary="用户注册")
@@ -117,7 +124,9 @@ def register(
     user: UserRegister,
     session: Session = Depends(get_session),
 ):
-    """用户注册接口"""
+    """用户注册接口 - 不允许注册admin角色"""
+    if user.role == "admin":
+        raise HTTPException(status_code=403, detail="Cannot register as admin")
     return AuthService.register(user, session)
 
 
@@ -141,43 +150,40 @@ def confirm_password_reset(
 
 @router.post("/admin/test-db-connection", summary="测试数据库连接")
 def test_db_connection(
-    db_config: dict,
+    current_user: dict = Depends(check_login),
+    db_config: dict = None,
     session: Session = Depends(get_session),
 ):
-    """测试数据库连接接口"""
+    """测试数据库连接接口 - 仅管理员可用"""
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can test database connections")
+
     import sqlalchemy
     from sqlalchemy import create_engine
     from sqlalchemy.exc import SQLAlchemyError
-    
+
     try:
         db_type = db_config.get("db_type", "mysql")
-        
+
         if db_type == "mysql":
             host = db_config.get("host", "localhost")
             port = db_config.get("port", 3306)
             database = db_config.get("database", "leave_management")
             username = db_config.get("username", "root")
             password = db_config.get("password", "")
-            
-            # 创建MySQL连接字符串
+
             connection_string = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}"
         else:
-            # SQLite
             db_path = db_config.get("db_path", "./leave_management.db")
             connection_string = f"sqlite:///{db_path}"
-        
-        # 测试连接
+
         engine = create_engine(connection_string)
         with engine.connect() as conn:
-            # 执行一个简单的查询来测试连接
             if db_type == "mysql":
                 conn.execute(sqlalchemy.text("SELECT 1"))
-            else:
-                # SQLite不需要执行查询，连接成功即可
-                pass
-        
+
         return {"message": "数据库连接成功"}
-        
+
     except SQLAlchemyError as e:
         return {"message": f"数据库连接失败: {str(e)}"}
     except Exception as e:
@@ -186,14 +192,17 @@ def test_db_connection(
 
 @router.post("/admin/configure-db", summary="配置数据库")
 def configure_database(
-    db_config: dict,
+    current_user: dict = Depends(check_login),
+    db_config: dict = None,
     session: Session = Depends(get_session),
 ):
-    """配置数据库接口"""
+    """配置数据库接口 - 仅管理员可用"""
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can configure database")
+
     from app.config.settings import settings
     from app.database.connection import recreate_engine
-    
-    # 更新数据库配置
+
     settings.db_type = db_config.get("db_type", "mysql")
     settings.db_host = db_config.get("host", "localhost")
     settings.db_port = db_config.get("port", 3306)
@@ -201,11 +210,9 @@ def configure_database(
     settings.db_user = db_config.get("username", "root")
     settings.db_password = db_config.get("password", "")
     settings.db_path = db_config.get("db_path", "./leave_management.db")
-    
-    # 保存配置到文件
+
     settings.save()
-    
-    # 重新创建数据库引擎
+
     recreate_engine()
-    
+
     return {"message": "数据库配置成功"}

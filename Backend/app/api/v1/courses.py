@@ -5,12 +5,14 @@ from app.database.connection import get_session
 from app.models import Course
 from app.schemas import PaginatedResponse
 from app.services.course import CourseService
+from app.api.deps import check_login
 
 router = APIRouter()
 
 
 @router.get("/courses", response_model=PaginatedResponse)
 def read_courses(
+    current_user: dict = Depends(check_login),
     page: int = 1,
     page_size: int = 20,
     session: Session = Depends(get_session),
@@ -26,30 +28,44 @@ def read_courses(
 
 
 @router.get("/courses/count")
-def courses_count(session: Session = Depends(get_session)):
+def courses_count(
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
+):
     return CourseService.get_courses_count(session)
 
 
 @router.get("/courses/{course_id}", response_model=Course)
-def read_course(course_id: int, session: Session = Depends(get_session)):
+def read_course(
+    current_user: dict = Depends(check_login),
+    course_id: int = 0,
+    session: Session = Depends(get_session),
+):
     return CourseService.get_course_by_id(course_id, session)
 
 
 @router.post("/courses", response_model=Course)
 def create_course_endpoint(
-    course: Course,
-    session: Session = Depends(get_session)
+    current_user: dict = Depends(check_login),
+    course: Course = None,
+    session: Session = Depends(get_session),
 ):
+    if current_user["role"] not in ["admin", "reviewer", "teacher"]:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Permission denied")
     return CourseService.create_course(course, session)
 
 
 @router.put("/courses/{course_id}", response_model=Course)
 def update_course_endpoint(
     course_id: int,
-    course: Course,
-    session: Session = Depends(get_session)
+    current_user: dict = Depends(check_login),
+    course: Course = None,
+    session: Session = Depends(get_session),
 ):
-    """编辑课程"""
+    if current_user["role"] not in ["admin", "reviewer", "teacher"]:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Permission denied")
     course_data = course.model_dump(exclude_unset=True)
     return CourseService.update_course(course_id, course_data, session)
 
@@ -57,7 +73,10 @@ def update_course_endpoint(
 @router.delete("/courses/{course_id}")
 def delete_course_endpoint(
     course_id: int,
-    session: Session = Depends(get_session)
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
 ):
-    """删除课程"""
+    if current_user["role"] not in ["admin"]:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Only admins can delete courses")
     return CourseService.delete_course(course_id, session)

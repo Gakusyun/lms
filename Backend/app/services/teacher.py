@@ -16,6 +16,10 @@ class TeacherService:
     ):
         """分页获取教师列表"""
         teachers, total, total_pages = CommonService.paginate_query(session, Teacher, page, page_size)
+        # 过滤password字段
+        for t in teachers:
+            if hasattr(t, 'password'):
+                t.password = None
         return teachers, total, total_pages
 
     @staticmethod

@@ -3,19 +3,18 @@ from fastapi import HTTPException
 
 from app.models import StudentCourse, Student, Course, Teacher
 from app.schemas import StudentCourseCreate, StudentCourseResponse
-from app.api.deps import check_login
 from app.services.common import CommonService
 
 
 class StudentCourseService:
     @staticmethod
     def create_student_course(
-        token: str,
+        current_user: dict,
         student_course_data: StudentCourseCreate,
         session: Session,
     ):
         """学生选课"""
-        obj = check_login(token, session)
+        obj = current_user
 
         # 只有管理员和学生可以选课
         if obj["role"] not in ["admin", "student"]:
@@ -57,12 +56,12 @@ class StudentCourseService:
 
     @staticmethod
     def get_student_courses(
-        token: str,
+        current_user: dict,
         student_id: int = None,
         session: Session = None,
     ):
         """获取学生的选课列表"""
-        obj = check_login(token, session)
+        obj = current_user
 
         # 权限检查
         if obj["role"] == "student":
@@ -118,12 +117,12 @@ class StudentCourseService:
 
     @staticmethod
     def get_course_students(
-        token: str,
+        current_user: dict,
         course_id: int,
         session: Session,
     ):
         """获取课程的学生列表"""
-        obj = check_login(token, session)
+        obj = current_user
 
         # 权限检查：管理员、教师、审核员可以查看课程学生
         if obj["role"] not in ["admin", "teacher", "reviewer"]:
@@ -178,13 +177,13 @@ class StudentCourseService:
 
     @staticmethod
     def get_similar_course_students(
-        token: str,
+        current_user: dict,
         teacher_id: int,
         course_id: int,
         session: Session,
     ):
         """获取同一教师下相似课程的学生列表（防止请错课程）"""
-        obj = check_login(token, session)
+        obj = current_user
 
         # 权限检查：管理员、教师、审核员可以查看
         if obj["role"] not in ["admin", "teacher", "reviewer"]:
@@ -251,13 +250,13 @@ class StudentCourseService:
 
     @staticmethod
     def delete_student_course(
-        token: str,
+        current_user: dict,
         student_id: int,
         course_id: int,
         session: Session,
     ):
         """学生退课"""
-        obj = check_login(token, session)
+        obj = current_user
 
         # 权限检查
         if obj["role"] == "student":

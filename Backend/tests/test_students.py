@@ -95,13 +95,16 @@ def test_get_students(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token访问学生列表
-    response = client.get(f"/api/v1/students?token={token}")
+    response = client.get(
+        "/api/v1/students",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "items" in data
@@ -114,13 +117,16 @@ def test_get_student_by_id(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token访问学生详情
-    response = client.get(f"/api/v1/students/2001?token={token}")
+    response = client.get(
+        "/api/v1/students/2001",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["student_id"] == 2001
@@ -132,13 +138,16 @@ def test_get_nonexistent_student(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token访问不存在的学生
-    response = client.get(f"/api/v1/students/9999?token={token}")
+    response = client.get(
+        "/api/v1/students/9999",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 404
 
 
@@ -147,21 +156,22 @@ def test_create_student(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token创建学生
     response = client.post(
-        f"/api/v1/students?token={token}",
+        "/api/v1/students",
         json={
             "student_id": 2002,
             "student_name": "NewStu",
             "password": "password123",
             "reviewer_id": 4001,
             "school_id": 1
-        }
+        },
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -174,20 +184,21 @@ def test_create_student_existing(setup_database):
     # 先登录获取token
     login_response = client.post(
         "/api/v1/login",
-        json={"id": 1001, "password": "admin123", "token": "test_token"}
+        json={"id": 1001, "password": "admin123"}
     )
     assert login_response.status_code == 200
     token = login_response.json()["token"]
     
     # 使用获取的token创建已存在的学生
     response = client.post(
-        f"/api/v1/students?token={token}",
+        "/api/v1/students",
         json={
             "student_id": 2001,
             "student_name": "Student",
             "password": "password123",
             "reviewer_id": 4001,
             "school_id": 1
-        }
+        },
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 400

@@ -32,10 +32,10 @@ export default defineComponent(() => {
       url: BASE_URL + '/teachers',
       method: 'GET',
       data: {
-        token,
         page: page.value,
         page_size: pageSize
       },
+      header: { 'Authorization': `Bearer ${token}` },
       success: (res) => {
         console.log('教师API返回数据:', res.data);
         const data = res.data as any;

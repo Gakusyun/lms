@@ -5,43 +5,33 @@ from datetime import datetime
 from app.models import Leave, Student, Reviewer, Teacher, Course
 from app.services.student_course import StudentCourseService
 from app.schemas import LeaveCreate
-from app.api.deps import check_login
 from app.services.common import CommonService
 
 
 class LeaveService:
     @staticmethod
     def get_leaves(
-        token: str,
+        current_user: dict,
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
         session: Session = Depends(lambda: None),
     ):
         """分页获取请假记录"""
-        # 验证登录状态并获取用户信息
-        obj = check_login(token, session)
-
         # 构建基础查询
         query = select(Leave)
 
         # 根据角色应用不同的过滤条件
-        # 管理员：获取全部记录
-        # 学生：只能获取自己的记录
-        # 审核员：只能获取分配给自己的记录
-        # 教师：只能获取自己教授课程的请假记录
-        if obj["role"] == "student":
-            query = query.where(Leave.student_id == obj["id"])
-        elif obj["role"] == "reviewer":
-            query = query.where(Leave.reviewer_id == obj["id"])
-        elif obj["role"] == "teacher":
-            # 获取教师教授的课程ID列表
+        if current_user["role"] == "student":
+            query = query.where(Leave.student_id == current_user["id"])
+        elif current_user["role"] == "reviewer":
+            query = query.where(Leave.reviewer_id == current_user["id"])
+        elif current_user["role"] == "teacher":
             course_ids = session.exec(
-                select(Course.course_id).where(Course.teacher_id == obj["id"])
+                select(Course.course_id).where(Course.teacher_id == current_user["id"])
             ).all()
             if course_ids:
                 query = query.where(Leave.course_id.in_(course_ids))
             else:
-                # 如果教师没有教授任何课程，则返回空结果
                 query = query.where(Leave.course_id.is_(None))
 
         # 应用分页
@@ -51,13 +41,13 @@ class LeaveService:
         # 计算总数
         pk_col = list(Leave.__table__.primary_key.columns)[0]
         total_stmt = select(func.count(pk_col))
-        if obj["role"] == "student":
-            total_stmt = total_stmt.where(Leave.student_id == obj["id"])
-        elif obj["role"] == "reviewer":
-            total_stmt = total_stmt.where(Leave.reviewer_id == obj["id"])
-        elif obj["role"] == "teacher":
+        if current_user["role"] == "student":
+            total_stmt = total_stmt.where(Leave.student_id == current_user["id"])
+        elif current_user["role"] == "reviewer":
+            total_stmt = total_stmt.where(Leave.reviewer_id == current_user["id"])
+        elif current_user["role"] == "teacher":
             course_ids = session.exec(
-                select(Course.course_id).where(Course.teacher_id == obj["id"])
+                select(Course.course_id).where(Course.teacher_id == current_user["id"])
             ).all()
             if course_ids:
                 total_stmt = total_stmt.where(Leave.course_id.in_(course_ids))
@@ -82,7 +72,6 @@ class LeaveService:
                 ),
             },
         )
-        # 补充 course_name
         course_ids = {item["course_id"] for item in items if item.get("course_id")}
         if course_ids:
             courses = session.exec(
@@ -98,23 +87,21 @@ class LeaveService:
         return items, total, total_pages
 
     @staticmethod
-    def get_leaves_count(token: str, session: Session):
+    def get_leaves_count(current_user: dict, session: Session):
         """获取请假记录数量"""
-        obj = check_login(token, session)
-        if obj["role"] == "admin":
+        if current_user["role"] == "admin":
             count = session.exec(select(func.count(Leave.leave_id))).one()
-        elif obj["role"] == "student":
+        elif current_user["role"] == "student":
             count = session.exec(
-                select(func.count(Leave.leave_id)).where(Leave.student_id == obj["id"])
+                select(func.count(Leave.leave_id)).where(Leave.student_id == current_user["id"])
             ).one()
-        elif obj["role"] == "reviewer":
+        elif current_user["role"] == "reviewer":
             count = session.exec(
-                select(func.count(Leave.leave_id)).where(Leave.reviewer_id == obj["id"])
+                select(func.count(Leave.leave_id)).where(Leave.reviewer_id == current_user["id"])
             ).one()
-        elif obj["role"] == "teacher":
-            # 获取教师教授的课程ID列表
+        elif current_user["role"] == "teacher":
             course_ids = session.exec(
-                select(Course.course_id).where(Course.teacher_id == obj["id"])
+                select(Course.course_id).where(Course.teacher_id == current_user["id"])
             ).all()
             if course_ids:
                 count = session.exec(
@@ -129,23 +116,19 @@ class LeaveService:
 
     @staticmethod
     def create_leave(
-        token: str,
+        current_user: dict,
         leave_data: LeaveCreate,
         session: Session,
     ):
-        obj = check_login(token, session)
-
-        # 创建一个数据字典的副本来修改
         leave_dict = leave_data.model_dump()
 
         # 根据用户角色自动设置student_id
-        if obj["role"] == "student":
-            leave_dict["student_id"] = obj["id"]
+        if current_user["role"] == "student":
+            leave_dict["student_id"] = current_user["id"]
         elif not leave_dict.get("student_id"):
-            # 如果不是学生且没有提供student_id，抛出错误
             raise HTTPException(status_code=400, detail="student_id is required for non-student users")
 
-        # 自动设置reviewer_id：根据学生的reviewer_id设置
+        # 自动设置reviewer_id
         student = session.exec(
             select(Student).where(Student.student_id == leave_dict["student_id"])
         ).first()
@@ -169,7 +152,6 @@ class LeaveService:
                     detail="Student has not enrolled in this course"
                 )
 
-        # 如果没有提供leave_date，自动设置为当前时间
         if not leave_dict.get("leave_date"):
             leave_dict["leave_date"] = datetime.now()
 
@@ -180,20 +162,16 @@ class LeaveService:
         return leave
 
     @staticmethod
-    def get_leaves_by_student(token: str, student_id: int, session: Session):
-        obj = check_login(token, session)
+    def get_leaves_by_student(current_user: dict, student_id: int, session: Session):
         # 管理员和审核员可以查看任意学生的请假记录
-        if obj["role"] in ["admin", "reviewer"]:
+        if current_user["role"] in ["admin", "reviewer"]:
             pass
-        # 学生只能查看自己的请假记录
-        elif obj["role"] == "student":
-            if obj["id"] != student_id:
+        elif current_user["role"] == "student":
+            if current_user["id"] != student_id:
                 raise HTTPException(status_code=403, detail="Permission denied")
-        # 教师只能查看自己课程的学生请假记录
-        elif obj["role"] == "teacher":
-            # 检查该学生是否在教师教授的课程中
+        elif current_user["role"] == "teacher":
             course_ids = session.exec(
-                select(Course.course_id).where(Course.teacher_id == obj["id"])
+                select(Course.course_id).where(Course.teacher_id == current_user["id"])
             ).all()
             if course_ids:
                 student_in_courses = session.exec(
@@ -206,10 +184,8 @@ class LeaveService:
             else:
                 raise HTTPException(status_code=403, detail="Permission denied")
 
-        """根据学生ID获取请假记录（包含关联数据）"""
         leaves = session.exec(select(Leave).where(Leave.student_id == student_id)).all()
 
-        # 注入关联数据
         items = CommonService.inject_relations(
             session,
             leaves,
@@ -225,7 +201,6 @@ class LeaveService:
                 ),
             },
         )
-        # 补充 course_name
         course_ids = {item["course_id"] for item in items if item.get("course_id")}
         if course_ids:
             courses = session.exec(
@@ -241,29 +216,22 @@ class LeaveService:
         return items
 
     @staticmethod
-    def get_leaves_by_reviewer(token: str, reviewer_id: int, session: Session):
-        obj = check_login(token, session)
-        # 审核员只能查看分配给自己的请假记录
-        if obj["role"] == "reviewer":
-            if obj["id"] != reviewer_id:
+    def get_leaves_by_reviewer(current_user: dict, reviewer_id: int, session: Session):
+        if current_user["role"] == "reviewer":
+            if current_user["id"] != reviewer_id:
                 raise HTTPException(status_code=403, detail="Permission denied")
-        # 管理员可以查看任意审核员的记录
-        elif obj["role"] == "admin":
+        elif current_user["role"] == "admin":
             pass
-        # 其他角色无权限
         else:
             raise HTTPException(status_code=403, detail="Permission denied")
-        """根据审核员ID获取请假记录"""
         return session.exec(select(Leave).where(Leave.reviewer_id == reviewer_id)).all()
 
     @staticmethod
     def get_leaves_by_course(course_id: int, session: Session):
-        """根据课程ID获取请假记录"""
         return session.exec(select(Leave).where(Leave.course_id == course_id)).all()
 
     @staticmethod
     def get_leaves_by_teacher(teacher_id: int, session: Session):
-        """根据教师ID获取请假记录"""
         course_ids = session.exec(
             select(Course.course_id).where(Course.teacher_id == teacher_id)
         ).all()
@@ -273,16 +241,12 @@ class LeaveService:
 
     @staticmethod
     def edit_leave(
-        token: str,
+        current_user: dict,
         leave_id: int,
         leave_data: LeaveCreate,
         session: Session,
     ):
         """编辑请假记录"""
-        # 验证登录状态并获取用户信息
-        obj = check_login(token, session)
-
-        # 获取要编辑的请假记录
         leave = session.exec(
             select(Leave).where(Leave.leave_id == leave_id)
         ).first()
@@ -290,38 +254,34 @@ class LeaveService:
         if not leave:
             raise HTTPException(status_code=404, detail="Leave record not found")
 
-        # 检查状态：已批准的记录无法修改
-        if leave.status == "已批准":
-            raise HTTPException(status_code=403, detail="Cannot edit approved leave request")
+        # 只有待审批的记录可以修改
+        if leave.status != "待审批":
+            raise HTTPException(status_code=403, detail="Only pending leave requests can be edited")
 
         # 权限验证
-        if obj["role"] == "student":
-            # 学生只能修改自己的记录
-            if leave.student_id != obj["id"]:
+        if current_user["role"] == "student":
+            if leave.student_id != current_user["id"]:
                 raise HTTPException(status_code=403, detail="Students can only edit their own leave requests")
-        elif obj["role"] == "reviewer":
-            # 审核员只能修改自己名下学生的记录
-            if leave.reviewer_id != obj["id"]:
+        elif current_user["role"] == "reviewer":
+            if leave.reviewer_id != current_user["id"]:
                 raise HTTPException(status_code=403, detail="Reviewers can only edit leave requests of their assigned students")
-        elif obj["role"] == "admin":
-            # 管理员可以修改所有记录
+        elif current_user["role"] == "admin":
             pass
         else:
-            # 其他角色无权限修改
             raise HTTPException(status_code=403, detail="Permission denied")
 
-        # 更新请假记录
         update_data = leave_data.model_dump(exclude_unset=True)
 
-        # 不允许修改student_id，如果提供了不同的student_id，使用原来的ID
+        # 不允许修改student_id
         if "student_id" in update_data:
             if update_data["student_id"] != leave.student_id:
-                # 强制使用原来的student_id
                 update_data["student_id"] = leave.student_id
 
-        # 如果提供了course_id，需要验证学生是否选择了该课程
+        # 不允许修改status，防止状态机绕过
+        update_data.pop("status", None)
+
+        # 验证课程
         if "course_id" in update_data and update_data["course_id"]:
-            # 使用当前记录的student_id进行验证
             if not StudentCourseService.verify_student_enrollment(
                 leave.student_id,
                 update_data["course_id"],
@@ -332,10 +292,8 @@ class LeaveService:
                     detail="Student has not enrolled in this course"
                 )
 
-        # 标记为已修改（改为布尔类型）
         update_data["is_modified"] = True
 
-        # 应用更新
         for key, value in update_data.items():
             setattr(leave, key, value)
 
@@ -345,16 +303,12 @@ class LeaveService:
 
     @staticmethod
     def approve_leave(
-        token: str,
+        current_user: dict,
         leave_id: int,
         audit_remarks: str,
         session: Session,
     ):
         """批准请假"""
-        # 验证登录状态并获取用户信息
-        obj = check_login(token, session)
-
-        # 获取要审批的请假记录
         leave = session.exec(
             select(Leave).where(Leave.leave_id == leave_id)
         ).first()
@@ -362,23 +316,17 @@ class LeaveService:
         if not leave:
             raise HTTPException(status_code=404, detail="Leave record not found")
 
-        # 检查状态：只有待审批的记录可以审批
         if leave.status != "待审批":
             raise HTTPException(status_code=403, detail="Only pending leave requests can be approved")
 
-        # 权限验证
-        if obj["role"] == "reviewer":
-            # 审核员只能审批自己名下学生的记录
-            if leave.reviewer_id != obj["id"]:
+        if current_user["role"] == "reviewer":
+            if leave.reviewer_id != current_user["id"]:
                 raise HTTPException(status_code=403, detail="Reviewers can only approve leave requests of their assigned students")
-        elif obj["role"] == "admin":
-            # 管理员可以审批所有记录
+        elif current_user["role"] == "admin":
             pass
         else:
-            # 其他角色无权限审批
             raise HTTPException(status_code=403, detail="Permission denied")
 
-        # 更新请假记录
         leave.status = "已批准"
         leave.audit_remarks = audit_remarks
         leave.audit_time = datetime.now()
@@ -389,16 +337,12 @@ class LeaveService:
 
     @staticmethod
     def reject_leave(
-        token: str,
+        current_user: dict,
         leave_id: int,
         audit_remarks: str,
         session: Session,
     ):
         """拒绝请假"""
-        # 验证登录状态并获取用户信息
-        obj = check_login(token, session)
-
-        # 获取要拒绝的请假记录
         leave = session.exec(
             select(Leave).where(Leave.leave_id == leave_id)
         ).first()
@@ -406,25 +350,53 @@ class LeaveService:
         if not leave:
             raise HTTPException(status_code=404, detail="Leave record not found")
 
-        # 检查状态：只有待审批的记录可以拒绝
         if leave.status != "待审批":
             raise HTTPException(status_code=403, detail="Only pending leave requests can be rejected")
 
-        # 权限验证
-        if obj["role"] == "reviewer":
-            # 审核员只能拒绝自己名下学生的记录
-            if leave.reviewer_id != obj["id"]:
+        if current_user["role"] == "reviewer":
+            if leave.reviewer_id != current_user["id"]:
                 raise HTTPException(status_code=403, detail="Reviewers can only reject leave requests of their assigned students")
-        elif obj["role"] == "admin":
-            # 管理员可以拒绝所有记录
+        elif current_user["role"] == "admin":
             pass
         else:
-            # 其他角色无权限拒绝
             raise HTTPException(status_code=403, detail="Permission denied")
 
-        # 更新请假记录
         leave.status = "已拒绝"
         leave.audit_remarks = audit_remarks
+        leave.audit_time = datetime.now()
+
+        session.commit()
+        session.refresh(leave)
+        return leave
+
+    @staticmethod
+    def cancel_leave(
+        current_user: dict,
+        leave_id: int,
+        session: Session,
+    ):
+        """撤销请假"""
+        leave = session.exec(
+            select(Leave).where(Leave.leave_id == leave_id)
+        ).first()
+
+        if not leave:
+            raise HTTPException(status_code=404, detail="Leave record not found")
+
+        # 只有待审批的记录可以撤销
+        if leave.status != "待审批":
+            raise HTTPException(status_code=403, detail="Only pending leave requests can be cancelled")
+
+        # 权限验证：学生只能撤销自己的，管理员可以撤销所有
+        if current_user["role"] == "student":
+            if leave.student_id != current_user["id"]:
+                raise HTTPException(status_code=403, detail="Students can only cancel their own leave requests")
+        elif current_user["role"] == "admin":
+            pass
+        else:
+            raise HTTPException(status_code=403, detail="Permission denied")
+
+        leave.status = "已撤销"
         leave.audit_time = datetime.now()
 
         session.commit()
