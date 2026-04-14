@@ -143,6 +143,54 @@ class LeaveService:
         if not leave_dict.get("leave_date"):
             leave_dict["leave_date"] = datetime.now()
 
+        # ========== 自动业务校验 ==========
+
+        # 2.1 课程冲突检测：查询该学生当天是否已有请假记录与同一课程时间冲突
+        if leave_dict.get("course_id") and leave_dict.get("leave_date"):
+            existing_conflict = session.exec(
+                select(Leave).where(
+                    Leave.student_id == leave_dict["student_id"],
+                    Leave.course_id == leave_dict["course_id"],
+                    Leave.leave_date == leave_dict["leave_date"],
+                    Leave.status.in_(["待审批", "已批准"]),
+                )
+            ).first()
+            if existing_conflict:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"课程冲突：该学生当天已有请假记录（ID:{existing_conflict.leave_id}），同一课程同一时间不得重复请假"
+                )
+
+        # 2.2 历史请假频次校验：统计该学生近30天请假次数
+        thirty_days_ago = datetime.now() - timedelta(days=30)
+        recent_leaves_count = session.exec(
+            select(func.count(Leave.leave_id)).where(
+                Leave.student_id == leave_dict["student_id"],
+                Leave.leave_date >= thirty_days_ago,
+            )
+        ).one()
+        if recent_leaves_count >= 5:
+            raise HTTPException(
+                status_code=400,
+                detail=f"请假频次超限：该学生近30天已有 {recent_leaves_count} 次请假记录，请联系审核员"
+            )
+
+        # 2.4 紧急请假担保人关联校验
+        if leave_dict.get("guarantee_student_id"):
+            guarantee_student = session.exec(
+                select(Student).where(Student.student_id == leave_dict["guarantee_student_id"])
+            ).first()
+            if not guarantee_student:
+                raise HTTPException(
+                    status_code=400,
+                    detail="担保学生不存在"
+                )
+            if not guarantee_student.guarantee_permission or guarantee_student.guarantee_permission < datetime.now():
+                raise HTTPException(
+                    status_code=400,
+                    detail="担保学生无担保权限或权限已过期"
+                )
+
         leave = Leave(**leave_dict)
         session.add(leave)
         session.commit()
