@@ -6,6 +6,7 @@ from app.database.connection import get_session
 from app.models import Leave
 from app.schemas import LeaveCreate, PaginatedResponse
 from app.services.leave import LeaveService
+from app.services.qr_code import QRCodeService
 from app.api.deps import check_login, check_role
 
 router = APIRouter()
@@ -145,3 +146,27 @@ def batch_reject_leaves(
     leave_ids = data.get("leave_ids", [])
     audit_remarks = data.get("audit_remarks", "")
     return LeaveService.batch_reject_leaves(current_user, leave_ids, audit_remarks, session)
+
+
+@router.get("/leaves/{leave_id}/qr")
+def get_leave_qr_code(
+    leave_id: int,
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
+):
+    """获取请假凭证二维码"""
+    return QRCodeService.get_leave_qr_code(leave_id, session)
+
+
+@router.post("/leaves/verify-qr")
+def verify_qr_code(
+    current_user: dict = Depends(check_role(["admin", "teacher", "reviewer"])),
+    data: dict = Body(...),
+    session: Session = Depends(get_session),
+):
+    """核验二维码凭证"""
+    qr_content = data.get("qr_content", "")
+    if not qr_content:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail="qr_content is required")
+    return QRCodeService.verify_qr(qr_content, session)

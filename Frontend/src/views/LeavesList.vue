@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import { formatDate } from '../utils/formatters'
-import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave } from '../api'
+import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave, getLeaveQRCode } from '../api'
 import type { Leave, LeaveCreate, Course, StudentCourseResponse } from '../types'
 
 // 课程列表
@@ -20,6 +20,12 @@ const showAuditModal = ref(false)
 const isAuditing = ref(false)
 const auditError = ref('')
 const currentAuditLeave = ref<Leave | null>(null)
+
+// 二维码凭证相关状态
+const showQRModal = ref(false)
+const qrCodeData = ref('')
+const qrLoading = ref(false)
+const qrError = ref('')
 const auditForm = reactive({
   status: '',
   audit_remarks: ''
@@ -273,6 +279,33 @@ const canCancel = (leave: Leave): boolean => {
     currentUserRole === 'admin'
 }
 
+// 展示二维码凭证
+const showQRCode = async (leave: Leave) => {
+  showQRModal.value = true
+  qrCodeData.value = ''
+  qrError.value = ''
+  qrLoading.value = true
+
+  try {
+    const response = await getLeaveQRCode(leave.leave_id) as any
+    if (response.error) {
+      qrError.value = response.error
+    } else {
+      qrCodeData.value = response.qr_code
+    }
+  } catch (error: any) {
+    qrError.value = error.response?.data?.detail || '获取二维码失败'
+  } finally {
+    qrLoading.value = false
+  }
+}
+
+const closeQRModal = () => {
+  showQRModal.value = false
+  qrCodeData.value = ''
+  qrError.value = ''
+}
+
 // 刷新数据的函数
 const refreshData = () => {
   console.log('数据已刷新')
@@ -310,6 +343,9 @@ const refreshData = () => {
           </button>
           <button v-if="canCancel(item)" @click="handleCancelLeave(item)" class="btn btn-danger btn-sm">
             撤销
+          </button>
+          <button v-if="item.status === '已批准'" @click="showQRCode(item)" class="btn btn-info btn-sm">
+            查看凭证
           </button>
         </div>
       </template>
@@ -423,6 +459,28 @@ const refreshData = () => {
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- 二维码凭证弹窗 -->
+    <div v-if="showQRModal" class="modal-overlay" @click.self="closeQRModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>请假凭证</h3>
+        </div>
+        <div class="qr-container">
+          <div v-if="qrLoading" class="qr-loading">加载中...</div>
+          <div v-else-if="qrError" class="error-message">{{ qrError }}</div>
+          <div v-else-if="qrCodeData" class="qr-display">
+            <img :src="'data:image/png;base64,' + qrCodeData" alt="请假凭证二维码" class="qr-image" />
+            <p class="qr-hint">请将此二维码出示给教师核验</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" @click="closeQRModal" class="btn btn-secondary">
+            关闭
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -637,6 +695,52 @@ const refreshData = () => {
   background-color: var(--gray-200);
   color: var(--text-primary);
   border-color: var(--border-dark);
+}
+
+.btn-info {
+  background-color: var(--info, #0ea5e9);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-info:hover {
+  background-color: #0284c7;
+}
+
+.qr-container {
+  padding: var(--spacing-lg);
+  text-align: center;
+}
+
+.qr-loading {
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.qr-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing);
+}
+
+.qr-image {
+  max-width: 250px;
+  max-height: 250px;
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius);
+  padding: var(--spacing);
+  background: white;
+}
+
+.qr-hint {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
 }
 
 /* 响应式设计 */

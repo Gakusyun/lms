@@ -22,6 +22,7 @@ async def lifespan(app: FastAPI):
         logger.info("数据库表创建成功")
 
         # 自动迁移：为 Login 表添加 jwt_token 字段
+        # 自动迁移：为 Leave 表添加二维码凭证相关字段
         from sqlalchemy import text
         with engine.connect() as conn:
             try:
@@ -37,6 +38,22 @@ async def lifespan(app: FastAPI):
                         logger.info("jwt_token 字段添加成功")
                     else:
                         logger.info("jwt_token 字段已存在")
+
+                    # 检查 leave 表的二维码字段
+                    result = conn.execute(text("PRAGMA table_info(leave)"))
+                    leave_cols = [row[1] for row in result.fetchall()]
+
+                    qr_fields = ['qr_code', 'qr_valid_from', 'qr_valid_until', 'qr_max_uses', 'qr_use_count']
+                    for field in qr_fields:
+                        if field not in leave_cols:
+                            if field == 'qr_code':
+                                conn.execute(text(f"ALTER TABLE leave ADD COLUMN {field} TEXT"))
+                            elif field in ('qr_valid_from', 'qr_valid_until'):
+                                conn.execute(text(f"ALTER TABLE leave ADD COLUMN {field} DATETIME"))
+                            elif field in ('qr_max_uses', 'qr_use_count'):
+                                conn.execute(text(f"ALTER TABLE leave ADD COLUMN {field} INTEGER DEFAULT 1"))
+                            conn.commit()
+                            logger.info(f"leave 表添加字段 {field} 成功")
             except Exception as e:
                 logger.warning(f"字段迁移跳过: {str(e)}")
 

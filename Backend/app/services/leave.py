@@ -334,6 +334,15 @@ class LeaveService:
             detail=f"批准请假，意见={audit_remarks}",
             session=session,
         )
+
+        # 审批通过后自动生成二维码凭证
+        from app.services.qr_code import QRCodeService
+        try:
+            QRCodeService.generate_qr_for_leave(leave, session)
+            session.refresh(leave)
+        except Exception:
+            pass
+
         return leave
 
     @staticmethod
@@ -461,6 +470,14 @@ class LeaveService:
                 leave.audit_time = datetime.now()
                 session.commit()
                 session.refresh(leave)
+
+                # 批量审批通过后生成二维码
+                from app.services.qr_code import QRCodeService
+                try:
+                    QRCodeService.generate_qr_for_leave(leave, session)
+                except Exception:
+                    pass
+
                 approved_leaves.append(leave)
             except Exception as e:
                 errors.append({"leave_id": leave_id, "error": str(e)})

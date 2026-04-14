@@ -40,3 +40,9 @@ class Leave(SQLModel, table=True):
     guarantee_student_id: Optional[int] = Field(
         foreign_key="student.student_id", default=None, index=True
     )
+    # 二维码凭证相关字段
+    qr_code: Optional[str] = Field(default=None)  # 存储二维码 base64 数据
+    qr_valid_from: Optional[datetime] = Field(default=None)
+    qr_valid_until: Optional[datetime] = Field(default=None)
+    qr_max_uses: Optional[int] = Field(default=1)
+    qr_use_count: Optional[int] = Field(default=0)

@@ -292,3 +292,25 @@ export const cancelLeave = async (leaveId: number) => {
     throw error
   }
 }
+
+// 获取请假凭证二维码API
+export const getLeaveQRCode = async (leaveId: number) => {
+  try {
+    const response = await http.get(`/leaves/${leaveId}/qr`)
+    return response
+  } catch (error) {
+    console.error('获取二维码失败:', error)
+    throw error
+  }
+}
+
+// 核验二维码API
+export const verifyQRCode = async (qrContent: string) => {
+  try {
+    const response = await http.post('/leaves/verify-qr', { qr_content: qrContent })
+    return response
+  } catch (error) {
+    console.error('核验二维码失败:', error)
+    throw error
+  }
+}
