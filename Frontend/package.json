@@ -16,8 +16,10 @@
   "dependencies": {
     "@types/qrcode": "^1.5.6",
     "axios": "^1.15.0",
+    "echarts": "^5.5.0",
     "qrcode": "^1.5.4",
     "vue": "^3.5.32",
+    "vue-echarts": "^7.0.3",
     "vue-router": "^5.0.4",
     "xlsx": "^0.18.5"
   },

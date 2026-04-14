@@ -325,3 +325,96 @@ export const getApprovalRecommendation = async (leaveId: number) => {
     throw error
   }
 }
+
+// 统计API
+export const getLeaveStatistics = async () => {
+  try {
+    const response = await http.get('/statistics/leaves')
+    return response
+  } catch (error) {
+    console.error('获取请假统计失败:', error)
+    throw error
+  }
+}
+
+export const getLeaveTrend = async (days: number = 30) => {
+  try {
+    const response = await http.get('/statistics/leaves/trend', { params: { days } })
+    return response
+  } catch (error) {
+    console.error('获取请假趋势失败:', error)
+    throw error
+  }
+}
+
+export const getUserStatistics = async () => {
+  try {
+    const response = await http.get('/statistics/users')
+    return response
+  } catch (error) {
+    console.error('获取用户统计失败:', error)
+    throw error
+  }
+}
+
+// 通知API
+export const getNotifications = async (params?: any) => {
+  try {
+    const response = await http.get('/notifications', { params })
+    return response
+  } catch (error) {
+    console.error('获取通知失败:', error)
+    throw error
+  }
+}
+
+export const getUnreadCount = async () => {
+  try {
+    const response = await http.get('/notifications/unread-count')
+    return response
+  } catch (error) {
+    console.error('获取未读数量失败:', error)
+    throw error
+  }
+}
+
+export const markNotificationRead = async (notificationId: number) => {
+  try {
+    const response = await http.post(`/notifications/${notificationId}/read`)
+    return response
+  } catch (error) {
+    console.error('标记已读失败:', error)
+    throw error
+  }
+}
+
+export const markAllNotificationsRead = async () => {
+  try {
+    const response = await http.post('/notifications/read-all')
+    return response
+  } catch (error) {
+    console.error('全部标记已读失败:', error)
+    throw error
+  }
+}
+
+// JSON导出API
+export const exportLeavesJSON = async () => {
+  try {
+    const response = await http.get('/export/leaves/json', { responseType: 'blob' })
+    return response
+  } catch (error) {
+    console.error('导出请假数据失败:', error)
+    throw error
+  }
+}
+
+export const exportStudentsJSON = async () => {
+  try {
+    const response = await http.get('/export/students/json', { responseType: 'blob' })
+    return response
+  } catch (error) {
+    console.error('导出学生数据失败:', error)
+    throw error
+  }
+}

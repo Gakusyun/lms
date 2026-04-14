@@ -77,6 +77,10 @@ const goToAuditLogs = () => {
   router.push('/audit-logs')
 }
 
+const goToStatistics = () => {
+  router.push('/statistics')
+}
+
 const getRoleDisplayName = (role: string | undefined | null) => {
   switch (role) {
     case 'admin':
@@ -164,6 +168,8 @@ onMounted(() => {
               :onClick="goToCoursesList" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="0" description="查看系统操作审计日志"
               :onClick="goToAuditLogs" />
+            <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer'" title="数据统计" :count="0" description="请假趋势与数据可视化分析"
+              :onClick="goToStatistics" />
           </div>
         </section>
       </div>
