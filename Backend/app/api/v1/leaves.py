@@ -158,6 +158,16 @@ def get_leave_qr_code(
     return QRCodeService.get_leave_qr_code(leave_id, session)
 
 
+@router.get("/leaves/{leave_id}/recommendation")
+def get_approval_recommendation(
+    leave_id: int,
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
+):
+    """获取智能审批推荐"""
+    return LeaveService.get_approval_recommendation(leave_id, session)
+
+
 @router.post("/leaves/verify-qr")
 def verify_qr_code(
     current_user: dict = Depends(check_role(["admin", "teacher", "reviewer"])),
