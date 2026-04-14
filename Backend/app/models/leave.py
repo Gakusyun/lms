@@ -46,3 +46,5 @@ class Leave(SQLModel, table=True):
     qr_valid_until: Optional[datetime] = Field(default=None)
     qr_max_uses: Optional[int] = Field(default=1)
     qr_use_count: Optional[int] = Field(default=0)
+    # 审批层级: 1=一级(审核员), 2=二级(管理员), 3=多级
+    approval_level: int = Field(default=1)

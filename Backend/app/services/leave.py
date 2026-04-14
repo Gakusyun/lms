@@ -191,6 +191,31 @@ class LeaveService:
                     detail="担保学生无担保权限或权限已过期"
                 )
 
+        # 2.3 时长分级审批路由：按请假时长分配不同审批层级
+        leave_hours_str = leave_dict.get("leave_hours")
+        leave_hours = 0
+        try:
+            leave_hours = float(leave_hours_str) if leave_hours_str else 0
+        except (ValueError, TypeError):
+            leave_hours = 0
+
+        if leave_hours <= 4:
+            # ≤4小时：一级审批（审核员直接审批）
+            leave_dict["approval_level"] = 1
+        elif leave_hours <= 24:
+            # 4-24小时(含)：二级审批，需管理员确认
+            leave_dict["approval_level"] = 2
+        else:
+            # >24小时：三级审批，标记为需重点关注
+            leave_dict["approval_level"] = 3
+
+        # 二级及以上审批时，记录备注提示
+        if leave_dict["approval_level"] >= 2:
+            level_msg = f"请假{leave_hours}小时，触发{leave_dict['approval_level']}级审批"
+            existing_remarks = leave_dict.get("remarks") or ""
+            if level_msg not in existing_remarks:
+                leave_dict["remarks"] = f"{existing_remarks}[{level_msg}]".strip() if existing_remarks else f"[{level_msg}]"
+
         leave = Leave(**leave_dict)
         session.add(leave)
         session.commit()
@@ -360,12 +385,25 @@ class LeaveService:
             raise HTTPException(status_code=403, detail="Only pending leave requests can be approved")
 
         if current_user["role"] == "reviewer":
+            # 审核员只能审批一级请假(≤4h)，二级/三级请假必须由管理员审批
+            if leave.approval_level > 1:
+                raise HTTPException(
+                    status_code=403,
+                    detail=f"该请假触发{leave.approval_level}级审批（时长超过4小时），需由管理员审批"
+                )
             if leave.reviewer_id != current_user["id"]:
                 raise HTTPException(status_code=403, detail="Reviewers can only approve leave requests of their assigned students")
         elif current_user["role"] == "admin":
             pass
         else:
             raise HTTPException(status_code=403, detail="Permission denied")
+
+        # 三级审批(>24h)时强制要求审核意见
+        if leave.approval_level == 3 and not audit_remarks:
+            raise HTTPException(
+                status_code=400,
+                detail="超长请假(>24小时)必须填写审核意见"
+            )
 
         leave.status = "已批准"
         leave.audit_remarks = audit_remarks
@@ -506,11 +544,19 @@ class LeaveService:
                     continue
 
                 if current_user["role"] == "reviewer":
+                    if leave.approval_level > 1:
+                        errors.append({"leave_id": leave_id, "error": f"该请假触发{leave.approval_level}级审批，需由管理员审批"})
+                        continue
                     if leave.reviewer_id != current_user["id"]:
                         errors.append({"leave_id": leave_id, "error": "Not authorized"})
                         continue
                 elif current_user["role"] != "admin":
                     errors.append({"leave_id": leave_id, "error": "Permission denied"})
+                    continue
+
+                # 三级审批强制要求审核意见
+                if leave.approval_level == 3 and not audit_remarks:
+                    errors.append({"leave_id": leave_id, "error": "超长请假(>24小时)必须填写审核意见"})
                     continue
 
                 leave.status = "已批准"

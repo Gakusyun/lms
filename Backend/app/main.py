@@ -43,13 +43,15 @@ async def lifespan(app: FastAPI):
                     result = conn.execute(text("PRAGMA table_info(leave)"))
                     leave_cols = [row[1] for row in result.fetchall()]
 
-                    qr_fields = ['qr_code', 'qr_valid_from', 'qr_valid_until', 'qr_max_uses', 'qr_use_count']
+                    qr_fields = ['qr_code', 'qr_valid_from', 'qr_valid_until', 'qr_max_uses', 'qr_use_count', 'approval_level']
                     for field in qr_fields:
                         if field not in leave_cols:
                             if field == 'qr_code':
                                 conn.execute(text(f"ALTER TABLE leave ADD COLUMN {field} TEXT"))
                             elif field in ('qr_valid_from', 'qr_valid_until'):
                                 conn.execute(text(f"ALTER TABLE leave ADD COLUMN {field} DATETIME"))
+                            elif field == 'approval_level':
+                                conn.execute(text(f"ALTER TABLE leave ADD COLUMN {field} INTEGER DEFAULT 1"))
                             elif field in ('qr_max_uses', 'qr_use_count'):
                                 conn.execute(text(f"ALTER TABLE leave ADD COLUMN {field} INTEGER DEFAULT 1"))
                             conn.commit()
