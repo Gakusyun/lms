@@ -1,5 +1,6 @@
 from sqlmodel import Session, select, func
 from fastapi import Depends, HTTPException, Query
+import io
 
 from app.models import Student, Reviewer, School
 from app.schemas import StudentCreate
@@ -126,3 +127,92 @@ class StudentService:
         session.commit()
         session.refresh(student)
         return student
+
+    @staticmethod
+    def batch_import_students(current_user: dict, file, session: Session):
+        """批量导入学生数据 (Excel或CSV)"""
+        from app.services.audit_log import AuditLogService, AuditAction
+        from app.utils.jwt import get_password_hash
+
+        filename = file.filename or ""
+        content = file.file.read()
+
+        if filename.endswith(('.xlsx', '.xls')):
+            import openpyxl
+            wb = openpyxl.load_workbook(io.BytesIO(content), read_only=True)
+            ws = wb.active
+            rows = list(ws.iter_rows(min_row=2, values_only=True))
+        elif filename.endswith('.csv'):
+            text = content.decode('utf-8-sig')
+            import csv as csv_mod
+            reader = csv_mod.reader(io.StringIO(text))
+            rows = list(reader)
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="不支持的文件格式，请使用 .xlsx 或 .csv 文件"
+            )
+
+        if not rows:
+            raise HTTPException(status_code=400, detail="文件内容为空")
+
+        imported = []
+        errors = []
+        skipped = 0
+
+        for idx, row in enumerate(rows):
+            try:
+                if not row or len(row) < 2:
+                    errors.append({"row": idx + 2, "error": "数据不完整，至少需要 student_id 和 student_name"})
+                    continue
+
+                student_id = int(row[0])
+                student_name = str(row[1]).strip()
+                if not student_name:
+                    errors.append({"row": idx + 2, "error": "学生姓名不能为空"})
+                    continue
+
+                password = str(row[2]).strip() if len(row) > 2 and row[2] else "123456"
+                school_id = int(row[3]) if len(row) > 3 and row[3] else None
+                reviewer_id = int(row[4]) if len(row) > 4 and row[4] else None
+
+                # 检查是否已存在
+                existing = session.exec(
+                    select(Student).where(Student.student_id == student_id)
+                ).first()
+                if existing:
+                    skipped += 1
+                    continue
+
+                student = Student(
+                    student_id=student_id,
+                    student_name=student_name,
+                    password=get_password_hash(password),
+                    school_id=school_id,
+                    reviewer_id=reviewer_id,
+                )
+                session.add(student)
+                imported.append({"student_id": student_id, "student_name": student_name})
+            except (ValueError, TypeError) as e:
+                errors.append({"row": idx + 2, "error": f"数据格式错误: {str(e)}"})
+            except Exception as e:
+                errors.append({"row": idx + 2, "error": str(e)})
+
+        session.commit()
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.USER_CREATE,
+            target_type="student",
+            detail=f"批量导入学生 {len(imported)} 条，跳过 {skipped} 条，失败 {len(errors)} 条",
+            session=session,
+        )
+
+        return {
+            "imported": imported,
+            "skipped": skipped,
+            "errors": errors,
+            "total": len(rows),
+            "success_count": len(imported),
+            "error_count": len(errors),
+        }

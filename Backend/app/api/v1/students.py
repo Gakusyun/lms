@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, UploadFile, File, Form
 from sqlmodel import Session
+from typing import Optional
 
 from app.database.connection import get_session
 from app.models import Student
@@ -53,3 +54,45 @@ def create_student_endpoint(
     session: Session = Depends(get_session),
 ):
     return StudentService.create_student(current_user, student_data, session)
+
+
+@router.post("/students/import", summary="批量导入学生")
+async def import_students(
+    current_user: dict = Depends(check_role(["admin"])),
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+):
+    """批量导入学生数据 (Excel/CSV)
+    Excel格式要求: student_id, student_name, password, school_id, reviewer_id
+    CSV格式要求: 同上，逗号分隔
+    """
+    return StudentService.batch_import_students(current_user, file, session)
+
+
+@router.get("/students/import/template", summary="下载导入模板")
+def download_import_template():
+    """生成并返回学生导入模板"""
+    from fastapi.responses import StreamingResponse
+    import io
+
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "学生导入模板"
+
+    headers = ["student_id", "student_name", "password", "school_id", "reviewer_id"]
+    ws.append(headers)
+
+    # 添加示例行
+    ws.append([1001, "张三", "123456", 1, 1])
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=student_import_template.xlsx"},
+    )
