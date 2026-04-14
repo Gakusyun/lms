@@ -5,7 +5,7 @@ from app.database.connection import get_session
 from app.models import Student
 from app.schemas import StudentCreate, PaginatedResponse
 from app.services.student import StudentService
-from app.api.deps import check_login
+from app.api.deps import check_login, check_role
 
 router = APIRouter()
 
@@ -48,7 +48,7 @@ def read_student(
 
 @router.post("/students", response_model=Student, summary="创建学生")
 def create_student_endpoint(
-    current_user: dict = Depends(check_login),
+    current_user: dict = Depends(check_role(["admin", "reviewer"])),
     student_data: StudentCreate = None,
     session: Session = Depends(get_session),
 ):

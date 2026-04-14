@@ -1,11 +1,13 @@
 from sqlmodel import Session, select, func
 from fastapi import Depends, Query, HTTPException
 from datetime import datetime
+from typing import List
 
-from app.models import Leave, Student, Reviewer, Teacher, Course
+from app.models import Leave, Student, Reviewer, Teacher, Course, AuditAction
 from app.services.student_course import StudentCourseService
 from app.schemas import LeaveCreate
 from app.services.common import CommonService
+from app.services.audit_log import AuditLogService
 
 
 class LeaveService:
@@ -17,10 +19,8 @@ class LeaveService:
         session: Session = Depends(lambda: None),
     ):
         """分页获取请假记录"""
-        # 构建基础查询
         query = select(Leave)
 
-        # 根据角色应用不同的过滤条件
         if current_user["role"] == "student":
             query = query.where(Leave.student_id == current_user["id"])
         elif current_user["role"] == "reviewer":
@@ -34,11 +34,9 @@ class LeaveService:
             else:
                 query = query.where(Leave.course_id.is_(None))
 
-        # 应用分页
         offset = (page - 1) * page_size
         leaves = session.exec(query.offset(offset).limit(page_size)).all()
 
-        # 计算总数
         pk_col = list(Leave.__table__.primary_key.columns)[0]
         total_stmt = select(func.count(pk_col))
         if current_user["role"] == "student":
@@ -65,10 +63,7 @@ class LeaveService:
                 "reviewer_id": (Reviewer, "reviewer_id", "reviewer_name", "reviewer_name"),
                 "teacher_id": (Teacher, "teacher_id", "teacher_name", "teacher_name"),
                 "guarantee_student_id": (
-                    Student,
-                    "student_id",
-                    "student_name",
-                    "guarantee_student_name",
+                    Student, "student_id", "student_name", "guarantee_student_name",
                 ),
             },
         )
@@ -111,7 +106,6 @@ class LeaveService:
                 count = 0
         else:
             raise HTTPException(status_code=403, detail="Permission denied")
-
         return {"leaves_count": count}
 
     @staticmethod
@@ -122,13 +116,11 @@ class LeaveService:
     ):
         leave_dict = leave_data.model_dump()
 
-        # 根据用户角色自动设置student_id
         if current_user["role"] == "student":
             leave_dict["student_id"] = current_user["id"]
         elif not leave_dict.get("student_id"):
             raise HTTPException(status_code=400, detail="student_id is required for non-student users")
 
-        # 自动设置reviewer_id
         student = session.exec(
             select(Student).where(Student.student_id == leave_dict["student_id"])
         ).first()
@@ -140,16 +132,12 @@ class LeaveService:
         else:
             raise HTTPException(status_code=400, detail="Student has no assigned reviewer")
 
-        # 验证学生是否选择了该课程
         if leave_dict.get("course_id"):
             if not StudentCourseService.verify_student_enrollment(
-                leave_dict["student_id"],
-                leave_dict["course_id"],
-                session
+                leave_dict["student_id"], leave_dict["course_id"], session
             ):
                 raise HTTPException(
-                    status_code=400,
-                    detail="Student has not enrolled in this course"
+                    status_code=400, detail="Student has not enrolled in this course"
                 )
 
         if not leave_dict.get("leave_date"):
@@ -159,11 +147,19 @@ class LeaveService:
         session.add(leave)
         session.commit()
         session.refresh(leave)
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_CREATE,
+            target_type="leave",
+            target_id=leave.leave_id,
+            detail=f"创建请假，类型={leave_dict.get('leave_type')}",
+            session=session,
+        )
         return leave
 
     @staticmethod
     def get_leaves_by_student(current_user: dict, student_id: int, session: Session):
-        # 管理员和审核员可以查看任意学生的请假记录
         if current_user["role"] in ["admin", "reviewer"]:
             pass
         elif current_user["role"] == "student":
@@ -185,7 +181,6 @@ class LeaveService:
                 raise HTTPException(status_code=403, detail="Permission denied")
 
         leaves = session.exec(select(Leave).where(Leave.student_id == student_id)).all()
-
         items = CommonService.inject_relations(
             session,
             leaves,
@@ -194,10 +189,7 @@ class LeaveService:
                 "reviewer_id": (Reviewer, "reviewer_id", "reviewer_name", "reviewer_name"),
                 "teacher_id": (Teacher, "teacher_id", "teacher_name", "teacher_name"),
                 "guarantee_student_id": (
-                    Student,
-                    "student_id",
-                    "student_name",
-                    "guarantee_student_name",
+                    Student, "student_id", "student_name", "guarantee_student_name",
                 ),
             },
         )
@@ -212,7 +204,6 @@ class LeaveService:
         else:
             for item in items:
                 item["course_name"] = None
-
         return items
 
     @staticmethod
@@ -254,11 +245,9 @@ class LeaveService:
         if not leave:
             raise HTTPException(status_code=404, detail="Leave record not found")
 
-        # 只有待审批的记录可以修改
         if leave.status != "待审批":
             raise HTTPException(status_code=403, detail="Only pending leave requests can be edited")
 
-        # 权限验证
         if current_user["role"] == "student":
             if leave.student_id != current_user["id"]:
                 raise HTTPException(status_code=403, detail="Students can only edit their own leave requests")
@@ -272,24 +261,18 @@ class LeaveService:
 
         update_data = leave_data.model_dump(exclude_unset=True)
 
-        # 不允许修改student_id
         if "student_id" in update_data:
             if update_data["student_id"] != leave.student_id:
                 update_data["student_id"] = leave.student_id
 
-        # 不允许修改status，防止状态机绕过
         update_data.pop("status", None)
 
-        # 验证课程
         if "course_id" in update_data and update_data["course_id"]:
             if not StudentCourseService.verify_student_enrollment(
-                leave.student_id,
-                update_data["course_id"],
-                session
+                leave.student_id, update_data["course_id"], session
             ):
                 raise HTTPException(
-                    status_code=400,
-                    detail="Student has not enrolled in this course"
+                    status_code=400, detail="Student has not enrolled in this course"
                 )
 
         update_data["is_modified"] = True
@@ -299,6 +282,15 @@ class LeaveService:
 
         session.commit()
         session.refresh(leave)
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_EDIT,
+            target_type="leave",
+            target_id=leave.leave_id,
+            detail="编辑请假记录",
+            session=session,
+        )
         return leave
 
     @staticmethod
@@ -333,6 +325,15 @@ class LeaveService:
 
         session.commit()
         session.refresh(leave)
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_APPROVE,
+            target_type="leave",
+            target_id=leave.leave_id,
+            detail=f"批准请假，意见={audit_remarks}",
+            session=session,
+        )
         return leave
 
     @staticmethod
@@ -367,6 +368,15 @@ class LeaveService:
 
         session.commit()
         session.refresh(leave)
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_REJECT,
+            target_type="leave",
+            target_id=leave.leave_id,
+            detail=f"拒绝请假，意见={audit_remarks}",
+            session=session,
+        )
         return leave
 
     @staticmethod
@@ -383,11 +393,9 @@ class LeaveService:
         if not leave:
             raise HTTPException(status_code=404, detail="Leave record not found")
 
-        # 只有待审批的记录可以撤销
         if leave.status != "待审批":
             raise HTTPException(status_code=403, detail="Only pending leave requests can be cancelled")
 
-        # 权限验证：学生只能撤销自己的，管理员可以撤销所有
         if current_user["role"] == "student":
             if leave.student_id != current_user["id"]:
                 raise HTTPException(status_code=403, detail="Students can only cancel their own leave requests")
@@ -401,4 +409,135 @@ class LeaveService:
 
         session.commit()
         session.refresh(leave)
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_CANCEL,
+            target_type="leave",
+            target_id=leave.leave_id,
+            detail="撤销请假申请",
+            session=session,
+        )
         return leave
+
+    @staticmethod
+    def batch_approve_leaves(
+        current_user: dict,
+        leave_ids: List[int],
+        audit_remarks: str,
+        session: Session,
+    ):
+        """批量批准请假"""
+        if not leave_ids:
+            raise HTTPException(status_code=400, detail="leave_ids cannot be empty")
+
+        approved_leaves = []
+        errors = []
+
+        for leave_id in leave_ids:
+            try:
+                leave = session.exec(
+                    select(Leave).where(Leave.leave_id == leave_id)
+                ).first()
+
+                if not leave:
+                    errors.append({"leave_id": leave_id, "error": "Leave record not found"})
+                    continue
+
+                if leave.status != "待审批":
+                    errors.append({"leave_id": leave_id, "error": "Only pending leaves can be approved"})
+                    continue
+
+                if current_user["role"] == "reviewer":
+                    if leave.reviewer_id != current_user["id"]:
+                        errors.append({"leave_id": leave_id, "error": "Not authorized"})
+                        continue
+                elif current_user["role"] != "admin":
+                    errors.append({"leave_id": leave_id, "error": "Permission denied"})
+                    continue
+
+                leave.status = "已批准"
+                leave.audit_remarks = audit_remarks
+                leave.audit_time = datetime.now()
+                session.commit()
+                session.refresh(leave)
+                approved_leaves.append(leave)
+            except Exception as e:
+                errors.append({"leave_id": leave_id, "error": str(e)})
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_BATCH_APPROVE,
+            target_type="leave",
+            detail=f"批量批准 {len(approved_leaves)} 条请假",
+            session=session,
+        )
+
+        return {
+            "approved": approved_leaves,
+            "errors": errors,
+            "total": len(leave_ids),
+            "success_count": len(approved_leaves),
+            "error_count": len(errors),
+        }
+
+    @staticmethod
+    def batch_reject_leaves(
+        current_user: dict,
+        leave_ids: List[int],
+        audit_remarks: str,
+        session: Session,
+    ):
+        """批量拒绝请假"""
+        if not leave_ids:
+            raise HTTPException(status_code=400, detail="leave_ids cannot be empty")
+
+        rejected_leaves = []
+        errors = []
+
+        for leave_id in leave_ids:
+            try:
+                leave = session.exec(
+                    select(Leave).where(Leave.leave_id == leave_id)
+                ).first()
+
+                if not leave:
+                    errors.append({"leave_id": leave_id, "error": "Leave record not found"})
+                    continue
+
+                if leave.status != "待审批":
+                    errors.append({"leave_id": leave_id, "error": "Only pending leaves can be rejected"})
+                    continue
+
+                if current_user["role"] == "reviewer":
+                    if leave.reviewer_id != current_user["id"]:
+                        errors.append({"leave_id": leave_id, "error": "Not authorized"})
+                        continue
+                elif current_user["role"] != "admin":
+                    errors.append({"leave_id": leave_id, "error": "Permission denied"})
+                    continue
+
+                leave.status = "已拒绝"
+                leave.audit_remarks = audit_remarks
+                leave.audit_time = datetime.now()
+                session.commit()
+                session.refresh(leave)
+                rejected_leaves.append(leave)
+            except Exception as e:
+                errors.append({"leave_id": leave_id, "error": str(e)})
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_BATCH_REJECT,
+            target_type="leave",
+            detail=f"批量拒绝 {len(rejected_leaves)} 条请假",
+            session=session,
+        )
+
+        return {
+            "rejected": rejected_leaves,
+            "errors": errors,
+            "total": len(leave_ids),
+            "success_count": len(rejected_leaves),
+            "error_count": len(errors),
+        }

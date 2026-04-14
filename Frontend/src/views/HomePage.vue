@@ -73,6 +73,10 @@ const goToCoursesList = () => {
 }
 
 // 获取角色显示名称
+const goToAuditLogs = () => {
+  router.push('/audit-logs')
+}
+
 const getRoleDisplayName = (role: string | undefined | null) => {
   switch (role) {
     case 'admin':
@@ -158,6 +162,8 @@ onMounted(() => {
               :onClick="goToTeachersList" />
             <GenericFeatureCard title="课程管理" :count="courseResponse?.courses_count || 0" description="设置和管理课程信息"
               :onClick="goToCoursesList" />
+            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="0" description="查看系统操作审计日志"
+              :onClick="goToAuditLogs" />
           </div>
         </section>
       </div>

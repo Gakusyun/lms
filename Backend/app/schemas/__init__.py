@@ -6,6 +6,7 @@ from app.schemas.student import StudentCreate
 from app.schemas.teacher import TeacherCreate
 from app.schemas.leave import LeaveCreate
 from app.schemas.student_course import StudentCourseCreate, StudentCourseResponse, StudentCourse
+from app.schemas.audit_log import AuditLogCreate, AuditLogResponse, AuditLogQuery
 
 __all__ = [
     "PaginatedResponse",
@@ -21,5 +22,8 @@ __all__ = [
     "LeaveCreate",
     "StudentCourseCreate",
     "StudentCourseResponse",
-    "StudentCourse"
+    "StudentCourse",
+    "AuditLogCreate",
+    "AuditLogResponse",
+    "AuditLogQuery",
 ]

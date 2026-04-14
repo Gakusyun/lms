@@ -3,9 +3,10 @@ from fastapi import HTTPException
 from datetime import timedelta
 
 from app.schemas import UserLogin, ChangePassword
-from app.models import Admin, Teacher, Student, Reviewer, Login
+from app.models import Admin, Teacher, Student, Reviewer, Login, AuditAction
 from app.utils.jwt import verify_password, get_password_hash, create_access_token, verify_token
 from app.utils.logger import get_logger
+from app.services.audit_log import AuditLogService
 
 logger = get_logger(__name__)
 
@@ -87,7 +88,15 @@ class AuthService:
             session.commit()
 
             logger.info(f"Login successful for user {user.id} ({user_name}, role: {user_role})")
-            
+
+            # 审计日志：登录
+            AuditLogService.log(
+                current_user={"id": user.id, "role": user_role, "name": user_name},
+                action=AuditAction.LOGIN,
+                detail=f"用户登录成功，角色={user_role}",
+                session=session,
+            )
+
             return {
                 "role": user_role,
                 "id": user.id,
@@ -149,6 +158,16 @@ class AuthService:
         # 更新密码
         target_user.password = get_password_hash(password_data.new_password)
         session.commit()
+
+        # 审计日志：密码修改
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.PASSWORD_CHANGE,
+            target_type="user",
+            target_id=target_user_id,
+            detail=f"修改密码，目标用户={target_user_id}，角色={target_role}",
+            session=session,
+        )
 
         return {
             "message": "Password changed successfully",

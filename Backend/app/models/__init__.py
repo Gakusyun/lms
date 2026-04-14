@@ -8,6 +8,7 @@ from app.models.login import Login
 from app.models.student_course import StudentCourse
 from app.models.school import School
 from app.models.role import Role
+from app.models.audit_log import AuditLog, AuditAction
 
 __all__ = [
     "Admin",
@@ -21,5 +22,7 @@ __all__ = [
     "Login",
     "StudentCourse",
     "School",
-    "Role"
+    "Role",
+    "AuditLog",
+    "AuditAction",
 ]
