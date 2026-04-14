@@ -4,13 +4,33 @@
   "pages": [
     "pages/home/index",
     "pages/login/index",
-    "pages/mine/index",
-    "pages/notifications/index",
-    "pages/students/index",
-    "pages/leaves/index",
-    "pages/reviewers/index",
-    "pages/teachers/index",
-    "pages/courses/index"
+    "pages/mine/index"
+  ],
+  "subpackages": [
+    {
+      "root": "pages/notifications",
+      "name": "notifications"
+    },
+    {
+      "root": "pages/students",
+      "name": "students"
+    },
+    {
+      "root": "pages/leaves",
+      "name": "leaves"
+    },
+    {
+      "root": "pages/reviewers",
+      "name": "reviewers"
+    },
+    {
+      "root": "pages/teachers",
+      "name": "teachers"
+    },
+    {
+      "root": "pages/courses",
+      "name": "courses"
+    }
   ],
   "window": {
     "navigationBarBackgroundColor": "@bgColor",
