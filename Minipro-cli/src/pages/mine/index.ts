@@ -1,6 +1,6 @@
 import { defineComponent, ref, reactive } from '@vue-mini/core';
 import { UserInfo, requireAuth, logout, getLocalUserInfo } from '@/utils/auth';
-import { BASE_URL } from '@/app';
+import { BASE_URL, startNotificationPolling, getUnreadCount } from '@/app';
 
 defineComponent(() => {
   const userInfo = ref<UserInfo | null>(null);
@@ -64,6 +64,7 @@ defineComponent(() => {
   // 页面显示时刷新本地用户信息（不重复验证token）
   const onShow = () => {
     refreshLocalUserInfo();
+    startNotificationPolling();
   };
 
   // 显示修改密码模态框
@@ -238,6 +239,13 @@ defineComponent(() => {
     });
   };
 
+  // 跳转到通知页面
+  const goToNotifications = () => {
+    wx.navigateTo({
+      url: '/pages/notifications/index'
+    });
+  };
+
   return {
     userInfo,
     loading,
@@ -257,6 +265,7 @@ defineComponent(() => {
     onConfirmPasswordInput,
     handleChangePassword,
     handleScanQRCode,
-    goHome
+    goHome,
+    goToNotifications,
   };
 });

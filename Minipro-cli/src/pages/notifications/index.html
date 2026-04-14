@@ -1,0 +1,43 @@
+<view class="list-page">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <view class="header-content">
+      <text class="page-title">消息通知</text>
+      <view class="header-buttons">
+        <button class="btn btn-info btn-sm" bindtap="markAllRead">全部已读</button>
+        <button class="btn btn-back btn-sm" bindtap="goBack">返回</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 通知列表 -->
+  <scroll-view scroll-y class="scroll-container" bindscrolltolower="loadMore">
+    <view wx:if="{{notifications.length > 0}}" class="card-list">
+      <view wx:for="{{notifications}}" wx:key="notification_id"
+        class="card notification-card {{item.is_read ? 'notification-read' : 'notification-unread'}}"
+        data-id="{{item.notification_id}}" bindtap="markAsRead">
+        <view class="notification-icon">{{typeIcon(item.type)}}</view>
+        <view class="notification-body">
+          <view class="notification-header">
+            <text class="notification-title">{{item.title}}</text>
+            <text class="notification-time">{{formatTime(item.created_at)}}</text>
+          </view>
+          <text class="notification-content">{{item.content}}</text>
+        </view>
+        <view wx:if="{{!item.is_read}}" class="unread-dot"></view>
+      </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading">
+      <text>正在加载...</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{!loading && notifications.length === 0}}" class="empty-state">
+      <text class="empty-icon">🔔</text>
+      <text class="empty-title">暂无通知</text>
+      <text class="empty-desc">审批状态变更时会自动通知您</text>
+    </view>
+  </scroll-view>
+</view>

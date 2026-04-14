@@ -1,5 +1,5 @@
 import { defineComponent, ref, computed } from '@vue-mini/core';
-import { BASE_URL } from '@/app';
+import { BASE_URL, startNotificationPolling, stopNotificationPolling, getUnreadCount, onUnreadChange } from '@/app';
 import { requireAuth, logout } from '@/utils/auth';
 
 export default defineComponent(() => {
@@ -9,6 +9,7 @@ export default defineComponent(() => {
   const reviewerCount = ref(0);
   const teacherCount = ref(0);
   const courseCount = ref(0);
+  const unreadCount = ref(0);
 
   // 角色显示名称映射 - 与 Web App 对齐
   const roleDisplayName = computed(() => {
@@ -138,6 +139,12 @@ export default defineComponent(() => {
     });
   };
 
+  const goToNotifications = () => {
+    wx.navigateTo({
+      url: '/pages/notifications/index'
+    });
+  };
+
   // 退出登录 - 与 Web App 对齐
   const handleLogout = () => {
     wx.showModal({
@@ -171,6 +178,11 @@ export default defineComponent(() => {
     if (user) {
       userInfo.value = user;
     }
+    unreadCount.value = getUnreadCount();
+    onUnreadChange((count) => {
+      unreadCount.value = count;
+    });
+    startNotificationPolling();
   };
 
   return {
@@ -183,15 +195,15 @@ export default defineComponent(() => {
     reviewerCount,
     teacherCount,
     courseCount,
+    unreadCount,
     goToStudents,
     goToLeaves,
+    goToNotifications,
     goToReviewers,
     goToTeachers,
     goToCourses,
     handleLogout,
     onReady,
-    onShow
+    onShow,
   };
 });
-
-
