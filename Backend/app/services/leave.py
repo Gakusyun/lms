@@ -8,6 +8,7 @@ from app.services.student_course import StudentCourseService
 from app.schemas import LeaveCreate
 from app.services.common import CommonService
 from app.services.audit_log import AuditLogService
+from app.services.notification import NotificationService
 
 
 class LeaveService:
@@ -429,6 +430,9 @@ class LeaveService:
         except Exception:
             pass
 
+        # 审批通过后通知学生
+        NotificationService.notify_leave_status_change(leave, "已批准", session)
+
         return leave
 
     @staticmethod
@@ -472,6 +476,10 @@ class LeaveService:
             detail=f"拒绝请假，意见={audit_remarks}",
             session=session,
         )
+
+        # 拒绝后通知学生
+        NotificationService.notify_leave_status_change(leave, "已拒绝", session)
+
         return leave
 
     @staticmethod
@@ -513,6 +521,9 @@ class LeaveService:
             detail="撤销请假申请",
             session=session,
         )
+
+        NotificationService.notify_leave_status_change(leave, "已撤销", session)
+
         return leave
 
     @staticmethod
