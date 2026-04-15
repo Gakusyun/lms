@@ -3,6 +3,12 @@
 检查管理员账户是否存在
 """
 
+import sys
+import os
+
+# 添加Backend目录到Python路径，使app模块可被导入
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+
 from sqlmodel import Session, select
 from app.database.connection import engine
 from app.models import Admin

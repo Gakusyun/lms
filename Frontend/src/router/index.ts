@@ -80,17 +80,15 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to, _from) => {
   // 如果路由不需要认证，直接通过
   if (to.meta.requiresAuth === false) {
     // 如果已登录，访问登录页时重定向到首页
     const authenticated = await isAuthenticated()
     if (to.name === 'login' && authenticated) {
-      next('/')
-      return
+      return { path: '/' }
     }
-    next()
-    return
+    return true
   }
 
   // 检查是否需要认证的路由
@@ -101,12 +99,11 @@ router.beforeEach(async (to, _from, next) => {
 
     if (!authenticated) {
       // 未登录，重定向到登录页
-      next('/login')
-      return
+      return { path: '/login' }
     }
   }
 
-  next()
+  return true
 })
 
 export default router

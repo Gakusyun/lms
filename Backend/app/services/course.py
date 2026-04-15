@@ -33,6 +33,86 @@ class CourseService:
         return items, total, total_pages
 
     @staticmethod
+    def get_courses_by_ids(
+        course_ids: list,
+        page: int = 1,
+        page_size: int = 20,
+        session: Session = Depends(lambda: None)
+    ):
+        """根据课程ID列表获取课程"""
+        # 构建查询
+        query = select(Course).where(Course.course_id.in_(course_ids))
+        
+        # 计算总数
+        total = session.exec(select(func.count(Course.course_id)).where(Course.course_id.in_(course_ids))).one()
+        
+        # 分页
+        offset = (page - 1) * page_size
+        courses = session.exec(query.offset(offset).limit(page_size)).all()
+        
+        # 计算总页数
+        total_pages = (total + page_size - 1) // page_size
+        
+        # 注入关联数据
+        items = CommonService.inject_relations(
+            session,
+            courses,
+            {"teacher_id": (Teacher, "teacher_id", "teacher_name", "teacher_name")},
+        )
+        
+        # 为每个课程添加选课人数
+        for item in items:
+            enrollment_count = session.exec(
+                select(func.count(StudentCourse.student_id)).where(
+                    StudentCourse.course_id == item["course_id"],
+                    StudentCourse.status == "已选课"
+                )
+            ).one()
+            item["enrollment_count"] = enrollment_count
+        
+        return items, total, total_pages
+
+    @staticmethod
+    def get_courses_by_teacher(
+        teacher_id: int,
+        page: int = 1,
+        page_size: int = 20,
+        session: Session = Depends(lambda: None)
+    ):
+        """获取教师的课程"""
+        # 构建查询
+        query = select(Course).where(Course.teacher_id == teacher_id)
+        
+        # 计算总数
+        total = session.exec(select(func.count(Course.course_id)).where(Course.teacher_id == teacher_id)).one()
+        
+        # 分页
+        offset = (page - 1) * page_size
+        courses = session.exec(query.offset(offset).limit(page_size)).all()
+        
+        # 计算总页数
+        total_pages = (total + page_size - 1) // page_size
+        
+        # 注入关联数据
+        items = CommonService.inject_relations(
+            session,
+            courses,
+            {"teacher_id": (Teacher, "teacher_id", "teacher_name", "teacher_name")},
+        )
+        
+        # 为每个课程添加选课人数
+        for item in items:
+            enrollment_count = session.exec(
+                select(func.count(StudentCourse.student_id)).where(
+                    StudentCourse.course_id == item["course_id"],
+                    StudentCourse.status == "已选课"
+                )
+            ).one()
+            item["enrollment_count"] = enrollment_count
+        
+        return items, total, total_pages
+
+    @staticmethod
     def get_courses_count(session: Session):
         """获取课程数量"""
         return {"courses_count": session.exec(select(func.count(Course.course_id))).one()}

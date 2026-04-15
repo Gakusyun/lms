@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlmodel import Session, select
 
 from app.database.connection import get_session
@@ -11,8 +11,9 @@ router = APIRouter()
 
 
 @router.post("/login", summary="登录")
-def login(user: UserLogin, session: Session = Depends(get_session)):
-    return AuthService.login(user, session)
+def login(user: UserLogin, request: Request, session: Session = Depends(get_session)):
+    client_ip = request.client.host if request.client else None
+    return AuthService.login(user, session, client_ip)
 
 
 @router.get("/login/check")
@@ -99,24 +100,28 @@ def create_admin(
 
 @router.post("/change-password", summary="修改密码")
 def change_password(
+    request: Request,
     current_user: dict = Depends(check_login),
     password_data: ChangePassword = None,
     session: Session = Depends(get_session),
 ):
     """修改密码接口 - 修改自己的密码"""
+    client_ip = request.client.host if request.client else None
     # 从current_user中获取token相关信息，传递user信息给service
-    return AuthService.change_password(current_user, password_data, session, None)
+    return AuthService.change_password(current_user, password_data, session, None, client_ip)
 
 
 @router.post("/change-password/{user_id}", summary="修改指定用户密码")
 def change_user_password(
+    request: Request,
     user_id: int,
     current_user: dict = Depends(check_login),
     password_data: ChangePassword = None,
     session: Session = Depends(get_session),
 ):
     """修改指定用户密码接口 - 仅管理员可用"""
-    return AuthService.change_password(current_user, password_data, session, user_id)
+    client_ip = request.client.host if request.client else None
+    return AuthService.change_password(current_user, password_data, session, user_id, client_ip)
 
 
 @router.post("/register", summary="用户注册")
@@ -150,13 +155,9 @@ def confirm_password_reset(
 
 @router.post("/admin/test-db-connection", summary="测试数据库连接")
 def test_db_connection(
-    current_user: dict = Depends(check_login),
     db_config: dict = None,
-    session: Session = Depends(get_session),
 ):
-    """测试数据库连接接口 - 仅管理员可用"""
-    if current_user["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Only admins can test database connections")
+    """测试数据库连接接口 - 首次启动时无需认证"""
 
     import sqlalchemy
     from sqlalchemy import create_engine
@@ -192,13 +193,9 @@ def test_db_connection(
 
 @router.post("/admin/configure-db", summary="配置数据库")
 def configure_database(
-    current_user: dict = Depends(check_login),
     db_config: dict = None,
-    session: Session = Depends(get_session),
 ):
-    """配置数据库接口 - 仅管理员可用"""
-    if current_user["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Only admins can configure database")
+    """配置数据库接口 - 首次启动时无需认证"""
 
     from app.config.settings import settings
     from app.database.connection import recreate_engine
@@ -213,6 +210,10 @@ def configure_database(
 
     settings.save()
 
-    recreate_engine()
+    new_engine = recreate_engine()
+
+    # 在新数据库上创建所有表
+    from sqlmodel import SQLModel
+    SQLModel.metadata.create_all(new_engine, checkfirst=True)
 
     return {"message": "数据库配置成功"}

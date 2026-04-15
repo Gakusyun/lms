@@ -83,7 +83,7 @@ class StatisticsService:
         
         # 转换为字典格式
         leave_trend = [
-            {"date": result.date.isoformat(), "count": result.count}
+            {"date": str(result.date), "count": result.count}
             for result in results
         ]
         
@@ -181,3 +181,49 @@ class StatisticsService:
         ]
         
         return {"reviewer_performance": reviewer_performance}
+    
+    @staticmethod
+    def get_reviewer_students_statistics(current_user: dict, session: Session):
+        """获取审核员管理的学生统计情况"""
+        obj = current_user
+        
+        # 只有审核员可以查看自己管理的学生统计
+        if obj["role"] != "reviewer":
+            raise HTTPException(status_code=403, detail="Permission denied")
+        
+        # 构建查询，获取审核员管理的学生及其请假情况
+        query = select(
+            Student.student_id,
+            Student.student_name,
+            func.count(Leave.leave_id).label('total_leaves'),
+            func.sum(func.case((Leave.status == "已批准", 1), else_=0)).label('approved_leaves'),
+            func.sum(func.case((Leave.status == "已拒绝", 1), else_=0)).label('rejected_leaves'),
+            func.sum(func.case((Leave.status == "待审批", 1), else_=0)).label('pending_leaves')
+        ).outerjoin(
+            Leave, Student.student_id == Leave.student_id
+        ).where(
+            Student.reviewer_id == obj["id"]
+        ).group_by(
+            Student.student_id, Student.student_name
+        )
+        
+        results = session.exec(query).all()
+        
+        # 转换为字典格式
+        students_statistics = [
+            {
+                "student_id": result.student_id,
+                "student_name": result.student_name,
+                "total_leaves": result.total_leaves,
+                "approved_leaves": result.approved_leaves,
+                "rejected_leaves": result.rejected_leaves,
+                "pending_leaves": result.pending_leaves,
+                "approval_rate": round(result.approved_leaves / result.total_leaves * 100, 2) if result.total_leaves > 0 else 0
+            }
+            for result in results
+        ]
+        
+        # 按请假次数排序
+        students_statistics.sort(key=lambda x: x["total_leaves"], reverse=True)
+        
+        return {"students_statistics": students_statistics}

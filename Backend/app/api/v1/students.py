@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Query, UploadFile, File, Form
-from sqlmodel import Session
+from sqlmodel import Session, select, func
 from typing import Optional
 
 from app.database.connection import get_session
@@ -36,6 +36,15 @@ def students_count(
     session: Session = Depends(get_session),
 ):
     return StudentService.get_students_count(current_user, session)
+
+
+@router.get("/students/next-id")
+def get_next_student_id(
+    current_user: dict = Depends(check_role(["admin", "reviewer"])),
+    session: Session = Depends(get_session),
+):
+    max_id = session.exec(select(func.max(Student.student_id))).one()
+    return {"next_id": (max_id or 0) + 1}
 
 
 @router.get("/students/{student_id}", response_model=Student)

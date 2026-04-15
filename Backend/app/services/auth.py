@@ -51,7 +51,7 @@ class AuthService:
         return getattr(obj, name_field_map.get(role, "name"))
 
     @staticmethod
-    def login(user: UserLogin, session: Session):
+    def login(user: UserLogin, session: Session, client_ip: str = None):
         """用户登录"""
         try:
             logger.info(f"Login attempt for user ID: {user.id}")
@@ -93,7 +93,10 @@ class AuthService:
             AuditLogService.log(
                 current_user={"id": user.id, "role": user_role, "name": user_name},
                 action=AuditAction.LOGIN,
+                target_type="user",
+                target_id=user.id,
                 detail=f"用户登录成功，角色={user_role}",
+                ip_address=client_ip,
                 session=session,
             )
 
@@ -127,7 +130,7 @@ class AuthService:
         return session.exec(select(func.count(Admin.admin_id))).one()
 
     @staticmethod
-    def change_password(current_user: dict, password_data: ChangePassword, session: Session, target_user_id: int = None):
+    def change_password(current_user: dict, password_data: ChangePassword, session: Session, target_user_id: int = None, client_ip: str = None):
         """修改密码"""
         # 验证当前用户角色
         role_model_map = AuthService.get_role_model_map()
@@ -166,6 +169,7 @@ class AuthService:
             target_type="user",
             target_id=target_user_id,
             detail=f"修改密码，目标用户={target_user_id}，角色={target_role}",
+            ip_address=client_ip,
             session=session,
         )
 

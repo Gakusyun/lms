@@ -10,9 +10,37 @@ import GenericFeatureCard from '../components/GenericFeatureCard.vue'
 // 使用组合式函数
 const { data: studentResponse, fetchCount: getStudentCount } = useApiCount<Record<string, number>>('/students/count')
 const { data: leaveResponse, fetchCount: getLeavesCount } = useApiCount<Record<string, number>>('/leaves/count')
-const { data: reviewerResponse, fetchCount: getReviewerCount } = useApiCount<Record<string, number>>('/reviewers/count')
-const { data: teacherResponse, fetchCount: getTeacherCount } = useApiCount<Record<string, number>>('/teachers/count')
 const { data: courseResponse, fetchCount: getCourseCount } = useApiCount<Record<string, number>>('/courses/count')
+
+// 为需要权限的API创建响应式引用
+const reviewerResponse = ref<Record<string, number> | null>(null)
+const teacherResponse = ref<Record<string, number> | null>(null)
+const auditLogResponse = ref<{ total: number } | null>(null)
+
+// 定义获取计数的函数
+const getReviewerCount = async () => {
+  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer') {
+    const api = useApiCount<Record<string, number>>('/reviewers/count')
+    await api.fetchCount()
+    reviewerResponse.value = api.data.value
+  }
+}
+
+const getTeacherCount = async () => {
+  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer' || userInfo.value?.role === 'teacher') {
+    const api = useApiCount<Record<string, number>>('/teachers/count')
+    await api.fetchCount()
+    teacherResponse.value = api.data.value
+  }
+}
+
+const getAuditLogCount = async () => {
+  if (userInfo.value?.role === 'admin') {
+    const api = useApiCount<{ total: number }>('/audit-logs/count')
+    await api.fetchCount()
+    auditLogResponse.value = api.data.value
+  }
+}
 
 const router = useRouter()
 const { goToStudents, goToLeaves, goToReviewers, goToTeachers, goToCourses } = useNavigation()
@@ -100,9 +128,17 @@ const getRoleDisplayName = (role: string | undefined | null) => {
 onMounted(() => {
   getStudentCount()
   getLeavesCount()
-  getReviewerCount()
-  getTeacherCount()
   getCourseCount()
+  
+  // 根据角色获取其他统计数据
+  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer') {
+    getReviewerCount()
+    getTeacherCount()
+  }
+  
+  if (userInfo.value?.role === 'admin') {
+    getAuditLogCount()
+  }
 })
 </script>
 <template>
@@ -166,7 +202,7 @@ onMounted(() => {
               :onClick="goToTeachersList" />
             <GenericFeatureCard title="课程管理" :count="courseResponse?.courses_count || 0" description="设置和管理课程信息"
               :onClick="goToCoursesList" />
-            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="0" description="查看系统操作审计日志"
+            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="auditLogResponse?.total || 0" description="查看系统操作审计日志"
               :onClick="goToAuditLogs" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer'" title="数据统计" :count="0" description="请假趋势与数据可视化分析"
               :onClick="goToStatistics" />

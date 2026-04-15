@@ -10,8 +10,8 @@ from datetime import datetime, timedelta
 import random
 from sqlmodel import Session, select
 
-# 添加当前目录到Python路径
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# 添加Backend目录到Python路径，使app模块可被导入
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 
 from app.database.connection import engine
 from app.models import Admin, Reviewer, Student, Teacher, Course, Leave, StudentCourse, School, Role

@@ -52,3 +52,12 @@ def get_reviewer_performance(
 ):
     """获取审核员绩效统计 - 仅管理员可访问"""
     return StatisticsService.get_reviewer_performance(current_user, session)
+
+
+@router.get("/statistics/reviewers/students")
+def get_reviewer_students_statistics(
+    current_user: dict = Depends(check_role(["reviewer"])),
+    session: Session = Depends(get_session),
+):
+    """获取审核员管理的学生统计情况 - 仅审核员可访问"""
+    return StatisticsService.get_reviewer_students_statistics(current_user, session)

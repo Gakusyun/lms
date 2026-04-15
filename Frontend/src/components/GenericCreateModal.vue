@@ -40,22 +40,37 @@ const fetchOptions = async () => {
   loadingOptions.value = true
   try {
     if (props.type === 'student') {
-      const [reviewersRes, schoolsRes] = await Promise.all([
+      const [reviewersRes, schoolsRes, nextIdRes] = await Promise.all([
         http.get('/reviewers'),
-        http.get('/schools', { params: { page_size: 100 } })
+        http.get('/schools', { params: { page_size: 100 } }),
+        http.get('/students/next-id')
       ])
       reviewers.value = (reviewersRes as any).items || []
       schools.value = (schoolsRes as any).items || []
+      formData.value.student_id = String((nextIdRes as any).next_id || '')
     } else if (props.type === 'reviewer') {
-      const [schoolsRes, rolesRes] = await Promise.all([
+      const [schoolsRes, rolesRes, nextIdRes] = await Promise.all([
         http.get('/schools', { params: { page_size: 100 } }),
-        http.get('/roles', { params: { page_size: 100 } })
+        http.get('/roles', { params: { page_size: 100 } }),
+        http.get('/reviewers/next-id')
       ])
       schools.value = (schoolsRes as any).items || []
       roles.value = (rolesRes as any).items || []
-    } else if (props.type === 'course') {
-      const response = await http.get('/teachers')
+      formData.value.reviewer_id = String((nextIdRes as any).next_id || '')
+    } else if (props.type === 'teacher') {
+      const [response, nextIdRes] = await Promise.all([
+        http.get('/teachers'),
+        http.get('/teachers/next-id')
+      ])
       teachers.value = (response as any).items || []
+      formData.value.teacher_id = String((nextIdRes as any).next_id || '')
+    } else if (props.type === 'course') {
+      const [response, nextIdRes] = await Promise.all([
+        http.get('/teachers'),
+        http.get('/courses/next-id')
+      ])
+      teachers.value = (response as any).items || []
+      formData.value.course_id = String((nextIdRes as any).next_id || '')
     } else if (props.type === 'leave') {
       const response = await http.get('/courses')
       courses.value = (response as any).items || []
@@ -215,10 +230,11 @@ const handleCreate = async () => {
       case 'leave':
         endpoint = '/leaves'
         payload = {
-          student_id: formData.value.student_id,
+          student_id: toInt(formData.value.student_id),
           course_id: formData.value.course_id === 0 ? null : formData.value.course_id,
           leave_date: formData.value.leave_date,
-          leave_hours: formData.value.leave_hours,
+          leave_hours: formData.value.leave_hours ? formData.value.leave_hours.toString() : null,
+          status: '待审批',
           leave_type: formData.value.leave_type || null,
           remarks: formData.value.remarks || null
         }
@@ -265,8 +281,13 @@ const handleCreate = async () => {
         return
     }
 
-    // Validation
-    if (Object.values(payload).some(value => value === '' || value === null)) {
+    // Validation - check required fields per type
+    if (props.type === 'leave') {
+      if (!payload.student_id || !payload.leave_date || !payload.leave_hours || payload.leave_hours <= 0) {
+        error.value = '请填写所有必填字段（学生ID、请假日期、请假课时，课时需大于0）'
+        return
+      }
+    } else if (Object.values(payload).some(value => value === '' || value === null)) {
       error.value = '请填写所有必填字段'
       return
     }
@@ -313,6 +334,13 @@ watch(() => props.type, (newType) => {
     if (newType === 'leave' && currentUserRole.value === 'student' && currentUserId.value) {
       formData.value.student_id = String(currentUserId.value)
     }
+})
+
+// Also auto-fill when modal opens
+watch(() => props.show, (newValue) => {
+  if (newValue && props.type === 'leave' && currentUserRole.value === 'student' && currentUserId.value) {
+    formData.value.student_id = String(currentUserId.value)
+  }
 })
 </script>
 
@@ -379,7 +407,7 @@ watch(() => props.type, (newType) => {
             <div class="form-row">
               <div class="form-group">
                 <label for="leave_hours">请假课时 *</label>
-                <input type="number" id="leave_hours" v-model="formData.leave_hours" required placeholder="数字" />
+                <input type="number" id="leave_hours" v-model="formData.leave_hours" required placeholder="数字" min="1" />
               </div>
               <div class="form-group">
                 <label for="leave_type">请假类型</label>
@@ -408,8 +436,8 @@ watch(() => props.type, (newType) => {
           <form v-else-if="type === 'student'" @submit.prevent="handleCreate" class="create-form">
             <div class="form-row">
               <div class="form-group">
-                <label>学号 *</label>
-                <input type="number" v-model="formData.student_id" required min="1" />
+                <label>学号</label>
+                <input type="text" v-model="formData.student_id" readonly class="readonly-input" />
               </div>
               <div class="form-group">
                 <label>姓名 *</label>
@@ -460,8 +488,8 @@ watch(() => props.type, (newType) => {
           <form v-else-if="type === 'reviewer'" @submit.prevent="handleCreate" class="create-form">
             <div class="form-row">
               <div class="form-group">
-                <label>审核人ID *</label>
-                <input type="number" v-model="formData.reviewer_id" required min="1" />
+                <label>审核人ID</label>
+                <input type="text" v-model="formData.reviewer_id" readonly class="readonly-input" />
               </div>
               <div class="form-group">
                 <label>姓名 *</label>
@@ -508,8 +536,8 @@ watch(() => props.type, (newType) => {
           <form v-else-if="type === 'teacher'" @submit.prevent="handleCreate" class="create-form">
             <div class="form-row">
               <div class="form-group">
-                <label>教师ID *</label>
-                <input type="number" v-model="formData.teacher_id" required min="1" />
+                <label>教师ID</label>
+                <input type="text" v-model="formData.teacher_id" readonly class="readonly-input" />
               </div>
               <div class="form-group">
                 <label>姓名 *</label>
@@ -533,8 +561,8 @@ watch(() => props.type, (newType) => {
           <form v-else-if="type === 'course'" @submit.prevent="handleCreate" class="create-form">
             <div class="form-row">
               <div class="form-group">
-                <label>课程ID *</label>
-                <input type="text" v-model="formData.course_id" required />
+                <label>课程ID</label>
+                <input type="text" v-model="formData.course_id" readonly class="readonly-input" />
               </div>
               <div class="form-group">
                 <label>课程名称 *</label>

@@ -357,6 +357,16 @@ export const getUserStatistics = async () => {
   }
 }
 
+export const getReviewerStudentsStatistics = async () => {
+  try {
+    const response = await http.get('/statistics/reviewers/students')
+    return response
+  } catch (error) {
+    console.error('获取审核员学生统计失败:', error)
+    throw error
+  }
+}
+
 // 通知API
 export const getNotifications = async (params?: any) => {
   try {
