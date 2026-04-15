@@ -74,16 +74,18 @@ const fetchStatistics = async () => {
     let userData: any = {}
     let reviewerStudentsData: any = {}
     
+    // 根据用户角色和响应长度处理数据
     if (userInfo.value?.role === 'admin' && responses.length >= 3) {
       userData = responses[2] as any
     }
     
-    if (userInfo.value?.role === 'reviewer') {
-      if (userInfo.value?.role === 'admin' && responses.length >= 4) {
-        reviewerStudentsData = responses[3] as any
-      } else if (responses.length >= 3) {
-        reviewerStudentsData = responses[2] as any
-      }
+    // 检查是否需要处理审核员学生统计数据
+    const isReviewer = userInfo.value?.role === 'reviewer'
+    const hasReviewerData = isReviewer && responses.length >= (userInfo.value?.role === 'admin' ? 4 : 3)
+    
+    if (hasReviewerData) {
+      const reviewerDataIndex = userInfo.value?.role === 'admin' ? 3 : 2
+      reviewerStudentsData = responses[reviewerDataIndex] as any
     }
 
     leaveStats.value = statsData?.leave_statistics || []

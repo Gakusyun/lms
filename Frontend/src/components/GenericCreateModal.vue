@@ -148,7 +148,7 @@ const getDefaultFormData = () => {
 }
 
 // Form data
-const formData = ref(getDefaultFormData())
+const formData = ref<any>(getDefaultFormData())
 
 // Helper: safely parse int from form data
 const toInt = (v: any): number | null => {
