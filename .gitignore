@@ -11,3 +11,5 @@ CLAUDE.md
 .claude
 
 logs
+
+.playwright-cli/

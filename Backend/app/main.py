@@ -84,7 +84,13 @@ async def global_exception_handler(request: Request, exc: Exception):
     logger.error(traceback.format_exc())
     return JSONResponse(
         status_code=500,
-        content={"detail": "内部服务器错误，请稍后再试"}
+        content={"detail": "内部服务器错误，请稍后再试"},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
     )
 
 
@@ -94,7 +100,13 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     logger.warning(f"HTTP异常: {exc.status_code} - {exc.detail}")
     return JSONResponse(
         status_code=exc.status_code,
-        content={"detail": exc.detail}
+        content={"detail": exc.detail},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
     )
 
 # 添加CORS中间件

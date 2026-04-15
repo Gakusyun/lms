@@ -39,7 +39,6 @@ def read_courses(
         course_ids = [sc.course_id for sc in student_courses]
         
         # 获取这些课程
-        from app.services.course import CourseService
         items, total, total_pages = CourseService.get_courses_by_ids(course_ids, page, page_size, session)
         return PaginatedResponse(
             items=items,
@@ -50,7 +49,6 @@ def read_courses(
         )
     elif current_user["role"] == "teacher":
         # 教师只能看到自己教的课
-        from app.services.course import CourseService
         items, total, total_pages = CourseService.get_courses_by_teacher(current_user["id"], page, page_size, session)
         return PaginatedResponse(
             items=items,
