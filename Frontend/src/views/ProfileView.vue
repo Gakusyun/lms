@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { changePassword } from '../api/index'
+import { changePassword, getData } from '../api/index'
+import http from '../utils/http'
 
 const router = useRouter()
 
@@ -51,6 +52,49 @@ const goHome = () => {
 const logout = () => {
   localStorage.clear()
   router.push('/login')
+}
+
+// 修改姓名
+const isEditingName = ref(false)
+const editNameValue = ref('')
+const nameError = ref('')
+const nameSuccess = ref('')
+
+const startEditName = () => {
+  editNameValue.value = userInfo.value.name
+  isEditingName.value = true
+  nameError.value = ''
+  nameSuccess.value = ''
+}
+
+const cancelEditName = () => {
+  isEditingName.value = false
+  editNameValue.value = ''
+  nameError.value = ''
+}
+
+const handleSaveName = async () => {
+  if (!editNameValue.value.trim()) {
+    nameError.value = '姓名不能为空'
+    return
+  }
+
+  try {
+    nameError.value = ''
+    nameSuccess.value = ''
+    const response = await http.put('/profile', { name: editNameValue.value.trim() })
+    if (response?.name) {
+      userInfo.value.name = response.name
+      localStorage.setItem('name', response.name)
+      nameSuccess.value = '姓名修改成功！'
+      setTimeout(() => {
+        isEditingName.value = false
+        nameSuccess.value = ''
+      }, 1500)
+    }
+  } catch (error: any) {
+    nameError.value = error.response?.data?.detail || '修改失败'
+  }
 }
 
 // 打开修改密码模态框
@@ -160,7 +204,27 @@ onMounted(() => {
           </div>
           <div class="info-item">
             <label>姓名</label>
-            <span>{{ userInfo.name }}</span>
+            <div v-if="!isEditingName" class="info-value-group">
+              <span>{{ userInfo.name }}</span>
+              <button @click="startEditName" class="btn-edit">修改</button>
+            </div>
+            <div v-else class="info-edit-group">
+              <input
+                type="text"
+                v-model="editNameValue"
+                class="form-input form-input-sm"
+                placeholder="请输入新姓名"
+                maxlength="20"
+              />
+              <button @click="handleSaveName" class="btn-save">保存</button>
+              <button @click="cancelEditName" class="btn-cancel">取消</button>
+            </div>
+          </div>
+          <div v-if="nameError" class="alert alert-danger" style="margin-top: -0.5rem;">
+            {{ nameError }}
+          </div>
+          <div v-if="nameSuccess" class="alert alert-success" style="margin-top: -0.5rem;">
+            {{ nameSuccess }}
           </div>
         </div>
 
@@ -395,6 +459,51 @@ onMounted(() => {
 .info-item span {
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.info-value-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.info-edit-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.form-input-sm {
+  padding: 0.35rem 0.5rem;
+  font-size: var(--text-sm);
+  width: 140px;
+}
+
+.btn-edit, .btn-save, .btn-cancel {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-medium);
+  background: var(--gray-50);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.btn-edit:hover, .btn-save:hover, .btn-cancel:hover {
+  background: var(--gray-100);
+  color: var(--text-primary);
+}
+
+.btn-save {
+  background-color: var(--primary-50);
+  color: var(--primary-700);
+  border-color: var(--primary-200);
+}
+
+.btn-save:hover {
+  background-color: var(--primary-100);
 }
 
 .profile-actions {

@@ -428,3 +428,43 @@ export const exportStudentsJSON = async () => {
     throw error
   }
 }
+
+// 销假API - 辅导员确认学生已返校报到
+export const closeOffLeave = async (leaveId: number) => {
+  try {
+    const response = await http.post(`/leaves/close-off/${leaveId}`)
+    return response
+  } catch (error) {
+    console.error('销假失败:', error)
+    throw error
+  }
+}
+
+// 上传证明文件API
+export const uploadLeaveFile = async (file: File) => {
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    // 注意：不设置 Content-Type，让 Axios 自动添加带 boundary 的 multipart/form-data
+    const response = await http.post('/leaves/upload', formData)
+    return response
+  } catch (error) {
+    console.error('上传文件失败:', error)
+    throw error
+  }
+}
+
+// 上传请假证明文件到指定请假条API
+export const uploadLeaveFiles = async (leaveId: number, files: File[]) => {
+  try {
+    const formData = new FormData()
+    files.forEach((file) => {
+      formData.append('files', file)
+    })
+    const response = await http.post(`/leaves/${leaveId}/upload`, formData)
+    return response
+  } catch (error) {
+    console.error('上传文件失败:', error)
+    throw error
+  }
+}

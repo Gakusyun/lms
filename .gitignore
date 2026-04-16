@@ -13,3 +13,6 @@ CLAUDE.md
 logs
 
 .playwright-cli/
+.playwright/
+
+*.db

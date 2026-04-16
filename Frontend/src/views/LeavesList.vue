@@ -1,13 +1,47 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import { formatDate } from '../utils/formatters'
-import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave, getLeaveQRCode } from '../api'
+import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave, getLeaveQRCode, closeOffLeave } from '../api'
+import http from '../utils/http'
 import type { Leave, LeaveCreate, Course, StudentCourseResponse } from '../types'
 
 // 课程列表
 const courses = ref<Course[]>([])
 const coursesLoading = ref(false)
+const listKey = ref(0) // 用于刷新GenericList
+
+// 审核员Tab状态 - 书记/学工处默认显示"全院"，辅导员默认显示"我的"
+const reviewerTab = ref<'mine' | 'school'>('school')
+
+// 全院列表（书记/学工处用）
+const schoolLeaves = ref<any[]>([])
+const schoolLoading = ref(false)
+const schoolTotal = ref(0)
+const schoolError = ref('')
+
+const fetchSchoolLeaves = async () => {
+  if (currentUserRole !== 'reviewer') return
+  try {
+    schoolLoading.value = true
+    schoolError.value = ''
+    const res = await http.get('/leaves?page=1&page_size=100&scope=school') as any
+    schoolLeaves.value = res?.items || []
+    schoolTotal.value = res?.total || 0
+  } catch (err: any) {
+    schoolError.value = err.message || '获取全院请假失败'
+  } finally {
+    schoolLoading.value = false
+  }
+}
+
+// 书记/学工处切换Tab时拉取数据
+const switchTab = (tab: 'mine' | 'school') => {
+  reviewerTab.value = tab
+  if (tab === 'school') {
+    fetchSchoolLeaves()
+  }
+}
 
 // 编辑请假条相关状态
 const showEditModal = ref(false)
@@ -34,6 +68,13 @@ const auditForm = reactive({
 // 获取当前用户信息
 const currentUserId = parseInt(localStorage.getItem('id') || '0')
 const currentUserRole = localStorage.getItem('role') || ''
+
+// 页面加载时自动获取全院数据（如果默认显示全院tab）
+onMounted(() => {
+  if (currentUserRole === 'reviewer' && reviewerTab.value === 'school') {
+    fetchSchoolLeaves()
+  }
+})
 
 // 创建请假条表单数据(用于编辑)
 const leaveForm = reactive<LeaveCreate>({
@@ -259,6 +300,19 @@ const handleCancelLeave = async (leave: Leave) => {
   }
 }
 
+// 销假 - 辅导员确认学生已返校报到
+const handleCloseOff = async (leave: Leave) => {
+  if (!confirm(`确定要对该请假执行销假操作吗？\n学生: ${leave.student_name}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}`)) return
+
+  try {
+    await closeOffLeave(leave.leave_id)
+    listKey.value++
+  } catch (error: any) {
+    console.error('销假失败:', error)
+    alert(error.response?.data?.detail || '销假失败')
+  }
+}
+
 // 判断是否可以编辑（学生只能编辑自己的待审批请假条）
 const canEdit = (leave: Leave): boolean => {
   return currentUserRole === 'student' && leave.student_id === currentUserId && leave.status === '待审批'
@@ -277,6 +331,11 @@ const canAudit = (leave: Leave): boolean => {
 const canCancel = (leave: Leave): boolean => {
   return (currentUserRole === 'student' && leave.student_id === currentUserId && leave.status === '待审批') ||
     currentUserRole === 'admin'
+}
+
+// 判断是否可以销假（辅导员/书记/管理员可以对已批准的请假执行销假）
+const canCloseOff = (leave: Leave): boolean => {
+  return leave.status === '已批准' && (currentUserRole === 'reviewer' || currentUserRole === 'admin')
 }
 
 // 展示二维码凭证
@@ -306,6 +365,38 @@ const closeQRModal = () => {
   qrError.value = ''
 }
 
+// 判断是否可以下载证明材料
+const canDownloadMaterials = (leave: Leave): boolean => {
+  return !!(leave.materials && leave.materials.trim())
+}
+
+// 下载证明材料
+const downloadMaterials = (leave: Leave) => {
+  if (!leave.materials) return
+  const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : ''
+  // 实际文件存储在 /uploads/ 下，materials 字段存的是相对路径（如 uploads/xxx.png 或请假材料.pdf）
+  let filePath = leave.materials.startsWith('/') ? leave.materials : `/${leave.materials}`
+  // 如果路径不以 uploads/ 开头，补上前缀（兼容测试数据中直接存文件名的老数据）
+  if (!filePath.startsWith('/uploads/')) {
+    filePath = `/uploads${filePath}`
+  }
+  const url = `${baseUrl}${filePath}`
+  window.open(url, '_blank')
+}
+
+// 格式化材料字段为可点击链接
+const formatMaterials = (value: string): string => {
+  if (!value || !value.trim()) return '-'
+  const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : ''
+  return value.split(',').map(f => f.trim()).filter(Boolean).map(fileName => {
+    let filePath = fileName.startsWith('/') ? fileName : `/${fileName}`
+    if (!filePath.startsWith('/uploads/')) {
+      filePath = `/uploads${filePath}`
+    }
+    return `<a href="${baseUrl}${filePath}" target="_blank" class="material-link">${fileName.split('/').pop()}</a>`
+  }).join('<br>')
+}
+
 // 刷新数据的函数
 const refreshData = () => {
   console.log('数据已刷新')
@@ -314,7 +405,8 @@ const refreshData = () => {
 
 <template>
   <div class="leaves-page">
-    <GenericList endpoint="/leaves" title="请假条列表" item-label="张请假条" :show-actions="true" :show-create="true" create-type="leave"
+    <!-- 审核员视图 -->
+    <GenericList v-if="currentUserRole === 'reviewer'" :key="listKey" endpoint="/leaves" title="请假条列表" item-label="张请假条" :show-actions="true" :show-create="false"
       :columns="[
         { key: 'leave_id', label: '请假ID' },
         { key: 'student_name', label: '学生名称' },
@@ -331,7 +423,12 @@ const refreshData = () => {
           label: '状态'
         },
         { key: 'reviewer_name', label: '审核人姓名' },
-        { key: 'audit_remarks', label: '审核意见' }
+        { key: 'audit_remarks', label: '审核意见' },
+        {
+          key: 'materials',
+          label: '证明材料',
+          formatter: formatMaterials
+        }
       ]">
       <template #actions="{ item }">
         <div class="action-buttons">
@@ -344,8 +441,126 @@ const refreshData = () => {
           <button v-if="canCancel(item)" @click="handleCancelLeave(item)" class="btn btn-danger btn-sm">
             撤销
           </button>
+          <button v-if="canCloseOff(item)" @click="handleCloseOff(item)" class="btn btn-success btn-sm">
+            销假
+          </button>
+          <button v-if="canDownloadMaterials(item)" @click="downloadMaterials(item)" class="btn btn-info btn-sm">
+            下载材料
+          </button>
+        </div>
+      </template>
+    </GenericList>
+
+    <!-- 学生视图 -->
+    <GenericList v-else-if="currentUserRole === 'student'" :key="listKey" endpoint="/leaves" title="我的请假条" item-label="张请假条" :show-actions="true" :show-create="true" create-type="leave"
+      :columns="[
+        { key: 'leave_id', label: '请假ID' },
+        { key: 'leave_type', label: '请假类型' },
+        { key: 'leave_hours', label: '请假课时' },
+        {
+          key: 'leave_date',
+          label: '请假时间',
+          formatter: formatDate
+        },
+        { key: 'remarks', label: '备注' },
+        {
+          key: 'status',
+          label: '状态'
+        },
+        { key: 'reviewer_name', label: '审核人姓名' },
+        { key: 'audit_remarks', label: '审核意见' },
+        { key: 'materials', label: '证明材料' }
+      ]">
+      <template #actions="{ item }">
+        <div class="action-buttons">
+          <button v-if="canEdit(item)" @click="openEditModal(item)" class="btn btn-warning btn-sm">
+            修改
+          </button>
+          <button v-if="canCancel(item)" @click="handleCancelLeave(item)" class="btn btn-danger btn-sm">
+            撤销
+          </button>
           <button v-if="item.status === '已批准'" @click="showQRCode(item)" class="btn btn-info btn-sm">
             查看凭证
+          </button>
+        </div>
+      </template>
+    </GenericList>
+
+    <!-- 管理员视图 -->
+    <GenericList v-else-if="currentUserRole === 'admin'" :key="listKey" endpoint="/leaves" title="请假条列表" item-label="张请假条" :show-actions="true" :show-create="false"
+      :columns="[
+        { key: 'leave_id', label: '请假ID' },
+        { key: 'student_name', label: '学生名称' },
+        { key: 'leave_type', label: '请假类型' },
+        { key: 'leave_hours', label: '请假课时' },
+        {
+          key: 'leave_date',
+          label: '请假时间',
+          formatter: formatDate
+        },
+        { key: 'remarks', label: '备注' },
+        {
+          key: 'status',
+          label: '状态'
+        },
+        { key: 'reviewer_name', label: '审核人姓名' },
+        { key: 'audit_remarks', label: '审核意见' },
+        {
+          key: 'materials',
+          label: '证明材料',
+          formatter: formatMaterials
+        }
+      ]">
+      <template #actions="{ item }">
+        <div class="action-buttons">
+          <button v-if="canAudit(item)" @click="openAuditModal(item)" class="btn btn-primary btn-sm">
+            审核
+          </button>
+          <button v-if="item.status === '已批准'" @click="showQRCode(item)" class="btn btn-info btn-sm">
+            查看凭证
+          </button>
+          <button v-if="canCloseOff(item)" @click="handleCloseOff(item)" class="btn btn-success btn-sm">
+            销假
+          </button>
+          <button v-if="canDownloadMaterials(item)" @click="downloadMaterials(item)" class="btn btn-info btn-sm">
+            下载材料
+          </button>
+        </div>
+      </template>
+    </GenericList>
+
+    <!-- 教师视图 -->
+    <GenericList v-else-if="currentUserRole === 'teacher'" :key="listKey" endpoint="/leaves" title="请假条列表" item-label="张请假条" :show-actions="true" :show-create="false"
+      :columns="[
+        { key: 'leave_id', label: '请假ID' },
+        { key: 'student_name', label: '学生名称' },
+        { key: 'leave_type', label: '请假类型' },
+        { key: 'leave_hours', label: '请假课时' },
+        {
+          key: 'leave_date',
+          label: '请假时间',
+          formatter: formatDate
+        },
+        { key: 'remarks', label: '备注' },
+        {
+          key: 'status',
+          label: '状态'
+        },
+        { key: 'reviewer_name', label: '审核人姓名' },
+        { key: 'audit_remarks', label: '审核意见' },
+        {
+          key: 'materials',
+          label: '证明材料',
+          formatter: formatMaterials
+        }
+      ]">
+      <template #actions="{ item }">
+        <div class="action-buttons">
+          <button v-if="item.status === '已批准'" @click="showQRCode(item)" class="btn btn-info btn-sm">
+            查看凭证
+          </button>
+          <button v-if="canDownloadMaterials(item)" @click="downloadMaterials(item)" class="btn btn-info btn-sm">
+            下载材料
           </button>
         </div>
       </template>
@@ -711,6 +926,20 @@ const refreshData = () => {
   background-color: #0284c7;
 }
 
+.btn-success {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
 .qr-container {
   padding: var(--spacing-lg);
   text-align: center;
@@ -775,5 +1004,48 @@ const refreshData = () => {
   .modal-footer button {
     width: 100%;
   }
+}
+
+/* 审核员Tab切换 */
+.reviewer-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-sm);
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tab-btn:hover {
+  background: var(--gray-50);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: var(--primary-600);
+  color: white;
+}
+
+.material-link {
+  color: var(--primary-600, #2563eb);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.material-link:hover {
+  color: var(--primary-700, #1d4ed8);
 }
 </style>

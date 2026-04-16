@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, Query, Body
+from fastapi import APIRouter, Depends, Query, Body, UploadFile, File, Request
 from sqlmodel import Session
 
 from app.database.connection import get_session
@@ -17,9 +17,10 @@ def read_leaves(
     current_user: dict = Depends(check_login),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
+    scope: str = Query(None, description="school:返回本院待审批(书记/学工处用)"),
     session: Session = Depends(get_session),
 ):
-    items, total, total_pages = LeaveService.get_leaves(current_user, page, page_size, session)
+    items, total, total_pages = LeaveService.get_leaves(current_user, page, page_size, session, scope)
     return PaginatedResponse(
         items=items,
         total=total,
@@ -180,3 +181,34 @@ def verify_qr_code(
         from fastapi import HTTPException
         raise HTTPException(status_code=400, detail="qr_content is required")
     return QRCodeService.verify_qr(qr_content, session)
+
+
+@router.post("/leaves/close-off/{leave_id}", response_model=Leave)
+def close_off_leave(
+    leave_id: int,
+    current_user: dict = Depends(check_role(["admin", "reviewer"])),
+    request: Request = None,
+    session: Session = Depends(get_session),
+):
+    """销假 - 辅导员确认学生已返校报到"""
+    ip_address = request.client.host if request else None
+    return LeaveService.close_off_leave(current_user, leave_id, session, ip_address)
+
+
+@router.post("/leaves/upload")
+async def upload_leave_file(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(check_login),
+):
+    """上传请假证明文件（独立上传）"""
+    return await LeaveService.upload_file(file)
+
+
+@router.post("/leaves/{leave_id}/upload")
+async def upload_leave_files(
+    leave_id: int,
+    files: List[UploadFile] = File(...),
+    current_user: dict = Depends(check_login),
+):
+    """上传请假证明文件（关联到请假条，使用leave_id作为文件夹）"""
+    return await LeaveService.upload_leave_files(leave_id, files)

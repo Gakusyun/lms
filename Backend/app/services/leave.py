@@ -1,31 +1,147 @@
+import re
+import os
 from sqlmodel import Session, select, func
-from fastapi import Depends, Query, HTTPException
+from fastapi import Depends, Query, HTTPException, UploadFile, File
 from datetime import datetime, timedelta
 from typing import List
 
-from app.models import Leave, Student, Reviewer, Teacher, Course, AuditAction
+from app.models import Leave, Student, Reviewer, Teacher, Course, School, Role, AuditAction
 from app.services.student_course import StudentCourseService
 from app.schemas import LeaveCreate
 from app.services.common import CommonService
 from app.services.audit_log import AuditLogService
 from app.services.notification import NotificationService
 
+# 上传文件存储目录
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# 审批层级对应的课时阈值
+APPROVAL_LEVEL_1_THRESHOLD = 8    # ≤8课时：辅导员审批
+APPROVAL_LEVEL_2_THRESHOLD = 56   # 8-56课时：书记审批
+
+
+def get_reviewer_role_name(reviewer: Reviewer, session: Session) -> str:
+    """获取审核员的角色名称"""
+    if not reviewer or not reviewer.role_id:
+        return ""
+    role = session.exec(select(Role).where(Role.role_id == reviewer.role_id)).first()
+    return role.role_name if role else ""
+
+
+def parse_leave_hours(leave_hours_str) -> float:
+    """从leave_hours字符串中解析出数字（支持 '8'、'8课时' 等格式）"""
+    if not leave_hours_str:
+        return 0
+    try:
+        return float(str(leave_hours_str))
+    except (ValueError, TypeError):
+        # 尝试从字符串中提取数字
+        match = re.search(r'[\d.]+', str(leave_hours_str))
+        return float(match.group()) if match else 0
+
+
+def get_reviewer_role_name(reviewer, session: Session) -> str:
+    """获取审核员的职务名称"""
+    if reviewer.role_id:
+        role = session.exec(
+            select(Role).where(Role.role_id == reviewer.role_id)
+        ).first()
+        if role:
+            return role.role_name
+    return ""
+
+
+def get_reviewer_school_id(reviewer) -> int:
+    """获取审核员的院系ID"""
+    return reviewer.school_id or 0
+
 
 class LeaveService:
     @staticmethod
     def get_leaves(
         current_user: dict,
-        page: int = Query(1, ge=1),
-        page_size: int = Query(20, ge=1, le=100),
-        session: Session = Depends(lambda: None),
+        page: int = 1,
+        page_size: int = 20,
+        session: Session = None,
+        scope: str = None,
     ):
-        """分页获取请假记录"""
+        """分页获取请假记录
+        scope=school: 书记/学工处查看本院所有待审批（可代审）
+        """
         query = select(Leave)
 
+        # scope=school: 本院所有待审批（书记/学工处代审用）
+        if scope == "school" and current_user["role"] == "reviewer":
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
+            ).first()
+            if reviewer:
+                role_name = get_reviewer_role_name(reviewer, session)
+                reviewer_school_id = get_reviewer_school_id(reviewer)
+                if "书记" in role_name:
+                    # 书记：看本学院所有请假（所有状态）
+                    school_student_ids = session.exec(
+                        select(Student.student_id).where(Student.school_id == reviewer_school_id)
+                    ).all()
+                    if school_student_ids:
+                        query = query.where(Leave.student_id.in_(school_student_ids))
+                    else:
+                        query = query.where(Leave.leave_id == -1)
+                elif "学工处" in role_name:
+                    # 学工处：看全校所有请假（所有状态）
+                    pass  # 不过滤状态
+                else:
+                    # 辅导员不看scope=school
+                    query = query.where(Leave.leave_id == -1)
+            else:
+                query = query.where(Leave.leave_id == -1)
+
+            # 手动分页
+            offset = (page - 1) * page_size
+            all_leaves = session.exec(query.order_by(Leave.leave_date.desc())).all()
+            total = len(all_leaves)
+            total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+            leaves = all_leaves[offset:offset + page_size]
+
+            items = CommonService.inject_relations(
+                session, leaves,
+                {
+                    "student_id": (Student, "student_id", "student_name", "student_name"),
+                    "reviewer_id": (Reviewer, "reviewer_id", "reviewer_name", "reviewer_name"),
+                    "teacher_id": (Teacher, "teacher_id", "teacher_name", "teacher_name"),
+                    "guarantee_student_id": (Student, "student_id", "student_name", "guarantee_student_name"),
+                },
+            )
+            for item in items:
+                item.pop("password", None) if "password" in item else None
+            return items, total, total_pages
+
+        # 普通查询（非scope=school）
         if current_user["role"] == "student":
             query = query.where(Leave.student_id == current_user["id"])
         elif current_user["role"] == "reviewer":
-            query = query.where(Leave.reviewer_id == current_user["id"])
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
+            ).first()
+            role_name = get_reviewer_role_name(reviewer, session) if reviewer else ""
+            reviewer_school_id = get_reviewer_school_id(reviewer) if reviewer else 0
+
+            if "辅导员" in role_name:
+                # 辅导员只看自己直属学生的请假
+                query = query.where(Leave.reviewer_id == current_user["id"])
+            elif "书记" in role_name:
+                # 书记看本学院所有请假
+                school_student_ids = session.exec(
+                    select(Student.student_id).where(Student.school_id == reviewer_school_id)
+                ).all()
+                if school_student_ids:
+                    query = query.where(Leave.student_id.in_(school_student_ids))
+                else:
+                    query = query.where(Leave.student_id == -1)  # no results
+            else:
+                # 学工处/其他角色看全校请假
+                pass  # no filter
         elif current_user["role"] == "teacher":
             course_ids = session.exec(
                 select(Course.course_id).where(Course.teacher_id == current_user["id"])
@@ -43,7 +159,24 @@ class LeaveService:
         if current_user["role"] == "student":
             total_stmt = total_stmt.where(Leave.student_id == current_user["id"])
         elif current_user["role"] == "reviewer":
-            total_stmt = total_stmt.where(Leave.reviewer_id == current_user["id"])
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
+            ).first()
+            role_name = get_reviewer_role_name(reviewer, session) if reviewer else ""
+            reviewer_school_id = get_reviewer_school_id(reviewer) if reviewer else 0
+
+            if "辅导员" in role_name:
+                total_stmt = total_stmt.where(Leave.reviewer_id == current_user["id"])
+            elif "书记" in role_name:
+                school_student_ids = session.exec(
+                    select(Student.student_id).where(Student.school_id == reviewer_school_id)
+                ).all()
+                if school_student_ids:
+                    total_stmt = total_stmt.where(Leave.student_id.in_(school_student_ids))
+                else:
+                    total_stmt = total_stmt.where(Leave.student_id == -1)
+            else:
+                pass
         elif current_user["role"] == "teacher":
             course_ids = session.exec(
                 select(Course.course_id).where(Course.teacher_id == current_user["id"])
@@ -92,9 +225,29 @@ class LeaveService:
                 select(func.count(Leave.leave_id)).where(Leave.student_id == current_user["id"])
             ).one()
         elif current_user["role"] == "reviewer":
-            count = session.exec(
-                select(func.count(Leave.leave_id)).where(Leave.reviewer_id == current_user["id"])
-            ).one()
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
+            ).first()
+            role_name = get_reviewer_role_name(reviewer, session) if reviewer else ""
+            reviewer_school_id = get_reviewer_school_id(reviewer) if reviewer else 0
+
+            if "辅导员" in role_name:
+                count = session.exec(
+                    select(func.count(Leave.leave_id)).where(Leave.reviewer_id == current_user["id"])
+                ).one()
+            elif "书记" in role_name:
+                school_student_ids = session.exec(
+                    select(Student.student_id).where(Student.school_id == reviewer_school_id)
+                ).all()
+                if school_student_ids:
+                    count = session.exec(
+                        select(func.count(Leave.leave_id)).where(Leave.student_id.in_(school_student_ids))
+                    ).one()
+                else:
+                    count = 0
+            else:
+                # 学工处/其他看全校
+                count = session.exec(select(func.count(Leave.leave_id))).one()
         elif current_user["role"] == "teacher":
             course_ids = session.exec(
                 select(Course.course_id).where(Course.teacher_id == current_user["id"])
@@ -176,7 +329,7 @@ class LeaveService:
                 detail=f"请假频次超限：该学生近30天已有 {recent_leaves_count} 次请假记录，请联系审核员"
             )
 
-        # 2.4 紧急请假担保人关联校验
+        # 2.4 紧急请假担保人关联校验：被担保人和担保人都需要在有效期内
         if leave_dict.get("guarantee_student_id"):
             guarantee_student = session.exec(
                 select(Student).where(Student.student_id == leave_dict["guarantee_student_id"])
@@ -191,28 +344,28 @@ class LeaveService:
                     status_code=400,
                     detail="担保学生无担保权限或权限已过期"
                 )
+            # 被担保学生本人也需要有有效的担保权限
+            if not student.guarantee_permission or student.guarantee_permission < datetime.now():
+                raise HTTPException(
+                    status_code=400,
+                    detail="你当前无担保权限或权限已过期，不能发起紧急请假"
+                )
 
-        # 2.3 时长分级审批路由：按请假时长分配不同审批层级
-        leave_hours_str = leave_dict.get("leave_hours")
-        leave_hours = 0
-        try:
-            leave_hours = float(leave_hours_str) if leave_hours_str else 0
-        except (ValueError, TypeError):
-            leave_hours = 0
+        # 2.3 时长分级审批路由：按请假课时分配不同审批层级
+        # ≤8课时：辅导员审批 | 8-56课时：书记审批 | >56课时：学工处审批
+        leave_hours = parse_leave_hours(leave_dict.get("leave_hours"))
 
-        if leave_hours <= 4:
-            # ≤4小时：一级审批（审核员直接审批）
+        if leave_hours <= APPROVAL_LEVEL_1_THRESHOLD:
             leave_dict["approval_level"] = 1
-        elif leave_hours <= 24:
-            # 4-24小时(含)：二级审批，需管理员确认
+        elif leave_hours <= APPROVAL_LEVEL_2_THRESHOLD:
             leave_dict["approval_level"] = 2
         else:
-            # >24小时：三级审批，标记为需重点关注
             leave_dict["approval_level"] = 3
 
         # 二级及以上审批时，记录备注提示
         if leave_dict["approval_level"] >= 2:
-            level_msg = f"请假{leave_hours}小时，触发{leave_dict['approval_level']}级审批"
+            level_labels = {2: "学院书记", 3: "学工处"}
+            level_msg = f"请假{leave_hours}课时，需{level_labels[leave_dict['approval_level']]}审批"
             existing_remarks = leave_dict.get("remarks") or ""
             if level_msg not in existing_remarks:
                 leave_dict["remarks"] = f"{existing_remarks}[{level_msg}]".strip() if existing_remarks else f"[{level_msg}]"
@@ -374,7 +527,7 @@ class LeaveService:
         audit_remarks: str,
         session: Session,
     ):
-        """批准请假"""
+        """批准请假 - 基于审核员角色分级审批"""
         leave = session.exec(
             select(Leave).where(Leave.leave_id == leave_id)
         ).first()
@@ -386,24 +539,49 @@ class LeaveService:
             raise HTTPException(status_code=403, detail="Only pending leave requests can be approved")
 
         if current_user["role"] == "reviewer":
-            # 审核员只能审批一级请假(≤4h)，二级/三级请假必须由管理员审批
-            if leave.approval_level > 1:
-                raise HTTPException(
-                    status_code=403,
-                    detail=f"该请假触发{leave.approval_level}级审批（时长超过4小时），需由管理员审批"
-                )
-            if leave.reviewer_id != current_user["id"]:
-                raise HTTPException(status_code=403, detail="Reviewers can only approve leave requests of their assigned students")
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
+            ).first()
+            if not reviewer:
+                raise HTTPException(status_code=403, detail="Reviewer not found")
+
+            role_name = get_reviewer_role_name(reviewer, session)
+            reviewer_school_id = get_reviewer_school_id(reviewer)
+
+            # 辅导员：只能审批≤8课时（一级）
+            if "辅导员" in role_name:
+                if leave.approval_level > 1:
+                    raise HTTPException(
+                        status_code=403,
+                        detail=f"该请假{leave.leave_hours}触发二级审批，需由学院书记审批"
+                    )
+                if leave.reviewer_id != current_user["id"]:
+                    raise HTTPException(status_code=403, detail="辅导员只能审批自己直属学生的请假")
+            # 书记：可审批≤56课时（一级、二级）
+            elif "书记" in role_name:
+                if leave.approval_level > 2:
+                    raise HTTPException(
+                        status_code=403,
+                        detail=f"该请假{leave.leave_hours}触发三级审批，需由学工处审批"
+                    )
+                # 验证是本学院的请假
+                leave_student = session.exec(
+                    select(Student).where(Student.student_id == leave.student_id)
+                ).first()
+                if leave_student and leave_student.school_id != reviewer_school_id:
+                    raise HTTPException(status_code=403, detail="只能审批本学院的请假申请")
+            # 学工处/其他：可审批所有级别
+            # no additional check needed
         elif current_user["role"] == "admin":
             pass
         else:
             raise HTTPException(status_code=403, detail="Permission denied")
 
-        # 三级审批(>24h)时强制要求审核意见
+        # 三级审批(>56课时)时强制要求审核意见
         if leave.approval_level == 3 and not audit_remarks:
             raise HTTPException(
                 status_code=400,
-                detail="超长请假(>24小时)必须填写审核意见"
+                detail="超长请假(>56课时)必须填写审核意见"
             )
 
         leave.status = "已批准"
@@ -555,19 +733,36 @@ class LeaveService:
                     continue
 
                 if current_user["role"] == "reviewer":
-                    if leave.approval_level > 1:
-                        errors.append({"leave_id": leave_id, "error": f"该请假触发{leave.approval_level}级审批，需由管理员审批"})
-                        continue
-                    if leave.reviewer_id != current_user["id"]:
-                        errors.append({"leave_id": leave_id, "error": "Not authorized"})
-                        continue
+                    reviewer = session.exec(
+                        select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
+                    ).first()
+                    role_name = get_reviewer_role_name(reviewer, session) if reviewer else ""
+                    reviewer_school_id = get_reviewer_school_id(reviewer) if reviewer else 0
+
+                    if "辅导员" in role_name:
+                        if leave.approval_level > 1:
+                            errors.append({"leave_id": leave_id, "error": f"需由学院书记审批"})
+                            continue
+                        if leave.reviewer_id != current_user["id"]:
+                            errors.append({"leave_id": leave_id, "error": "Not authorized"})
+                            continue
+                    elif "书记" in role_name:
+                        if leave.approval_level > 2:
+                            errors.append({"leave_id": leave_id, "error": f"需由学工处审批"})
+                            continue
+                        leave_student = session.exec(
+                            select(Student).where(Student.student_id == leave.student_id)
+                        ).first()
+                        if leave_student and leave_student.school_id != reviewer_school_id:
+                            errors.append({"leave_id": leave_id, "error": "Not authorized - different school"})
+                            continue
                 elif current_user["role"] != "admin":
                     errors.append({"leave_id": leave_id, "error": "Permission denied"})
                     continue
 
                 # 三级审批强制要求审核意见
                 if leave.approval_level == 3 and not audit_remarks:
-                    errors.append({"leave_id": leave_id, "error": "超长请假(>24小时)必须填写审核意见"})
+                    errors.append({"leave_id": leave_id, "error": "超长请假(>56课时)必须填写审核意见"})
                     continue
 
                 leave.status = "已批准"
@@ -718,23 +913,20 @@ class LeaveService:
         })
 
         # ---------- 3. 请假时长评分 ----------
-        try:
-            leave_hours = float(leave.leave_hours) if leave.leave_hours else 0
-        except (ValueError, TypeError):
-            leave_hours = 0
-        if leave_hours <= 4:
+        leave_hours = parse_leave_hours(leave.leave_hours)
+        if leave_hours <= APPROVAL_LEVEL_1_THRESHOLD:
             duration_score = 20
-            duration_reason = "短期请假(≤4h) +20分"
-        elif leave_hours <= 24:
+            duration_reason = f"短期请假(≤{APPROVAL_LEVEL_1_THRESHOLD}课时) +20分"
+        elif leave_hours <= APPROVAL_LEVEL_2_THRESHOLD:
             duration_score = 10
-            duration_reason = "中期请假(4-24h) +10分"
+            duration_reason = f"中期请假({APPROVAL_LEVEL_1_THRESHOLD}-{APPROVAL_LEVEL_2_THRESHOLD}课时) +10分"
         else:
             duration_score = 0
-            duration_reason = "长期请假(>24h) +0分，需重点审核"
+            duration_reason = f"长期请假(>{APPROVAL_LEVEL_2_THRESHOLD}课时) +0分，需重点审核"
         score += duration_score
         factors.append({
             "name": "请假时长",
-            "value": f"{leave_hours}小时",
+            "value": f"{leave_hours}课时",
             "score": duration_score,
             "max_score": 20,
             "reason": duration_reason,
@@ -811,4 +1003,130 @@ class LeaveService:
             "verdict_label": verdict_label,
             "verdict_reason": verdict_reason,
             "factors": factors,
+        }
+
+    @staticmethod
+    def close_off_leave(
+        current_user: dict,
+        leave_id: int,
+        session: Session,
+        ip_address: str = None,
+    ):
+        """销假 - 辅导员确认学生已返校报到，请假流程闭环"""
+        leave = session.exec(select(Leave).where(Leave.leave_id == leave_id)).first()
+
+        if not leave:
+            raise HTTPException(status_code=404, detail="Leave record not found")
+
+        if leave.status != "已批准":
+            raise HTTPException(status_code=403, detail="只能对已批准的请假进行销假操作")
+
+        if current_user["role"] == "reviewer":
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
+            ).first()
+            role_name = get_reviewer_role_name(reviewer, session) if reviewer else ""
+            # 辅导员可以销假（学生向辅导员报到）
+            if "辅导员" not in role_name and "书记" not in role_name:
+                raise HTTPException(status_code=403, detail="只有辅导员或书记可以执行销假操作")
+        elif current_user["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Permission denied")
+
+        leave.status = "已销假"
+        leave.audit_time = datetime.now()
+
+        session.commit()
+        session.refresh(leave)
+
+        AuditLogService.log(
+            current_user=current_user,
+            action="close_off",
+            target_type="leave",
+            target_id=leave.leave_id,
+            detail="销假：学生已返校报到",
+            ip_address=ip_address,
+            session=session,
+        )
+
+        NotificationService.notify_leave_status_change(leave, "已销假", session)
+
+        return leave
+
+    @staticmethod
+    async def upload_file(file: UploadFile, session: Session = None) -> dict:
+        """上传证明文件"""
+        if not file.filename:
+            raise HTTPException(status_code=400, detail="文件名不能为空")
+
+        # 安全检查：只允许图片和文档
+        allowed_extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf", ".doc", ".docx"}
+        ext = os.path.splitext(file.filename)[1].lower()
+        if ext not in allowed_extensions:
+            raise HTTPException(status_code=400, detail=f"不支持的文件格式: {ext}")
+
+        # 生成唯一文件名
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        safe_name = f"{timestamp}_{file.filename}"
+        file_path = os.path.join(UPLOAD_DIR, safe_name)
+
+        # 保存文件
+        content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(content)
+
+        # 返回相对路径用于存储到 materials 字段
+        return {
+            "file_path": f"uploads/{safe_name}",
+            "file_name": file.filename,
+            "file_size": len(content),
+        }
+
+    @staticmethod
+    async def upload_leave_files(leave_id: int, files: List[UploadFile]) -> dict:
+        """上传请假证明文件（关联到请假条，使用leave_id作为文件夹）"""
+        from sqlmodel import select
+        from app.models import Leave
+
+        # 验证请假条是否存在
+        leave = Session.execute(
+            select(Leave).where(Leave.leave_id == leave_id)
+        ).first()
+        if not leave:
+            raise HTTPException(status_code=404, detail="请假记录不存在")
+
+        # 创建以leave_id命名的文件夹
+        leave_folder = os.path.join(UPLOAD_DIR, str(leave_id))
+        os.makedirs(leave_folder, exist_ok=True)
+
+        # 安全检查：只允许图片和文档
+        allowed_extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf", ".doc", ".docx"}
+
+        uploaded_files = []
+        for file in files:
+            if not file.filename:
+                continue
+            ext = os.path.splitext(file.filename)[1].lower()
+            if ext not in allowed_extensions:
+                continue
+
+            # 生成唯一文件名
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            safe_name = f"{timestamp}_{file.filename}"
+            file_path = os.path.join(leave_folder, safe_name)
+
+            # 保存文件
+            content = await file.read()
+            with open(file_path, "wb") as f:
+                f.write(content)
+
+            uploaded_files.append({
+                "file_path": f"uploads/{leave_id}/{safe_name}",
+                "file_name": file.filename,
+                "file_size": len(content),
+            })
+
+        return {
+            "leave_id": leave_id,
+            "files": uploaded_files,
+            "count": len(uploaded_files),
         }

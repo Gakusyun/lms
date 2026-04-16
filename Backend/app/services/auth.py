@@ -150,8 +150,8 @@ class AuthService:
             target_user_id = current_user["id"]
             target_user, target_role, _, _ = AuthService.find_user_by_id(target_user_id, session)
 
-        # 验证原密码 - 管理员可以跳过验证
-        if current_user["role"] != "admin":
+        # 验证原密码 - 管理员修改他人密码可跳过，修改自己需要验证
+        if current_user["id"] == target_user_id:
             if not target_user.password:
                 raise HTTPException(400, "User has no password set")
 

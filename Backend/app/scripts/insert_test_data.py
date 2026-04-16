@@ -41,57 +41,31 @@ def create_admin(session: Session):
 
 
 def create_test_reviewers(session: Session):
-    """创建测试审核员数据 - 随机名称"""
-    # 随机中文姓名生成
+    """创建测试审核员数据 - 按角色分类，模拟真实层级"""
     surnames = [
-        "李",
-        "王",
-        "张",
-        "刘",
-        "陈",
-        "杨",
-        "赵",
-        "黄",
-        "周",
-        "吴",
-        "徐",
-        "孙",
-        "胡",
-        "朱",
-        "高",
+        "李", "王", "张", "刘", "陈", "杨", "赵", "黄",
+        "周", "吴", "徐", "孙", "胡", "朱", "高", "林",
     ]
     names = [
-        "伟",
-        "芳",
-        "娜",
-        "秀英",
-        "敏",
-        "静",
-        "丽",
-        "强",
-        "磊",
-        "军",
-        "洋",
-        "勇",
-        "艳",
-        "杰",
-        "涛",
+        "伟", "芳", "娜", "秀英", "敏", "静", "丽", "强",
+        "磊", "军", "洋", "勇", "艳", "杰", "涛", "明",
     ]
 
     # 创建学校和角色数据
+    # 角色按审批层级定义：辅导员(一级)、书记(二级)、学工处(三级)
     schools = [
         "学生处",
-        "教务处",
-        "计算机系",
-        "软件工程学院",
-        "电子信息学院",
-        "自动化学院",
-        "数学系",
-        "物理学院",
+        "智能制造学院",
+        "信息工程学院",
+        "城市建设学院",
+        "经济与管理学院",
+        "会计学院",
+        "艺术设计学院",
+        "人文与教育学院",
+        "体育学院",
     ]
-    roles_list = ["处长", "主任", "辅导员", "书记", "副院长", "科长", "组长", "主管"]
+    roles_list = ["辅导员", "书记", "学工处", "副院长"]
 
-    # 先创建 School 和 Role 记录
     school_map = {}
     for idx, school_name in enumerate(schools, start=1):
         school = School(school_id=idx, school_name=school_name)
@@ -108,26 +82,63 @@ def create_test_reviewers(session: Session):
 
     session.commit()
 
-    created_reviewers = []
-    for i in range(16):  # 创建16个审核员
-        reviewer_id = 1001 + i
-        name = random.choice(surnames) + random.choice(names)
-        school_name = random.choice(schools)
-        role_name = random.choice(roles_list)
+    # 各学院的辅导员和书记（ID 1001-1014）
+    college_schools = [s for s in schools if s not in ("学生处", "教务处")]
+    college_school_ids = [school_map[s] for s in college_schools]
 
+    created_reviewers = []
+    reviewer_id = 1001
+    used_names = set()
+
+    def gen_name():
+        while True:
+            n = random.choice(surnames) + random.choice(names)
+            if n not in used_names:
+                used_names.add(n)
+                return n
+
+    # 为每个学院创建2个辅导员 + 1个书记
+    for school_id in college_school_ids:
+        # 辅导员 (2个)
+        for j in range(2):
+            reviewer = Reviewer(
+                reviewer_id=reviewer_id,
+                reviewer_name=gen_name(),
+                school_id=school_id,
+                role_id=role_map["辅导员"],
+                password=hash_password("1"),
+            )
+            session.add(reviewer)
+            created_reviewers.append(reviewer)
+            print(f"创建辅导员{j+1}: {reviewer.reviewer_name} (ID: {reviewer_id}, {college_schools[college_school_ids.index(school_id)]})")
+            reviewer_id += 1
+
+        # 书记 (1个)
         reviewer = Reviewer(
             reviewer_id=reviewer_id,
-            reviewer_name=name,
-            school_id=school_map[school_name],
-            role_id=role_map[role_name],
+            reviewer_name=gen_name(),
+            school_id=school_id,
+            role_id=role_map["书记"],
             password=hash_password("1"),
         )
-
         session.add(reviewer)
         created_reviewers.append(reviewer)
-        print(
-            f"创建审核员: {reviewer.reviewer_name} (ID: {reviewer.reviewer_id}, {school_name}{role_name}, 密码: 1)"
+        print(f"创建书记: {reviewer.reviewer_name} (ID: {reviewer_id}, {college_schools[college_school_ids.index(school_id)]})")
+        reviewer_id += 1
+
+    # 学工处审核员（2个，全校权限）
+    for _ in range(2):
+        reviewer = Reviewer(
+            reviewer_id=reviewer_id,
+            reviewer_name=gen_name(),
+            school_id=school_map["学生处"],
+            role_id=role_map["处长"],
+            password=hash_password("1"),
         )
+        session.add(reviewer)
+        created_reviewers.append(reviewer)
+        print(f"创建学工处: {reviewer.reviewer_name} (ID: {reviewer_id}, 学生处/处长)")
+        reviewer_id += 1
 
     session.commit()
     return created_reviewers, school_map
@@ -206,28 +217,45 @@ def create_test_courses(session: Session, teachers):
 
 
 def create_test_students(session: Session, reviewers, school_map):
-    """创建测试学生数据"""
+    """创建测试学生数据 - 学生分配到同学院的辅导员"""
     schools = [
-        "计算机系",
-        "软件工程",
-        "电子信息",
-        "自动化",
-        "数学系",
-        "物理学院",
-        "化学学院",
+        "智能制造学院",
+        "信息工程学院",
+        "城市建设学院",
+        "经济与管理学院",
+        "会计学院",
+        "艺术设计学院",
+        "人文与教育学院",
+        "体育学院",
     ]
+
+    # 按学校分组辅导员（只分配辅导员角色的审核员）
+    counselor_role = session.exec(
+        select(Role).where(Role.role_name == "辅导员")
+    ).first()
+    counselor_reviewers = {}
+    for r in reviewers:
+        if r.role_id == (counselor_role.role_id if counselor_role else None):
+            sid = r.school_id or 0
+            if sid not in counselor_reviewers:
+                counselor_reviewers[sid] = []
+            counselor_reviewers[sid].append(r)
 
     created_students = []
     for i in range(1, 151):  # 创建150个学生
         school_name = random.choice(schools)
-        school_id = school_map.get(school_name, 1)  # 默认使用第一个学校
+        school_id = school_map.get(school_name, 1)
+
+        # 分配同学院的辅导员
+        available_counselors = counselor_reviewers.get(school_id, list(reviewers))
+        assigned_reviewer = random.choice(available_counselors) if available_counselors else random.choice(reviewers)
 
         student_data = {
             "student_id": 4000 + i,
             "student_name": f"学生{i:03d}",
             "password": "1",
             "school_id": school_id,
-            "reviewer_id": random.choice(reviewers).reviewer_id,  # 随机分配审核员
+            "reviewer_id": assigned_reviewer.reviewer_id,
             "guarantee_permission": datetime.now()
             + timedelta(days=random.randint(1, 365)),
         }
@@ -274,9 +302,10 @@ def create_student_course_enrollments(session: Session, students, courses):
 
 
 def create_test_leaves(session: Session, students, courses):
-    """创建测试请假记录数据"""
+    """创建测试请假记录数据 - 比例符合实际"""
     leave_types = ["事假", "病假", "公假", "婚假", "丧假"]
-    status_types = ["待审批", "已批准", "已拒绝"]
+    # 实际比例：已批准60%、已拒绝25%、待审批10%、已销假5%
+    status_weights = ["已批准"] * 60 + ["已拒绝"] * 25 + ["待审批"] * 10 + ["已销假"] * 5
 
     created_leaves = []
     leave_id_counter = 5001
@@ -303,20 +332,29 @@ def create_test_leaves(session: Session, students, courses):
             leave_days = random.randint(1, 7)
             selected_course = random.choice(student_courses)
 
+            # 根据状态决定审核意见，保持一致
+            status = random.choice(status_weights)
+            if status == "已批准":
+                audit_remarks = "已批准"
+            elif status == "已拒绝":
+                audit_remarks = "已拒绝"
+            elif status == "已销假":
+                audit_remarks = "已批准"  # 销假是从已批准转来的
+            else:
+                audit_remarks = ""  # 待审批状态没有审核意见
+
             leave_data = {
                 "leave_id": leave_id_counter,
                 "student_id": student.student_id,
                 "leave_date": leave_date,
-                "leave_hours": f"{random.randint(1, 8)}课时",
-                "status": random.choice(status_types),
+                "leave_hours": str(random.choice([2, 4, 6, 8, 12, 16, 24, 32, 48, 60, 72])),
+                "status": status,
                 "leave_type": random.choice(leave_types),
                 "remarks": f"{student.student_name}的请假申请",
                 "materials": "请假材料.pdf" if random.random() > 0.6 else "",
                 "reviewer_id": student.reviewer_id,  # 使用学生的审核员
                 "teacher_id": selected_course.teacher_id,
-                "audit_remarks": "审核通过"
-                if random.random() > 0.3
-                else "需要补充材料",
+                "audit_remarks": audit_remarks,
                 "audit_time": leave_date + timedelta(hours=random.randint(1, 48)),
                 "course_id": selected_course.course_id,
                 "is_modified": False,  # 改为布尔类型
@@ -395,8 +433,8 @@ def main():
         print(f"\n测试数据创建完成!")
         print(f"- 管理员: 1 个 (ID: 8001, 密码: 1)")
         print(f"- 学校/院系: {len(school_map)} 个")
-        print(f"- 角色: 8 个")
-        print(f"- 审核员: {len(reviewers)} 个 (ID: 1001-1016, 密码: 1)")
+        print(f"- 角色: 6 个 (辅导员、书记、处长、主任、副院长、科长)")
+        print(f"- 审核员: {len(reviewers)} 个 (每学院1辅导员+1书记 + 2学工处, 密码: 1)")
         print(f"- 教师: {len(teachers)} 个 (ID: 2001-2015, 密码: 1)")
         print(f"- 课程: {len(courses)} 门")
         print(f"- 学生: {len(students)} 个 (ID: 4001-4150, 密码: 1)")

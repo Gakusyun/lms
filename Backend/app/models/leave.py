@@ -10,6 +10,7 @@ class LeaveStatus(str, Enum):
     APPROVED = "已批准"
     REJECTED = "已拒绝"
     CANCELLED = "已撤销"
+    CLOSED_OFF = "已销假"
 
 
 class LeaveType(str, Enum):

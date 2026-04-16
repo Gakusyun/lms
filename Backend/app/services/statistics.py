@@ -1,8 +1,25 @@
 from sqlmodel import Session, select, func
 from fastapi import HTTPException
 from datetime import datetime, timedelta
+from sqlalchemy import case
 
-from app.models import Leave, Student, Teacher, Course, Reviewer, StudentCourse
+from app.models import Leave, Student, Teacher, Course, Reviewer, StudentCourse, Role
+
+
+def get_reviewer_role_name_for_stat(reviewer, session: Session) -> str:
+    """获取审核员的职务名称"""
+    if reviewer and reviewer.role_id:
+        role = session.exec(
+            select(Role).where(Role.role_id == reviewer.role_id)
+        ).first()
+        if role:
+            return role.role_name
+    return ""
+
+
+def get_reviewer_school_id_for_stat(reviewer) -> int:
+    """获取审核员的院系ID"""
+    return reviewer.school_id or 0 if reviewer else 0
 
 
 class StatisticsService:
@@ -21,7 +38,29 @@ class StatisticsService:
         if obj["role"] == "student":
             query = query.where(Leave.student_id == obj["id"])
         elif obj["role"] == "reviewer":
-            query = query.where(Leave.reviewer_id == obj["id"])
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == obj["id"])
+            ).first()
+            if reviewer:
+                role_name = get_reviewer_role_name_for_stat(reviewer, session)
+                reviewer_school_id = get_reviewer_school_id_for_stat(reviewer)
+                if "学工处" in role_name or "处长" in role_name:
+                    # 学工处/处长：看全校所有请假（不筛选）
+                    pass
+                elif "书记" in role_name or "辅导员" in role_name:
+                    # 书记/辅导员：看本学院所有请假
+                    school_student_ids = session.exec(
+                        select(Student.student_id).where(Student.school_id == reviewer_school_id)
+                    ).all()
+                    if school_student_ids:
+                        query = query.where(Leave.student_id.in_(school_student_ids))
+                    else:
+                        query = query.where(Leave.leave_id == -1)
+                else:
+                    # 其他角色：只看我负责的请假
+                    query = query.where(Leave.reviewer_id == obj["id"])
+            else:
+                query = query.where(Leave.reviewer_id == obj["id"])
         elif obj["role"] == "teacher":
             # 获取教师教授的课程ID列表
             course_ids = session.exec(
@@ -67,7 +106,29 @@ class StatisticsService:
         if obj["role"] == "student":
             query = query.where(Leave.student_id == obj["id"])
         elif obj["role"] == "reviewer":
-            query = query.where(Leave.reviewer_id == obj["id"])
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == obj["id"])
+            ).first()
+            if reviewer:
+                role_name = get_reviewer_role_name_for_stat(reviewer, session)
+                reviewer_school_id = get_reviewer_school_id_for_stat(reviewer)
+                if "学工处" in role_name or "处长" in role_name:
+                    # 学工处/处长：看全校所有请假（不筛选）
+                    pass
+                elif "书记" in role_name or "辅导员" in role_name:
+                    # 书记/辅导员：看本学院所有请假
+                    school_student_ids = session.exec(
+                        select(Student.student_id).where(Student.school_id == reviewer_school_id)
+                    ).all()
+                    if school_student_ids:
+                        query = query.where(Leave.student_id.in_(school_student_ids))
+                    else:
+                        query = query.where(Leave.leave_id == -1)
+                else:
+                    # 其他角色：只看我负责的请假
+                    query = query.where(Leave.reviewer_id == obj["id"])
+            else:
+                query = query.where(Leave.reviewer_id == obj["id"])
         elif obj["role"] == "teacher":
             # 获取教师教授的课程ID列表
             course_ids = session.exec(
@@ -186,24 +247,43 @@ class StatisticsService:
     def get_reviewer_students_statistics(current_user: dict, session: Session):
         """获取审核员管理的学生统计情况"""
         obj = current_user
-        
+
         # 只有审核员可以查看自己管理的学生统计
         if obj["role"] != "reviewer":
             raise HTTPException(status_code=403, detail="Permission denied")
-        
+
         # 构建查询，获取审核员管理的学生及其请假情况
         query = select(
             Student.student_id,
             Student.student_name,
             func.count(Leave.leave_id).label('total_leaves'),
-            func.sum(func.case((Leave.status == "已批准", 1), else_=0)).label('approved_leaves'),
-            func.sum(func.case((Leave.status == "已拒绝", 1), else_=0)).label('rejected_leaves'),
-            func.sum(func.case((Leave.status == "待审批", 1), else_=0)).label('pending_leaves')
+            func.sum(case((Leave.status == "已批准", 1), else_=0)).label('approved_leaves'),
+            func.sum(case((Leave.status == "已拒绝", 1), else_=0)).label('rejected_leaves'),
+            func.sum(case((Leave.status == "待审批", 1), else_=0)).label('pending_leaves')
         ).outerjoin(
             Leave, Student.student_id == Leave.student_id
-        ).where(
-            Student.reviewer_id == obj["id"]
-        ).group_by(
+        )
+
+        # 根据审核员角色应用不同的过滤条件
+        reviewer = session.exec(
+            select(Reviewer).where(Reviewer.reviewer_id == obj["id"])
+        ).first()
+        if reviewer:
+            role_name = get_reviewer_role_name_for_stat(reviewer, session)
+            reviewer_school_id = get_reviewer_school_id_for_stat(reviewer)
+            if "学工处" in role_name or "处长" in role_name:
+                # 学工处/处长：看全校所有学生（不筛选）
+                pass
+            elif "书记" in role_name or "辅导员" in role_name:
+                # 书记/辅导员：看本学院所有学生
+                query = query.where(Student.school_id == reviewer_school_id)
+            else:
+                # 其他角色：只看我负责的学生
+                query = query.where(Student.reviewer_id == obj["id"])
+        else:
+            query = query.where(Student.reviewer_id == obj["id"])
+
+        query = query.group_by(
             Student.student_id, Student.student_name
         )
         

@@ -1,18 +1,18 @@
 <script setup lang="ts">
 interface Props {
   title: string
-  count: number | string
+  count?: number | string
   description: string
   onClick: () => void
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 </script>
 
 <template>
   <button @click="onClick" class="feature-card">
     <h3 class="feature-title">{{ title }}</h3>
-    <div class="feature-count">{{ count }}</div>
+    <div v-if="props.count !== undefined" class="feature-count">{{ count }}</div>
     <p class="feature-description">{{ description }}</p>
   </button>
 </template>

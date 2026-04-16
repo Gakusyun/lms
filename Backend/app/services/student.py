@@ -2,10 +2,26 @@ from sqlmodel import Session, select, func
 from fastapi import Depends, HTTPException, Query
 import io
 
-from app.models import Student, Reviewer, School
+from app.models import Student, Reviewer, School, Role
 from app.schemas import StudentCreate
 from app.services.common import CommonService
 from app.utils.jwt import get_password_hash
+
+
+def get_reviewer_role_name(reviewer, session: Session) -> str:
+    """获取审核员的职务名称"""
+    if reviewer.role_id:
+        role = session.exec(
+            select(Role).where(Role.role_id == reviewer.role_id)
+        ).first()
+        if role:
+            return role.role_name
+    return ""
+
+
+def get_reviewer_school_id(reviewer) -> int:
+    """获取审核员的院系ID"""
+    return reviewer.school_id or 0
 
 
 class StudentService:
@@ -26,9 +42,25 @@ class StudentService:
         # 构建查询条件
         query = select(Student)
 
-        # 如果是审核员，只显示该审核员负责的学生
+        # 如果是审核员，根据角色显示不同范围的学生
         if obj["role"] == "reviewer":
-            query = query.where(Student.reviewer_id == obj["id"])
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == obj["id"])
+            ).first()
+            if reviewer:
+                role_name = get_reviewer_role_name(reviewer, session)
+                reviewer_school_id = get_reviewer_school_id(reviewer)
+                if "学工处" in role_name or "处长" in role_name:
+                    # 学工处/处长：看全校所有学生（不筛选）
+                    pass
+                elif "书记" in role_name or "辅导员" in role_name:
+                    # 书记/辅导员：看本学院所有学生
+                    query = query.where(Student.school_id == reviewer_school_id)
+                else:
+                    # 其他角色：只显示自己负责的学生
+                    query = query.where(Student.reviewer_id == obj["id"])
+            else:
+                query = query.where(Student.reviewer_id == obj["id"])
 
         elif obj["role"] == "student":
             query = query.where(Student.student_id == obj["id"])
@@ -41,7 +73,23 @@ class StudentService:
         pk_col = list(Student.__table__.primary_key.columns)[0]
         total_stmt = select(func.count(pk_col))
         if obj["role"] == "reviewer":
-            total_stmt = total_stmt.where(Student.reviewer_id == obj["id"])
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == obj["id"])
+            ).first()
+            if reviewer:
+                role_name = get_reviewer_role_name(reviewer, session)
+                reviewer_school_id = get_reviewer_school_id(reviewer)
+                if "学工处" in role_name or "处长" in role_name:
+                    # 学工处/处长：统计全校所有学生（不筛选）
+                    pass
+                elif "书记" in role_name or "辅导员" in role_name:
+                    # 书记/辅导员：统计本学院所有学生
+                    total_stmt = total_stmt.where(Student.school_id == reviewer_school_id)
+                else:
+                    # 其他角色：只统计自己负责的学生
+                    total_stmt = total_stmt.where(Student.reviewer_id == obj["id"])
+            else:
+                total_stmt = total_stmt.where(Student.reviewer_id == obj["id"])
         total = session.exec(total_stmt).one()
 
         total_pages = (total + page_size - 1) // page_size
@@ -81,12 +129,36 @@ class StudentService:
         elif obj["role"] == "student":
             return {"students_count": "自己"}
         else:
-            # 修复：正确计算该审核员下的学生数量
-            count = session.exec(
-                select(func.count(Student.student_id)).where(
-                    Student.reviewer_id == obj["id"]
-                )
-            ).one()
+            # 修复：根据角色正确计算学生数量
+            reviewer = session.exec(
+                select(Reviewer).where(Reviewer.reviewer_id == obj["id"])
+            ).first()
+            if reviewer:
+                role_name = get_reviewer_role_name(reviewer, session)
+                reviewer_school_id = get_reviewer_school_id(reviewer)
+                if "学工处" in role_name or "处长" in role_name:
+                    # 学工处/处长：统计全校所有学生
+                    count = session.exec(select(func.count(Student.student_id))).one()
+                elif "书记" in role_name or "辅导员" in role_name:
+                    # 书记/辅导员：统计本学院所有学生
+                    count = session.exec(
+                        select(func.count(Student.student_id)).where(
+                            Student.school_id == reviewer_school_id
+                        )
+                    ).one()
+                else:
+                    # 其他角色：只统计自己负责的学生
+                    count = session.exec(
+                        select(func.count(Student.student_id)).where(
+                            Student.reviewer_id == obj["id"]
+                        )
+                    ).one()
+            else:
+                count = session.exec(
+                    select(func.count(Student.student_id)).where(
+                        Student.reviewer_id == obj["id"]
+                    )
+                ).one()
             return {"students_count": count}
 
     @staticmethod

@@ -89,10 +89,10 @@ def read_teachers(
 
 @router.get("/teachers/count")
 def teachers_count(
-    current_user: dict = Depends(check_role(["admin", "reviewer", "teacher"])),
+    current_user: dict = Depends(check_login),
     session: Session = Depends(get_session),
 ):
-    return TeacherService.get_teachers_count(session)
+    return TeacherService.get_teachers_count(current_user, session)
 
 
 @router.get("/teachers/next-id")

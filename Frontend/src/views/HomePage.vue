@@ -19,7 +19,7 @@ const auditLogResponse = ref<{ total: number } | null>(null)
 
 // 定义获取计数的函数
 const getReviewerCount = async () => {
-  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer') {
+  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer' || userInfo.value?.role === 'student') {
     const api = useApiCount<Record<string, number>>('/reviewers/count')
     await api.fetchCount()
     reviewerResponse.value = api.data.value
@@ -27,7 +27,7 @@ const getReviewerCount = async () => {
 }
 
 const getTeacherCount = async () => {
-  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer' || userInfo.value?.role === 'teacher') {
+  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer' || userInfo.value?.role === 'teacher' || userInfo.value?.role === 'student') {
     const api = useApiCount<Record<string, number>>('/teachers/count')
     await api.fetchCount()
     teacherResponse.value = api.data.value
@@ -126,16 +126,19 @@ const getRoleDisplayName = (role: string | undefined | null) => {
 
 // 组件挂载时自动获取数据
 onMounted(() => {
-  getStudentCount()
-  getLeavesCount()
-  getCourseCount()
-  
-  // 根据角色获取其他统计数据
   if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer') {
+    getStudentCount()
+  }
+
+  // 学生也能看到自己的审核员和教师
+  if (userInfo.value?.role === 'admin' || userInfo.value?.role === 'reviewer' || userInfo.value?.role === 'student') {
     getReviewerCount()
     getTeacherCount()
   }
-  
+
+  getLeavesCount()
+  getCourseCount()
+
   if (userInfo.value?.role === 'admin') {
     getAuditLogCount()
   }
@@ -192,19 +195,19 @@ onMounted(() => {
         <!-- 功能网格 -->
         <section class="features-section">
           <div class="features-grid">
-            <GenericFeatureCard title="学生管理" :count="studentResponse?.students_count || 0" description="查看和管理所有学生信息"
+            <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer'" title="学生管理" :count="studentResponse?.students_count || 0" description="查看和管理所有学生信息"
               :onClick="goToStudentsList" />
             <GenericFeatureCard title="请假条管理" :count="leaveResponse?.leaves_count || 0" description="处理和审核请假申请"
               :onClick="goToLeavesList" />
-            <GenericFeatureCard title="审核员管理" :count="reviewerResponse?.reviewers_count || 0" description="管理审核员权限和设置"
+            <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer' || userInfo?.role === 'student'" title="审核员管理" :count="reviewerResponse?.reviewers_count || 0" description="管理审核员权限和设置"
               :onClick="goToReviewersList" />
-            <GenericFeatureCard title="教师管理" :count="teacherResponse?.teachers_count || 0" description="维护教师信息档案"
+            <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'student'" title="教师管理" :count="teacherResponse?.teachers_count || 0" description="维护教师信息档案"
               :onClick="goToTeachersList" />
             <GenericFeatureCard title="课程管理" :count="courseResponse?.courses_count || 0" description="设置和管理课程信息"
               :onClick="goToCoursesList" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="auditLogResponse?.total || 0" description="查看系统操作审计日志"
               :onClick="goToAuditLogs" />
-            <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer'" title="数据统计" :count="0" description="请假趋势与数据可视化分析"
+            <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer'" title="数据统计" description="请假趋势与数据可视化分析"
               :onClick="goToStatistics" />
           </div>
         </section>

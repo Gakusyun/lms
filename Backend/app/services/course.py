@@ -113,9 +113,21 @@ class CourseService:
         return items, total, total_pages
 
     @staticmethod
-    def get_courses_count(session: Session):
-        """获取课程数量"""
-        return {"courses_count": session.exec(select(func.count(Course.course_id))).one()}
+    def get_courses_count(current_user: dict, session: Session):
+        """获取课程数量（根据角色过滤）"""
+        if current_user["role"] == "teacher":
+            count = session.exec(
+                select(func.count(Course.course_id)).where(Course.teacher_id == current_user["id"])
+            ).one()
+        elif current_user["role"] == "student":
+            course_ids = session.exec(
+                select(StudentCourse.course_id).where(StudentCourse.student_id == current_user["id"])
+            ).all()
+            count = len(course_ids) if course_ids else 0
+        else:
+            # admin, reviewer
+            count = session.exec(select(func.count(Course.course_id))).one()
+        return {"courses_count": count}
 
     @staticmethod
     def get_course_by_id(course_id: int, session: Session):

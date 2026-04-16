@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select, func
 
 from app.database.connection import get_session
-from app.models import Reviewer
+from app.models import Reviewer, School, Role
 from app.schemas import ReviewerCreate, PaginatedResponse
 from app.services.reviewer import ReviewerService
 from app.api.deps import check_login, check_role
@@ -17,80 +17,25 @@ def read_reviewers(
     page_size: int = 20,
     session: Session = Depends(get_session),
 ):
-    from app.models import Student
-    
-    if current_user["role"] == "student":
-        # 学生只能看到管理自己的审核员
-        student = session.exec(
-            select(Student).where(Student.student_id == current_user["id"])
-        ).first()
-        if not student or not student.reviewer_id:
-            return PaginatedResponse(
-                items=[],
-                total=0,
-                page=page,
-                page_size=page_size,
-                total_pages=0,
-            )
-        # 获取该审核员
-        reviewer = session.exec(
-            select(Reviewer).where(Reviewer.reviewer_id == student.reviewer_id)
-        ).first()
-        if not reviewer:
-            return PaginatedResponse(
-                items=[],
-                total=0,
-                page=page,
-                page_size=page_size,
-                total_pages=0,
-            )
-        # 注入关联数据
-        from app.services.common import CommonService
-        items = CommonService.inject_relations(
-            session,
-            [reviewer],
-            {
-                "school_id": (
-                    School,
-                    "school_id",
-                    "school_name",
-                    "school_name",
-                ),
-                "role_id": (
-                    Role,
-                    "role_id",
-                    "role_name",
-                    "role_name",
-                )
-            },
-        )
-        for item in items:
-            item.pop("password", None)
-        return PaginatedResponse(
-            items=items,
-            total=1,
-            page=page,
-            page_size=page_size,
-            total_pages=1,
-        )
-    else:
-        # 管理员和审核员可以看到所有审核员
-        reviewers, total, total_pages = ReviewerService.get_reviewers(page, page_size, session)
-        return PaginatedResponse(
-            items=reviewers,
-            total=total,
-            page=page,
-            page_size=page_size,
-            total_pages=total_pages,
-        )
+    # 学生：看自己辅导员+本院书记+学工处 | 其他角色：看全部
+    reviewers, total, total_pages = ReviewerService.get_reviewers(
+        current_user, page, page_size, session
+    )
+    return PaginatedResponse(
+        items=reviewers,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages,
+    )
 
 
 @router.get("/reviewers/count")
 def reviewers_count(
-    current_user: dict = Depends(check_role(["admin", "reviewer"])),
+    current_user: dict = Depends(check_login),
     session: Session = Depends(get_session),
 ):
-    return ReviewerService.get_reviewers_count(session)
+    return ReviewerService.get_reviewers_count(current_user, session)
 
 
 @router.get("/reviewers/next-id")

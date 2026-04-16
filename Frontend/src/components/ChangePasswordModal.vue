@@ -91,8 +91,8 @@ const handleSubmit = async () => {
       emit('close')
     }, 1000)
 
-  } catch (error: any) {
-    error.value = error.response?.data?.detail || error.message || '修改密码失败'
+  } catch (err: any) {
+    error.value = err.response?.data?.detail || err.message || '修改密码失败'
   } finally {
     loading.value = false
   }

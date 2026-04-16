@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import http from '../utils/http'
+import { uploadLeaveFiles } from '../api'
 
 interface Props {
   show: boolean
@@ -26,6 +27,9 @@ const success = ref('')
 // File upload state
 const file = ref<File | null>(null)
 const isUploading = ref(false)
+const proofFiles = ref<File[]>([])
+const proofUploading = ref(false)
+const uploadedFilePaths = ref<string[]>([])
 
 // Options for select fields
 const reviewers = ref<any[]>([])
@@ -95,7 +99,10 @@ const resetForm = () => {
   isSubmitting.value = false
   isUploading.value = false
   file.value = null
-  
+  proofFiles.value = []
+  proofUploading.value = false
+  uploadedFilePaths.value = []
+
   // Reset form data
   formData.value = getDefaultFormData()
 }
@@ -164,6 +171,30 @@ const handleFileChange = (event: Event) => {
   }
 }
 
+// Handle proof file change for leave (multiple files)
+const handleProofFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files) {
+    // Add new files to existing selection
+    for (let i = 0; i < target.files.length; i++) {
+      proofFiles.value.push(target.files[i])
+    }
+  }
+  // Reset the input so the same file can be selected again if needed
+  target.value = ''
+}
+
+// Remove a file from selection
+const removeProofFile = (index: number) => {
+  proofFiles.value.splice(index, 1)
+}
+
+// Clear all selected files
+const clearProofFiles = () => {
+  proofFiles.value = []
+  uploadedFilePaths.value = []
+}
+
 // Handle import
 const handleImport = async () => {
   if (!file.value) {
@@ -210,7 +241,12 @@ const handleImport = async () => {
     }, 1500)
   } catch (error: any) {
     console.error('导入失败:', error)
-    error.value = error.response?.data?.message || error.message || '导入失败，请稍后重试'
+    const detail = error.response?.data?.detail
+    if (Array.isArray(detail)) {
+      error.value = detail.map((e: any) => e.msg || JSON.stringify(e)).join('; ')
+    } else {
+      error.value = detail || error.response?.data?.message || error.message || '导入失败，请稍后重试'
+    }
   } finally {
     isUploading.value = false
   }
@@ -229,6 +265,7 @@ const handleCreate = async () => {
     switch (props.type) {
       case 'leave':
         endpoint = '/leaves'
+        // 先创建请假条（不包含materials），得到leave_id后再上传文件
         payload = {
           student_id: toInt(formData.value.student_id),
           course_id: formData.value.course_id === 0 ? null : formData.value.course_id,
@@ -236,7 +273,8 @@ const handleCreate = async () => {
           leave_hours: formData.value.leave_hours ? formData.value.leave_hours.toString() : null,
           status: '待审批',
           leave_type: formData.value.leave_type || null,
-          remarks: formData.value.remarks || null
+          remarks: formData.value.remarks || null,
+          materials: null  // 先不传materials，等上传文件后再更新
         }
         break
       case 'student':
@@ -292,16 +330,47 @@ const handleCreate = async () => {
       return
     }
 
-    await http.post(endpoint, payload)
+    const result = await http.post(endpoint, payload)
+
+    // 如果是请假条创建，且有选中文件，则上传文件
+    if (props.type === 'leave' && proofFiles.value.length > 0) {
+      // 尝试多种可能的ID字段名
+      const leaveId = (result as any).leave_id || (result as any).id || (result as any)['leave_id']
+      if (!leaveId) {
+        error.value = '创建请假条成功，但无法获取请假ID'
+        isSubmitting.value = false
+        return
+      }
+      try {
+        const uploadResult = await uploadLeaveFiles(leaveId, proofFiles.value) as any
+        // 更新请假条的materials字段
+        const filePaths = uploadResult.files.map((f: any) => f.file_path)
+        await http.put(`/leaves/edit/${leaveId}`, {
+          materials: filePaths.join(',')
+        })
+      } catch (uploadError: any) {
+        console.error('文件上传失败:', uploadError)
+        error.value = '请假条创建成功，但文件上传失败'
+        setTimeout(() => {
+          closeModal()
+          props.onSuccess()
+        }, 2000)
+        return
+      }
+    }
 
     success.value = '创建成功'
     setTimeout(() => {
       closeModal()
       props.onSuccess()
     }, 1500)
-  } catch (error: any) {
-    console.error('创建失败:', error)
-    error.value = error.response?.data?.message || error.message || '创建失败，请稍后重试'
+  } catch (err: any) {
+    const detail = err.response?.data?.detail
+    if (Array.isArray(detail)) {
+      error.value = detail.map((e: any) => e.msg || JSON.stringify(e)).join('; ')
+    } else {
+      error.value = detail || err.response?.data?.message || err.message || '创建失败，请稍后重试'
+    }
   } finally {
     isSubmitting.value = false
   }
@@ -365,6 +434,9 @@ watch(() => props.show, (newValue) => {
             <button @click="handleImport" class="btn btn-import" :disabled="isUploading">
               {{ isUploading ? '导入中...' : '导入Excel' }}
             </button>
+            <a v-if="type === 'student'" href="/api/v1/students/import/template" download class="btn btn-download-template" target="_blank">
+              下载导入模板
+            </a>
           </div>
         </div>
 
@@ -426,7 +498,26 @@ watch(() => props.show, (newValue) => {
               <textarea id="remarks" v-model="formData.remarks" rows="3" placeholder="请输入请假事由等备注信息"
                 maxlength="100"></textarea>
             </div>
-            
+
+            <div class="form-group">
+              <label>上传证明材料（可多选）</label>
+              <div class="proof-upload">
+                <input type="file" multiple accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.doc,.docx" @change="handleProofFileChange" />
+                <button type="button" v-if="proofFiles.length > 0" @click="clearProofFiles" class="btn btn-secondary btn-sm">
+                  清空已选文件
+                </button>
+              </div>
+              <!-- Selected files list -->
+              <div v-if="proofFiles.length > 0" class="selected-files">
+                <div v-for="(file, index) in proofFiles" :key="index" class="file-item">
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size">({{ (file.size / 1024).toFixed(1) }}KB)</span>
+                  <button type="button" @click="removeProofFile(index)" class="btn-remove">×</button>
+                </div>
+              </div>
+              <div v-else class="uploaded-hint">未选择文件（提交请假条时可一并上传）</div>
+            </div>
+
             <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
               {{ isSubmitting ? '创建中...' : '创建请假条' }}
             </button>
@@ -740,6 +831,26 @@ watch(() => props.show, (newValue) => {
   color: var(--text-secondary);
 }
 
+.proof-upload {
+  display: flex;
+  gap: var(--spacing);
+  align-items: center;
+}
+
+.proof-upload input[type="file"] {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+}
+
+.uploaded-hint {
+  font-size: var(--text-xs);
+  color: #059669;
+  margin-top: 0.25rem;
+}
+
 .btn-import {
   background-color: #10b981;
   color: white;
@@ -754,6 +865,25 @@ watch(() => props.show, (newValue) => {
 
 .btn-import:hover {
   background-color: #059669;
+}
+
+.btn-download-template {
+  display: inline-block;
+  background-color: var(--primary-50, #eff6ff);
+  color: var(--primary-600, #2563eb);
+  border: 1px solid var(--primary-200, #bfdbfe);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.btn-download-template:hover {
+  background-color: var(--primary-100, #dbeafe);
+  border-color: var(--primary-400, #60a5fa);
 }
 
 .btn-import:disabled {

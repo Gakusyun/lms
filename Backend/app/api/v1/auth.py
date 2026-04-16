@@ -3,9 +3,9 @@ from sqlmodel import Session, select
 
 from app.database.connection import get_session
 from app.schemas import UserLogin, AdminCreate, ChangePassword, UserRegister, PasswordResetRequest, PasswordResetConfirm
-from app.models import Admin, Login
+from app.models import Admin, Login, Teacher, Student, Reviewer
 from app.services.auth import AuthService
-from app.api.deps import check_login, logout
+from app.api.deps import check_login, check_role, logout
 
 router = APIRouter()
 
@@ -98,6 +98,62 @@ def create_admin(
         raise HTTPException(status_code=400, detail="Admin already exists")
 
 
+@router.put("/profile", summary="修改个人信息")
+async def update_profile(
+    request: Request,
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
+):
+    """修改当前用户姓名"""
+    body = await request.json()
+    if not body:
+        raise HTTPException(status_code=400, detail="Request body is required")
+
+    name = body.get("name")
+    if not name or not name.strip():
+        raise HTTPException(status_code=400, detail="姓名不能为空")
+
+    role = current_user["role"]
+    user_id = current_user["id"]
+
+    # 根据角色直接查询对应模型
+    name_field_map = {
+        "teacher": ("teacher_name", Teacher),
+        "student": ("student_name", Student),
+        "reviewer": ("reviewer_name", Reviewer),
+        "admin": ("name", Admin),
+    }
+
+    name_field, model = name_field_map.get(role, ("name", Admin))
+
+    id_fields = {"teacher": "teacher_id", "student": "student_id", "reviewer": "reviewer_id", "admin": "admin_id"}
+    id_field = id_fields.get(role, "admin_id")
+
+    user = session.exec(
+        select(model).where(getattr(model, id_field) == user_id)
+    ).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="用户不存在")
+
+    setattr(user, name_field, name.strip())
+    session.commit()
+
+    # 更新审计日志
+    from app.services.audit_log import AuditLogService, AuditAction
+    client_ip = request.client.host if request.client else None
+    AuditLogService.log(
+        current_user=current_user,
+        action=AuditAction.USER_UPDATE,
+        target_type="user",
+        target_id=user_id,
+        detail=f"修改个人信息，姓名修改为：{name.strip()}",
+        ip_address=client_ip,
+        session=session,
+    )
+
+    return {"message": "个人信息修改成功", "name": name.strip()}
+
+
 @router.post("/change-password", summary="修改密码")
 def change_password(
     request: Request,
@@ -115,7 +171,7 @@ def change_password(
 def change_user_password(
     request: Request,
     user_id: int,
-    current_user: dict = Depends(check_login),
+    current_user: dict = Depends(check_role(["admin"])),
     password_data: ChangePassword = None,
     session: Session = Depends(get_session),
 ):

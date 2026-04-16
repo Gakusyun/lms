@@ -2,8 +2,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import SQLModel
 import traceback
+import os
 
 from app.database.connection import engine
 from app.api.v1.router import api_router
@@ -120,6 +122,11 @@ app.add_middleware(
 
 # 包含API路由
 app.include_router(api_router, prefix="/api/v1")
+
+# 静态文件服务 - 上传文件访问
+upload_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
+os.makedirs(upload_dir, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=upload_dir), name="uploads")
 
 
 @app.get("/")

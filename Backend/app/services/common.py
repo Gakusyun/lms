@@ -6,7 +6,8 @@ from fastapi import HTTPException
 class CommonService:
     @staticmethod
     def paginate_query(
-        session: Session, model: Type[SQLModel], page: int = 1, page_size: int = 20
+        session: Session, model: Type[SQLModel], page: int = 1, page_size: int = 20,
+        query=None
     ) -> tuple[List[SQLModel], int, int]:
         """通用分页查询（动态主键支持）"""
         if page < 1 or page_size < 1:
@@ -15,14 +16,25 @@ class CommonService:
             )
 
         offset = (page - 1) * page_size
-        items = session.exec(select(model).offset(offset).limit(page_size)).all()
+        if query is not None:
+            stmt = query.offset(offset).limit(page_size)
+        else:
+            stmt = select(model).offset(offset).limit(page_size)
+        items = session.exec(stmt).all()
 
         # 🔑 动态获取主键列
         pk_cols = model.__table__.primary_key.columns
         if not pk_cols:
             raise RuntimeError(f"Model {model.__name__} has no primary key")
         pk_col = list(pk_cols)[0]
-        total = session.exec(select(func.count(pk_col))).one()
+        if query is not None:
+            # 直接用 query 作为子查询计数
+            count_stmt = select(func.count(pk_col)).select_from(model).where(
+                pk_col.in_(select(query.subquery().select(pk_col)))
+            )
+        else:
+            count_stmt = select(func.count(pk_col))
+        total = session.exec(count_stmt).one()
 
         total_pages = (total + page_size - 1) // page_size
         return items, total, total_pages

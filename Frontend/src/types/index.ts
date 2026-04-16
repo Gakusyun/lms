@@ -18,7 +18,7 @@ export interface Leave {
   leave_type: string
   leave_hours: string  // 请假课时
   leave_date: string
-  status: '已批准' | '待审批' | '已拒绝' | '已撤销'
+  status: '已批准' | '待审批' | '已拒绝' | '已撤销' | '已销假'
   reviewer_id: number
   reviewer_name: string
   audit_remarks: string

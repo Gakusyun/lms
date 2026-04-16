@@ -182,9 +182,9 @@ const handleImport = async () => {
       closeModal()
       props.onSuccess()
     }, 1500)
-  } catch (error: any) {
-    console.error('导入失败:', error)
-    error.value = error.response?.data?.message || error.message || '导入失败，请稍后重试'
+  } catch (err: any) {
+    console.error('导入失败:', err)
+    error.value = err.response?.data?.message || err.message || '导入失败，请稍后重试'
   } finally {
     isUploading.value = false
   }
@@ -254,9 +254,9 @@ const handleCreate = async () => {
       closeModal()
       props.onSuccess()
     }, 1500)
-  } catch (error: any) {
-    console.error('创建失败:', error)
-    error.value = error.response?.data?.message || error.message || '创建失败，请稍后重试'
+  } catch (err: any) {
+    console.error('创建失败:', err)
+    error.value = err.response?.data?.message || err.message || '创建失败，请稍后重试'
   } finally {
     isSubmitting.value = false
   }

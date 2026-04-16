@@ -277,12 +277,12 @@ onMounted(() => {
                   <template v-for="column in columns" :key="column.key">
                     <slot v-if="$slots['table-cell']" name="table-cell" :item="item" :column="column">
                       <td class="table-cell">
-                        <span v-if="column.formatter">{{ column.formatter(item[column.key]) }}</span>
+                        <span v-if="column.formatter" v-html="column.formatter(item[column.key])"></span>
                         <span v-else>{{ item[column.key] }}</span>
                       </td>
                     </slot>
                     <td v-else class="table-cell">
-                      <span v-if="column.formatter">{{ column.formatter(item[column.key]) }}</span>
+                      <span v-if="column.formatter" v-html="column.formatter(item[column.key])"></span>
                       <span v-else>{{ item[column.key] }}</span>
                     </td>
                   </template>

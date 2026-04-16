@@ -74,7 +74,7 @@ def courses_count(
     current_user: dict = Depends(check_login),
     session: Session = Depends(get_session),
 ):
-    return CourseService.get_courses_count(session)
+    return CourseService.get_courses_count(current_user, session)
 
 
 @router.get("/courses/next-id")

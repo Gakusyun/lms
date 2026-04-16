@@ -1,7 +1,7 @@
 from sqlmodel import Session, select, func
 from fastapi import Depends, Query
 
-from app.models import Teacher
+from app.models import Teacher, Course, StudentCourse
 from app.schemas import TeacherCreate
 from app.services.common import CommonService
 from app.utils.jwt import get_password_hash
@@ -23,11 +23,23 @@ class TeacherService:
         return teachers, total, total_pages
 
     @staticmethod
-    def get_teachers_count(session: Session):
-        """获取教师数量"""
-        return {
-            "teachers_count": session.exec(select(func.count(Teacher.teacher_id))).one()
-        }
+    def get_teachers_count(current_user: dict, session: Session):
+        """获取教师数量（学生返回自己课程的老师，教师返回自己，admin/reviewer返回全部）"""
+        if current_user["role"] == "student":
+            # 获取学生选课的课程对应的老师
+            teacher_ids = session.exec(
+                select(Course.teacher_id)
+                .join(StudentCourse, Course.course_id == StudentCourse.course_id)
+                .where(StudentCourse.student_id == current_user["id"])
+                .distinct()
+            ).all()
+            return {"teachers_count": len(teacher_ids) if teacher_ids else 0}
+        elif current_user["role"] == "teacher":
+            return {"teachers_count": 1}
+        else:
+            return {
+                "teachers_count": session.exec(select(func.count(Teacher.teacher_id))).one()
+            }
 
     @staticmethod
     def get_teacher_by_id(teacher_id: int, session: Session):
