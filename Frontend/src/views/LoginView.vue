@@ -67,10 +67,7 @@
             <code>{{ qrToken }}</code>
           </div>
 
-          <button @click="handleQRCodeCheck" class="btn btn-success btn-lg w-full" :disabled="qrChecking">
-            <span v-if="!qrChecking">我已扫码</span>
-            <span v-else>验证中...</span>
-          </button>
+          <p class="qr-hint">请使用另一台设备扫码登录</p>
 
           <!-- 扫码错误信息显示 -->
           <div v-if="qrErrorMessage" class="alert alert-danger mt-4">
@@ -386,7 +383,7 @@ import { useRouter } from 'vue-router'
 import { login } from '../api'
 import http from '../utils/http'
 import { toDataURL } from 'qrcode'
-import type { LoginResponse, CheckAuthResponse } from '../types'
+import type { LoginResponse } from '../types'
 
 const router = useRouter()
 
@@ -403,7 +400,6 @@ const loginMode = ref<'password' | 'qrcode'>('password')
 const qrToken = ref('')
 const qrCodeDataUrl = ref('')
 const qrLoading = ref(false)
-const qrChecking = ref(false)
 const qrErrorMessage = ref('')
 
 // 生成唯一token
@@ -449,12 +445,24 @@ const generateQRCode = async () => {
     loginMode.value = 'qrcode'
     qrLoading.value = true
     qrErrorMessage.value = ''
+    qrToken.value = ''
 
-    // 生成唯一的扫码token
-    qrToken.value = generateToken()
+    // 生成唯一的扫码token（前端生成）
+    const rawToken = generateToken()
 
-    // 生成二维码
-    qrCodeDataUrl.value = await toDataURL(qrToken.value, {
+    // 先调用后端创建 Login 记录，再生成二维码
+    const token = localStorage.getItem('token')
+    await http.get('/login/orcode', {
+      params: {
+        login_token: rawToken,
+        token: token,
+        action: 'create'
+      }
+    })
+
+    // 创建成功后，保存 token 并生成二维码
+    qrToken.value = rawToken
+    qrCodeDataUrl.value = await toDataURL(rawToken, {
       width: 200,
       margin: 2,
       color: {
@@ -463,62 +471,59 @@ const generateQRCode = async () => {
       }
     })
 
-    console.log('二维码生成成功:', qrToken.value)
+    console.log('二维码生成成功:', rawToken)
+
+    // 启动 5 秒自动轮询
+    startQRPoll()
 
   } catch (error) {
     console.error('二维码生成失败:', error)
     qrErrorMessage.value = '二维码生成失败，请重试'
+    qrToken.value = ''
+    qrCodeDataUrl.value = ''
   } finally {
     qrLoading.value = false
   }
 }
 
-// 验证扫码登录 - 添加轮询机制
-const handleQRCodeCheck = async () => {
-  try {
-    qrChecking.value = true
-    qrErrorMessage.value = ''
+// 5秒自动轮询
+let qrPollTimer: ReturnType<typeof setInterval> | null = null
 
-    // 轮询检查登录状态，最多30秒
-    const maxAttempts = 30 // 最多尝试30次（30秒）
-    const pollInterval = 1000 // 每秒检查一次
-
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        // 调用登录二维码验证API
-        const response = await http.get(`/login/orcode?login_token=${qrToken.value}`) as unknown as CheckAuthResponse
-
-        // 登录成功，停止轮询
-        console.log('扫码登录成功:', response)
-
-        // 分别存储到localStorage
-        storeLoginInfo(response.token, response.role, response.id, response.name)
-
-        // 登录成功后跳转到首页
-        router.push('/')
-        return // 成功后退出函数
-
-      } catch (error: any) {
-        // 如果是422错误，说明还没有扫码，继续轮询
-        if (error.response?.status === 422) {
-          console.log(`等待扫码... (${attempt + 1}/${maxAttempts})`)
-          // 等待1秒后继续下一次轮询
-          await new Promise(resolve => setTimeout(resolve, pollInterval))
-        } else {
-          // 其他错误，停止轮询
-          throw error
-        }
-      }
+const startQRPoll = () => {
+  stopQRPoll()
+  qrPollTimer = setInterval(async () => {
+    if (!qrToken.value || loginMode.value !== 'qrcode') {
+      stopQRPoll()
+      return
     }
+    try {
+      const response = await http.get('/login/orcode', {
+        params: {
+          login_token: qrToken.value,
+          action: 'poll'
+        }
+      }) as any
+      if (response && response.token) {
+        stopQRPoll()
+        console.log('扫码登录成功:', response)
+        storeLoginInfo(response.token, response.role, response.id, response.name)
+        router.push('/')
+      }
+    } catch (error: any) {
+      if (error.response?.status !== 422) {
+        // 非 422 错误（不是"等待扫码"），停止轮询
+        stopQRPoll()
+        qrErrorMessage.value = '登录验证失败，请重试'
+      }
+      // 422 = 等待扫码，继续轮询
+    }
+  }, 5000)
+}
 
-    // 30秒后仍未扫码
-    qrErrorMessage.value = '扫码超时，请重试或使用账号密码登录'
-
-  } catch (error: any) {
-    console.error('扫码登录验证失败:', error)
-    qrErrorMessage.value = '登录验证失败，请确认是否已扫码或重试'
-  } finally {
-    qrChecking.value = false
+const stopQRPoll = () => {
+  if (qrPollTimer) {
+    clearInterval(qrPollTimer)
+    qrPollTimer = null
   }
 }
 </script>

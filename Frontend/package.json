@@ -17,6 +17,7 @@
     "@types/qrcode": "^1.5.6",
     "axios": "^1.15.0",
     "echarts": "^5.5.0",
+    "html5-qrcode": "^2.3.8",
     "qrcode": "^1.5.4",
     "vue": "^3.5.32",
     "vue-echarts": "^7.0.3",

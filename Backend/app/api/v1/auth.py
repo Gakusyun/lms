@@ -31,11 +31,20 @@ def log_out(current_user: dict = Depends(logout)):
 def login_qrcode(
     login_token: str,
     token: str | None = None,
+    action: str | None = None,
     session_check: Session = Depends(get_session),
     session_login: Session = Depends(get_session),
 ):
-    # 小程序端扫码：有 token 参数，创建登录记录
-    if token:
+    """
+    action=create: 创建设备A的Login记录（二维码生成前调用）
+                   需要 token（设备A的JWT）
+    无 action: 设备B授权扫码，标记记录为已使用（二维码被扫后调用）
+               可选 token（设备B的JWT，用于日志）
+    poll: 轮询查询Login记录是否已被使用（扫码后轮询）
+          无需 token
+    """
+    if action == "create" and token:
+        # 创建设置A的Login记录（二维码生成前）
         from app.utils.jwt import verify_token as jwt_verify
         obj = jwt_verify(token)
         if not obj or not obj.get("sub"):
@@ -58,17 +67,16 @@ def login_qrcode(
             "role": user_info["role"],
             "id": user_info["id"],
             "name": user_info["name"],
-            "token": token,
         }
-    # 前端轮询：只有 login_token，查询数据库
-    else:
+    elif action == "poll":
+        # 轮询查询：Login记录是否已被设备B扫码使用
         login_record = session_login.exec(
-            select(Login).where(Login.token == login_token, Login.can_be_used == True)
+            select(Login).where(Login.token == login_token)
         ).first()
-
-        if login_record:
-            login_record.can_be_used = False
-            session_login.commit()
+        if not login_record:
+            raise HTTPException(status_code=422, detail="Login record not found")
+        if login_record.can_be_used == False:
+            # 已被使用，返回JWT
             return {
                 "role": login_record.user_role,
                 "id": login_record.user_id,
@@ -76,7 +84,23 @@ def login_qrcode(
                 "token": login_record.jwt_token,
             }
         else:
-            raise HTTPException(status_code=422, detail="未扫码或二维码已过期")
+            # 等待扫码
+            raise HTTPException(status_code=422, detail="Waiting for scan")
+    else:
+        # 设备B扫码授权：标记记录为已使用
+        login_record = session_login.exec(
+            select(Login).where(Login.token == login_token, Login.can_be_used == True)
+        ).first()
+        if not login_record:
+            raise HTTPException(status_code=422, detail="二维码已失效或已被使用")
+        login_record.can_be_used = False
+        session_login.commit()
+        return {
+            "role": login_record.user_role,
+            "id": login_record.user_id,
+            "name": login_record.user_name,
+            "token": login_record.jwt_token,
+        }
 
 
 @router.post("/create/admin")

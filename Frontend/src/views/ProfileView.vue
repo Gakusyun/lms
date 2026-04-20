@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { changePassword } from '../api/index'
 import http from '../utils/http'
+import { Html5Qrcode } from 'html5-qrcode'
 
 const router = useRouter()
 
@@ -166,8 +167,126 @@ const handleChangePassword = async () => {
   }
 }
 
+// ========== 让其他设备登录 ==========
+const showOtherDeviceModal = ref(false)
+const otherDeviceToken = ref('')
+const otherDeviceLoading = ref(false)
+const otherDeviceError = ref('')
+const otherDeviceSuccess = ref('')
+
+// 扫码相关
+const showScanner = ref(false)
+const scannerContainerId = 'qr-scanner-container'
+let html5Qrcode: Html5Qrcode | null = null
+
+const openOtherDeviceModal = () => {
+  showOtherDeviceModal.value = true
+  otherDeviceToken.value = ''
+  otherDeviceError.value = ''
+  otherDeviceSuccess.value = ''
+}
+
+const closeOtherDeviceModal = () => {
+  showOtherDeviceModal.value = false
+  stopScanner()
+}
+
+const handleManualToken = async () => {
+  if (!otherDeviceToken.value.trim()) {
+    otherDeviceError.value = '请输入登录令牌'
+    return
+  }
+  await authorizeOtherDevice(otherDeviceToken.value.trim())
+}
+
+const startScanner = async () => {
+  try {
+    showScanner.value = true
+    otherDeviceError.value = ''
+
+    // 等待 DOM 就绪
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    html5Qrcode = new Html5Qrcode(scannerContainerId)
+
+    await html5Qrcode.start(
+      { facingMode: 'environment' },
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 }
+      },
+      (decodedText) => {
+        // 扫码成功
+        console.log('扫描到令牌:', decodedText)
+        stopScanner()
+        showScanner.value = false
+        otherDeviceToken.value = decodedText
+        authorizeOtherDevice(decodedText)
+      },
+      (_errorMessage) => {
+        // 扫码错误（忽略，扫码中会持续输出）
+      }
+    )
+  } catch (err) {
+    console.error('启动摄像头失败:', err)
+    otherDeviceError.value = '摄像头启动失败，请检查权限'
+    showScanner.value = false
+  }
+}
+
+const stopScanner = async () => {
+  if (html5Qrcode && html5Qrcode.isScanning) {
+    try {
+      await html5Qrcode.stop()
+    } catch (e) {
+      // 忽略停止错误
+    }
+    html5Qrcode = null
+  }
+}
+
+const authorizeOtherDevice = async (loginToken: string) => {
+  try {
+    otherDeviceLoading.value = true
+    otherDeviceError.value = ''
+    otherDeviceSuccess.value = ''
+
+    const token = localStorage.getItem('token')
+    if (!token) {
+      throw new Error('未找到认证令牌')
+    }
+
+    // 调用后端 API，将当前用户的 JWT 与 login_token 绑定
+    // 小程序端扫码：GET /login/orcode?login_token=xxx&token=JWT
+    const response = await http.get('/login/orcode', {
+      params: {
+        login_token: loginToken,
+        token: token
+      }
+    }) as any
+
+    if (response && response.token) {
+      otherDeviceSuccess.value = '授权成功！对方设备已登录'
+      setTimeout(() => {
+        closeOtherDeviceModal()
+      }, 1500)
+    } else {
+      otherDeviceError.value = '授权失败，未获取到有效响应'
+    }
+  } catch (error: any) {
+    console.error('授权失败:', error)
+    otherDeviceError.value = error.response?.data?.detail || '授权失败，令牌无效或已过期'
+  } finally {
+    otherDeviceLoading.value = false
+  }
+}
+
 onMounted(() => {
   getUserInfo()
+})
+
+onUnmounted(() => {
+  stopScanner()
 })
 </script>
 
@@ -232,13 +351,16 @@ onMounted(() => {
           <button @click="openPasswordModal" class="btn btn-primary">
             修改密码
           </button>
+          <button @click="openOtherDeviceModal" class="btn btn-secondary" style="margin-left: 0.5rem;">
+            让其他设备登录
+          </button>
         </div>
       </div>
     </div>
 
     <!-- 修改密码模态框 -->
-    <div v-if="showPasswordModal" class="modal-overlay" @click="closePasswordModal">
-      <div class="modal-content" @click.stop>
+    <div v-if="showPasswordModal" class="modal-overlay">
+      <div class="modal-content">
         <div class="modal-header">
           <h3>修改密码</h3>
           <button @click="closePasswordModal" class="modal-close">×</button>
@@ -303,6 +425,61 @@ onMounted(() => {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 让其他设备登录模态框 -->
+    <div v-if="showOtherDeviceModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>让其他设备登录</h3>
+          <button @click="closeOtherDeviceModal" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- 错误信息 -->
+          <div v-if="otherDeviceError" class="alert alert-danger">
+            {{ otherDeviceError }}
+          </div>
+
+          <!-- 成功信息 -->
+          <div v-if="otherDeviceSuccess" class="alert alert-success">
+            {{ otherDeviceSuccess }}
+          </div>
+
+          <!-- 扫码区域 -->
+          <div v-if="showScanner" class="scanner-area">
+            <div :id="scannerContainerId" class="scanner-container"></div>
+            <button type="button" @click="stopScanner(); showScanner = false" class="btn btn-outline btn-sm">
+              取消扫码
+            </button>
+          </div>
+
+          <!-- 手动输入 -->
+          <div v-else class="other-device-form">
+            <p class="help-text">扫描其他设备显示的登录二维码，或手动输入登录令牌</p>
+
+            <div class="form-group">
+              <label for="other_device_token">登录令牌</label>
+              <input
+                type="text"
+                id="other_device_token"
+                v-model="otherDeviceToken"
+                class="form-input"
+                placeholder="请输入登录令牌"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="button" @click="startScanner" class="btn btn-secondary" :disabled="otherDeviceLoading">
+                扫码
+              </button>
+              <button type="button" @click="handleManualToken" class="btn btn-primary" :disabled="otherDeviceLoading">
+                {{ otherDeviceLoading ? '授权中...' : '确认授权' }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -378,6 +555,20 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
+.btn-secondary {
+  background-color: var(--success);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #059669;
+}
+
+.btn-secondary:disabled {
+  background-color: var(--gray-300);
+  cursor: not-allowed;
+}
+
 .btn-outline {
   background-color: transparent;
   color: var(--text-secondary);
@@ -387,6 +578,12 @@ onMounted(() => {
 .btn-outline:hover {
   background-color: var(--gray-100);
   color: var(--text-primary);
+}
+
+.btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: var(--text-sm);
+  margin-top: var(--spacing);
 }
 
 .profile-card {
@@ -618,5 +815,32 @@ onMounted(() => {
   background-color: var(--green-50);
   color: var(--green-700);
   border: 1px solid var(--green-200);
+}
+
+.help-text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.scanner-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing);
+}
+
+.scanner-container {
+  width: 250px;
+  height: 250px;
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.other-device-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
 }
 </style>
