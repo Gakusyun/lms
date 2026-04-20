@@ -36,12 +36,12 @@ const fetchSchoolLeaves = async () => {
 }
 
 // 书记/学工处切换Tab时拉取数据
-const switchTab = (tab: 'mine' | 'school') => {
-  reviewerTab.value = tab
-  if (tab === 'school') {
-    fetchSchoolLeaves()
-  }
-}
+// const switchTab = (tab: 'mine' | 'school') => {
+//   reviewerTab.value = tab
+//   if (tab === 'school') {
+//     fetchSchoolLeaves()
+//   }
+// }
 
 // 编辑请假条相关状态
 const showEditModal = ref(false)

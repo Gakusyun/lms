@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../api'
-import http from '../utils/http'
 
 const router = useRouter()
 
@@ -31,7 +30,7 @@ const fetchNotifications = async () => {
     if (filter.value === 'unread') params.is_read = false
     else if (filter.value === 'read') params.is_read = true
 
-    const response = await getNotifications(params)
+    const response = await getNotifications(params) as any
     notifications.value = response?.items || []
     total.value = response?.total || 0
     totalPages.value = response?.total_pages || 0

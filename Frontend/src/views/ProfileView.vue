@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { changePassword, getData } from '../api/index'
+import { changePassword } from '../api/index'
 import http from '../utils/http'
 
 const router = useRouter()
@@ -82,7 +82,7 @@ const handleSaveName = async () => {
   try {
     nameError.value = ''
     nameSuccess.value = ''
-    const response = await http.put('/profile', { name: editNameValue.value.trim() })
+    const response = await http.put('/profile', { name: editNameValue.value.trim() }) as any
     if (response?.name) {
       userInfo.value.name = response.name
       localStorage.setItem('name', response.name)
