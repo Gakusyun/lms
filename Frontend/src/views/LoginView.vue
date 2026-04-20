@@ -447,20 +447,8 @@ const generateQRCode = async () => {
     qrErrorMessage.value = ''
     qrToken.value = ''
 
-    // 生成唯一的扫码token（前端生成）
+    // 生成唯一的扫码token（前端生成，纯本地）
     const rawToken = generateToken()
-
-    // 先调用后端创建 Login 记录，再生成二维码
-    const token = localStorage.getItem('token')
-    await http.get('/login/orcode', {
-      params: {
-        login_token: rawToken,
-        token: token,
-        action: 'create'
-      }
-    })
-
-    // 创建成功后，保存 token 并生成二维码
     qrToken.value = rawToken
     qrCodeDataUrl.value = await toDataURL(rawToken, {
       width: 200,
@@ -497,11 +485,9 @@ const startQRPoll = () => {
       return
     }
     try {
+      // 不传 token 参数，后端视为轮询请求
       const response = await http.get('/login/orcode', {
-        params: {
-          login_token: qrToken.value,
-          action: 'poll'
-        }
+        params: { login_token: qrToken.value }
       }) as any
       if (response && response.token) {
         stopQRPoll()
@@ -510,12 +496,12 @@ const startQRPoll = () => {
         router.push('/')
       }
     } catch (error: any) {
+      // 422 = 未扫码，继续轮询；其他错误停止轮询
       if (error.response?.status !== 422) {
-        // 非 422 错误（不是"等待扫码"），停止轮询
         stopQRPoll()
         qrErrorMessage.value = '登录验证失败，请重试'
       }
-      // 422 = 等待扫码，继续轮询
+      // 422 继续轮询
     }
   }, 5000)
 }
