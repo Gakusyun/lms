@@ -316,12 +316,13 @@ class LeaveService:
                     detail=f"课程冲突：该学生当天已有请假记录（ID:{existing_conflict.leave_id}），同一课程同一时间不得重复请假"
                 )
 
-        # 2.2 历史请假频次校验：统计该学生近30天请假次数
+        # 2.2 历史请假频次校验：统计该学生近30天请假次数（排除已撤销）
         thirty_days_ago = datetime.now() - timedelta(days=30)
         recent_leaves_count = session.exec(
             select(func.count(Leave.leave_id)).where(
                 Leave.student_id == leave_dict["student_id"],
                 Leave.leave_date >= thirty_days_ago,
+                Leave.status.not_in(["已撤销"]),
             )
         ).one()
         if recent_leaves_count >= 5:

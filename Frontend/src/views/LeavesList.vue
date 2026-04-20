@@ -196,7 +196,7 @@ const handleEditLeave = async () => {
     await editLeave(currentEditLeave.value.leave_id, formattedData)
 
     closeEditModal()
-    refreshData()
+    listKey.value++
 
   } catch (error: any) {
     console.error('编辑请假条失败:', error)
@@ -264,7 +264,7 @@ const handleAuditLeave = async () => {
     }
 
     closeAuditModal()
-    refreshData()
+    listKey.value++
 
   } catch (error: any) {
     console.error('审核请假条失败:', error)
@@ -293,7 +293,7 @@ const handleCancelLeave = async (leave: Leave) => {
 
   try {
     await cancelLeave(leave.leave_id)
-    refreshData()
+    listKey.value++
   } catch (error: any) {
     console.error('撤销请假条失败:', error)
     alert(error.response?.data?.detail || '撤销失败')
@@ -397,10 +397,6 @@ const formatMaterials = (value: string): string => {
   }).join('<br>')
 }
 
-// 刷新数据的函数
-const refreshData = () => {
-  console.log('数据已刷新')
-}
 </script>
 
 <template>
