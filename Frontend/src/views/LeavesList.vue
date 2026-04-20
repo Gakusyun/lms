@@ -374,6 +374,7 @@ const canDownloadMaterials = (leave: Leave): boolean => {
 const downloadMaterials = (leave: Leave) => {
   if (!leave.materials) return
   const files = leave.materials.split(',').filter((f: string) => f.trim())
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
   files.forEach((fileName: string) => {
     const trimmed = fileName.trim()
     if (!trimmed) return
@@ -382,7 +383,7 @@ const downloadMaterials = (leave: Leave) => {
     const parts = trimmed.split('/')
     const filename = parts[parts.length - 1]
     const leaveId = leave.leave_id
-    const url = `/api/v1/leaves/${leaveId}/download/${encodeURIComponent(filename)}`
+    const url = `${apiBase}/leaves/${leaveId}/download/${encodeURIComponent(filename)}`
     window.open(url, '_blank')
   })
 }
@@ -390,11 +391,12 @@ const downloadMaterials = (leave: Leave) => {
 // 格式化材料字段为可点击链接
 const formatMaterials = (value: string): string => {
   if (!value || !value.trim()) return '-'
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
   return value.split(',').map((f: string) => f.trim()).filter(Boolean).map(fileName => {
     const parts = fileName.split('/')
     const filename = parts[parts.length - 1]
     const leaveId = parts.length >= 2 ? parts[parts.length - 2] : ''
-    return `<a href="/api/v1/leaves/${leaveId}/download/${encodeURIComponent(filename)}" target="_blank" class="material-link">${filename}</a>`
+    return `<a href="${apiBase}/leaves/${leaveId}/download/${encodeURIComponent(filename)}" target="_blank" class="material-link">${filename}</a>`
   }).join('<br>')
 }
 
