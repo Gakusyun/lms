@@ -373,27 +373,28 @@ const canDownloadMaterials = (leave: Leave): boolean => {
 // 下载证明材料
 const downloadMaterials = (leave: Leave) => {
   if (!leave.materials) return
-  const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : ''
-  // 实际文件存储在 /uploads/ 下，materials 字段存的是相对路径（如 uploads/xxx.png 或请假材料.pdf）
-  let filePath = leave.materials.startsWith('/') ? leave.materials : `/${leave.materials}`
-  // 如果路径不以 uploads/ 开头，补上前缀（兼容测试数据中直接存文件名的老数据）
-  if (!filePath.startsWith('/uploads/')) {
-    filePath = `/uploads${filePath}`
-  }
-  const url = `${baseUrl}${filePath}`
-  window.open(url, '_blank')
+  const files = leave.materials.split(',').filter((f: string) => f.trim())
+  files.forEach((fileName: string) => {
+    const trimmed = fileName.trim()
+    if (!trimmed) return
+    // 提取 leave_id 和文件名
+    // materials 格式: uploads/{leave_id}/{filename}
+    const parts = trimmed.split('/')
+    const filename = parts[parts.length - 1]
+    const leaveId = leave.leave_id
+    const url = `/api/v1/leaves/${leaveId}/download/${encodeURIComponent(filename)}`
+    window.open(url, '_blank')
+  })
 }
 
 // 格式化材料字段为可点击链接
 const formatMaterials = (value: string): string => {
   if (!value || !value.trim()) return '-'
-  const baseUrl = import.meta.env.DEV ? 'http://localhost:8000' : ''
-  return value.split(',').map(f => f.trim()).filter(Boolean).map(fileName => {
-    let filePath = fileName.startsWith('/') ? fileName : `/${fileName}`
-    if (!filePath.startsWith('/uploads/')) {
-      filePath = `/uploads${filePath}`
-    }
-    return `<a href="${baseUrl}${filePath}" target="_blank" class="material-link">${fileName.split('/').pop()}</a>`
+  return value.split(',').map((f: string) => f.trim()).filter(Boolean).map(fileName => {
+    const parts = fileName.split('/')
+    const filename = parts[parts.length - 1]
+    const leaveId = parts.length >= 2 ? parts[parts.length - 2] : ''
+    return `<a href="/api/v1/leaves/${leaveId}/download/${encodeURIComponent(filename)}" target="_blank" class="material-link">${filename}</a>`
   }).join('<br>')
 }
 

@@ -1,5 +1,6 @@
+import os
 from typing import List
-from fastapi import APIRouter, Depends, Query, Body, UploadFile, File, Request
+from fastapi import APIRouter, Depends, Query, Body, UploadFile, File, Request, HTTPException
 from sqlmodel import Session
 
 from app.database.connection import get_session
@@ -219,3 +220,41 @@ async def upload_leave_files(
 ):
     """上传请假证明文件（关联到请假条，使用leave_id作为文件夹）"""
     return await LeaveService.upload_leave_files(leave_id, files, session)
+
+
+@router.get("/leaves/{leave_id}/download/{filename}")
+async def download_leave_file(
+    leave_id: int,
+    filename: str,
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
+):
+    """下载请假证明文件（受权限保护）"""
+    from fastapi.responses import FileResponse
+    from sqlmodel import select
+    from app.models import Leave
+
+    # 验证请假条存在
+    leave = session.exec(select(Leave).where(Leave.leave_id == leave_id)).first()
+    if not leave:
+        raise HTTPException(status_code=404, detail="请假记录不存在")
+
+    # 验证文件路径安全
+    safe_filename = os.path.basename(filename)
+    file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads", str(leave_id), safe_filename)
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="文件不存在")
+
+    # 根据文件扩展名确定 media_type
+    import mimetypes
+    media_type, _ = mimetypes.guess_type(safe_filename)
+    if not media_type:
+        media_type = "application/octet-stream"
+
+    return FileResponse(
+        path=file_path,
+        filename=safe_filename,
+        media_type=media_type,
+        headers={"Content-Disposition": f"attachment; filename*=UTF-8''{safe_filename}"}
+    )
