@@ -556,12 +556,12 @@ onUnmounted(() => {
 }
 
 .btn-secondary {
-  background-color: var(--success);
+  background-color: var(--primary-600);
   color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #059669;
+  background-color: var(--primary-700);
 }
 
 .btn-secondary:disabled {
