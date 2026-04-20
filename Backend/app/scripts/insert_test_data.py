@@ -132,7 +132,7 @@ def create_test_reviewers(session: Session):
             reviewer_id=reviewer_id,
             reviewer_name=gen_name(),
             school_id=school_map["学生处"],
-            role_id=role_map["处长"],
+            role_id=role_map["学工处"],
             password=hash_password("1"),
         )
         session.add(reviewer)
@@ -433,7 +433,7 @@ def main():
         print(f"\n测试数据创建完成!")
         print(f"- 管理员: 1 个 (ID: 8001, 密码: 1)")
         print(f"- 学校/院系: {len(school_map)} 个")
-        print(f"- 角色: 6 个 (辅导员、书记、处长、主任、副院长、科长)")
+        print(f"- 角色: 3 个 (辅导员、书记、学工处)")
         print(f"- 审核员: {len(reviewers)} 个 (每学院1辅导员+1书记 + 2学工处, 密码: 1)")
         print(f"- 教师: {len(teachers)} 个 (ID: 2001-2015, 密码: 1)")
         print(f"- 课程: {len(courses)} 门")
