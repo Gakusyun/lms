@@ -209,6 +209,7 @@ async def upload_leave_files(
     leave_id: int,
     files: List[UploadFile] = File(...),
     current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
 ):
     """上传请假证明文件（关联到请假条，使用leave_id作为文件夹）"""
-    return await LeaveService.upload_leave_files(leave_id, files)
+    return await LeaveService.upload_leave_files(leave_id, files, session)

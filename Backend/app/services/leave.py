@@ -1082,15 +1082,22 @@ class LeaveService:
         }
 
     @staticmethod
-    async def upload_leave_files(leave_id: int, files: List[UploadFile]) -> dict:
+    async def upload_leave_files(leave_id: int, files: List[UploadFile], session: Session = None) -> dict:
         """上传请假证明文件（关联到请假条，使用leave_id作为文件夹）"""
         from sqlmodel import select
         from app.models import Leave
 
         # 验证请假条是否存在
-        leave = Session.execute(
-            select(Leave).where(Leave.leave_id == leave_id)
-        ).first()
+        if session is None:
+            from app.database.connection import engine
+            with Session(engine) as temp_session:
+                leave = temp_session.exec(
+                    select(Leave).where(Leave.leave_id == leave_id)
+                ).first()
+        else:
+            leave = session.exec(
+                select(Leave).where(Leave.leave_id == leave_id)
+            ).first()
         if not leave:
             raise HTTPException(status_code=404, detail="请假记录不存在")
 

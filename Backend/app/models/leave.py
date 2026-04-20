@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field
 from datetime import datetime
 from typing import Optional
 from enum import Enum
+from pydantic import ConfigDict
 
 
 class LeaveStatus(str, Enum):
@@ -24,6 +25,7 @@ class LeaveType(str, Enum):
 
 class Leave(SQLModel, table=True):
     """请假表 - 符合第三范式"""
+    model_config = ConfigDict(populate_by_name=True)
     leave_id: int = Field(primary_key=True, index=True)
     student_id: int = Field(foreign_key="student.student_id", index=True)
     leave_date: datetime = Field(index=True)
