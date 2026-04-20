@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Union, Optional
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class LeaveCreate(BaseModel):
@@ -26,4 +26,43 @@ class LeaveCreate(BaseModel):
             return None
         if isinstance(v, str):
             return datetime.fromisoformat(v)
+        return v
+
+
+class LeaveResponse(BaseModel):
+    """用于 API 响应的 Leave schema"""
+    leave_id: int
+    student_id: int
+    leave_date: Optional[datetime] = None
+    leave_hours: Optional[str] = None
+    status: str = ""
+    leave_type: Optional[str] = None
+    remarks: Optional[str] = None
+    materials: Optional[str] = None
+    reviewer_id: Optional[int] = None
+    teacher_id: Optional[int] = None
+    audit_remarks: Optional[str] = None
+    audit_time: Optional[datetime] = None
+    course_id: Optional[int] = None
+    is_modified: bool = False
+    guarantee_student_id: Optional[int] = None
+    qr_code: Optional[str] = None
+    qr_valid_from: Optional[datetime] = None
+    qr_valid_until: Optional[datetime] = None
+    qr_max_uses: Optional[int] = None
+    qr_use_count: Optional[int] = None
+    approval_level: int = 1
+
+    model_config = ConfigDict(from_attributes=True)
+
+    @field_validator("leave_date", "audit_time", "qr_valid_from", "qr_valid_until", mode="before")
+    @classmethod
+    def parse_optional_datetime(cls, v):
+        if v is None:
+            return None
+        if isinstance(v, str):
+            try:
+                return datetime.fromisoformat(v)
+            except ValueError:
+                return v
         return v

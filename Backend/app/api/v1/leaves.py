@@ -4,7 +4,7 @@ from sqlmodel import Session
 
 from app.database.connection import get_session
 from app.models import Leave
-from app.schemas import LeaveCreate, PaginatedResponse
+from app.schemas import LeaveCreate, LeaveResponse, PaginatedResponse
 from app.services.leave import LeaveService
 from app.services.qr_code import QRCodeService
 from app.api.deps import check_login, check_role
@@ -38,7 +38,7 @@ def leaves_count(
     return LeaveService.get_leaves_count(current_user, session)
 
 
-@router.post("/leaves", response_model=Leave)
+@router.post("/leaves", response_model=LeaveResponse)
 def create_leave_endpoint(
     request: Request,
     current_user: dict = Depends(check_role(["admin", "student"])),
@@ -84,7 +84,7 @@ def read_leaves_by_teacher(
     return LeaveService.get_leaves_by_teacher(teacher_id, session)
 
 
-@router.put("/leaves/edit/{leave_id}", response_model=Leave)
+@router.put("/leaves/edit/{leave_id}", response_model=LeaveResponse)
 def edit_leave_by_id(
     request: Request,
     leave_id: int,
@@ -95,7 +95,7 @@ def edit_leave_by_id(
     return LeaveService.edit_leave(current_user, leave_id, leave_data, session, request)
 
 
-@router.post("/leaves/approve/{leave_id}", response_model=Leave)
+@router.post("/leaves/approve/{leave_id}", response_model=LeaveResponse)
 def approve_leave(
     request: Request,
     leave_id: int,
@@ -107,7 +107,7 @@ def approve_leave(
     return LeaveService.approve_leave(current_user, leave_id, audit_remarks, session, request)
 
 
-@router.post("/leaves/reject/{leave_id}", response_model=Leave)
+@router.post("/leaves/reject/{leave_id}", response_model=LeaveResponse)
 def reject_leave(
     request: Request,
     leave_id: int,
@@ -119,7 +119,7 @@ def reject_leave(
     return LeaveService.reject_leave(current_user, leave_id, audit_remarks, session, request)
 
 
-@router.post("/leaves/cancel/{leave_id}", response_model=Leave)
+@router.post("/leaves/cancel/{leave_id}", response_model=LeaveResponse)
 def cancel_leave(
     request: Request,
     leave_id: int,
@@ -190,7 +190,7 @@ def verify_qr_code(
     return QRCodeService.verify_qr(qr_content, session)
 
 
-@router.post("/leaves/close-off/{leave_id}", response_model=Leave)
+@router.post("/leaves/close-off/{leave_id}", response_model=LeaveResponse)
 def close_off_leave(
     leave_id: int,
     current_user: dict = Depends(check_role(["admin", "reviewer"])),
