@@ -64,7 +64,7 @@ def create_test_reviewers(session: Session):
         "人文与教育学院",
         "体育学院",
     ]
-    roles_list = ["辅导员", "书记", "学工处", "副院长"]
+    roles_list = ["辅导员", "书记", "学工处"]
 
     school_map = {}
     for idx, school_name in enumerate(schools, start=1):

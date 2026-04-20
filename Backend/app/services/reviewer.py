@@ -121,7 +121,7 @@ class ReviewerService:
             affairs_count = session.exec(
                 select(func.count(Reviewer.reviewer_id))
                 .join(Role, Reviewer.role_id == Role.role_id)
-                .where(Role.role_name.like("%学工处%"))
+                .where(or_(Role.role_name.like("%学工处%"), Role.role_name.like("%处长%")))
             ).one()
             count += affairs_count
             return {"reviewers_count": count}

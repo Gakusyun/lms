@@ -194,9 +194,6 @@ onMounted(() => {
       </div>
 
       <div v-else class="page-content">
-        <div class="stats-card">
-          <p class="stats-text">系统数据统计概览</p>
-        </div>
 
         <div class="charts-grid">
           <div class="chart-card">

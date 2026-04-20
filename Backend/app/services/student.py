@@ -53,9 +53,12 @@ class StudentService:
                 if "学工处" in role_name or "处长" in role_name:
                     # 学工处/处长：看全校所有学生（不筛选）
                     pass
-                elif "书记" in role_name or "辅导员" in role_name:
-                    # 书记/辅导员：看本学院所有学生
+                elif "书记" in role_name:
+                    # 书记：看本学院所有学生
                     query = query.where(Student.school_id == reviewer_school_id)
+                elif "辅导员" in role_name:
+                    # 辅导员：只看自己负责的学生
+                    query = query.where(Student.reviewer_id == obj["id"])
                 else:
                     # 其他角色：只显示自己负责的学生
                     query = query.where(Student.reviewer_id == obj["id"])
@@ -82,9 +85,12 @@ class StudentService:
                 if "学工处" in role_name or "处长" in role_name:
                     # 学工处/处长：统计全校所有学生（不筛选）
                     pass
-                elif "书记" in role_name or "辅导员" in role_name:
-                    # 书记/辅导员：统计本学院所有学生
+                elif "书记" in role_name:
+                    # 书记：统计本学院所有学生
                     total_stmt = total_stmt.where(Student.school_id == reviewer_school_id)
+                elif "辅导员" in role_name:
+                    # 辅导员：只统计自己负责的学生
+                    total_stmt = total_stmt.where(Student.reviewer_id == obj["id"])
                 else:
                     # 其他角色：只统计自己负责的学生
                     total_stmt = total_stmt.where(Student.reviewer_id == obj["id"])
@@ -139,11 +145,18 @@ class StudentService:
                 if "学工处" in role_name or "处长" in role_name:
                     # 学工处/处长：统计全校所有学生
                     count = session.exec(select(func.count(Student.student_id))).one()
-                elif "书记" in role_name or "辅导员" in role_name:
-                    # 书记/辅导员：统计本学院所有学生
+                elif "书记" in role_name:
+                    # 书记：统计本学院所有学生
                     count = session.exec(
                         select(func.count(Student.student_id)).where(
                             Student.school_id == reviewer_school_id
+                        )
+                    ).one()
+                elif "辅导员" in role_name:
+                    # 辅导员：只统计自己负责的学生
+                    count = session.exec(
+                        select(func.count(Student.student_id)).where(
+                            Student.reviewer_id == obj["id"]
                         )
                     ).one()
                 else:
