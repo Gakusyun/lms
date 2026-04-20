@@ -1,7 +1,7 @@
 import os
 from typing import List
 from fastapi import APIRouter, Depends, Query, Body, UploadFile, File, Request, HTTPException
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.database.connection import get_session
 from app.models import Leave
