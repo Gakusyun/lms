@@ -1,9 +1,13 @@
 from sqlmodel import Session, select, func
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
+from fastapi import Request
 
 from app.models import AuditLog, AuditAction
 from app.schemas import AuditLogCreate, AuditLogQuery
+
+if TYPE_CHECKING:
+    from fastapi import Request
 
 
 class AuditLogService:
@@ -17,11 +21,22 @@ class AuditLogService:
         target_id: Optional[int] = None,
         detail: Optional[str] = None,
         ip_address: Optional[str] = None,
+        request: "Request" = None,
         session: Session = None,
     ):
         """记录审计日志"""
         if session is None:
             return
+
+        # 如果没有传入 ip_address，则尝试从 request 中获取
+        if not ip_address and request is not None:
+            try:
+                ip_address = request.client.host if request.client else None
+                # 尝试获取 X-Forwarded-For 头（反向代理场景）
+                if not ip_address:
+                    ip_address = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+            except Exception:
+                ip_address = None
 
         log_entry = AuditLog(
             user_id=current_user.get("id", 0),
@@ -74,8 +89,6 @@ class AuditLogService:
             count_stmt = count_stmt.where(AuditLog.action == query.action)
         if query.target_type:
             count_stmt = count_stmt.where(AuditLog.target_type == query.target_type)
-        if query.target_id:
-            count_stmt = count_stmt.where(AuditLog.target_id == query.target_id)
         if query.start_date:
             count_stmt = count_stmt.where(AuditLog.timestamp >= query.start_date)
         if query.end_date:

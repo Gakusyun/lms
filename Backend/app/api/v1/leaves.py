@@ -40,11 +40,12 @@ def leaves_count(
 
 @router.post("/leaves", response_model=Leave)
 def create_leave_endpoint(
+    request: Request,
     current_user: dict = Depends(check_role(["admin", "student"])),
     leave_data: LeaveCreate = None,
     session: Session = Depends(get_session),
 ):
-    return LeaveService.create_leave(current_user, leave_data, session)
+    return LeaveService.create_leave(current_user, leave_data, session, request)
 
 
 @router.get("/leaves/student/{student_id}", response_model=List[Leave])
@@ -85,48 +86,53 @@ def read_leaves_by_teacher(
 
 @router.put("/leaves/edit/{leave_id}", response_model=Leave)
 def edit_leave_by_id(
+    request: Request,
     leave_id: int,
     current_user: dict = Depends(check_login),
     leave_data: LeaveCreate = None,
     session: Session = Depends(get_session),
 ):
-    return LeaveService.edit_leave(current_user, leave_id, leave_data, session)
+    return LeaveService.edit_leave(current_user, leave_id, leave_data, session, request)
 
 
 @router.post("/leaves/approve/{leave_id}", response_model=Leave)
 def approve_leave(
+    request: Request,
     leave_id: int,
     current_user: dict = Depends(check_role(["admin", "reviewer"])),
     audit_remarks: str = "",
     session: Session = Depends(get_session),
 ):
     """批准请假"""
-    return LeaveService.approve_leave(current_user, leave_id, audit_remarks, session)
+    return LeaveService.approve_leave(current_user, leave_id, audit_remarks, session, request)
 
 
 @router.post("/leaves/reject/{leave_id}", response_model=Leave)
 def reject_leave(
+    request: Request,
     leave_id: int,
     current_user: dict = Depends(check_role(["admin", "reviewer"])),
     audit_remarks: str = "",
     session: Session = Depends(get_session),
 ):
     """拒绝请假"""
-    return LeaveService.reject_leave(current_user, leave_id, audit_remarks, session)
+    return LeaveService.reject_leave(current_user, leave_id, audit_remarks, session, request)
 
 
 @router.post("/leaves/cancel/{leave_id}", response_model=Leave)
 def cancel_leave(
+    request: Request,
     leave_id: int,
     current_user: dict = Depends(check_login),
     session: Session = Depends(get_session),
 ):
     """撤销请假"""
-    return LeaveService.cancel_leave(current_user, leave_id, session)
+    return LeaveService.cancel_leave(current_user, leave_id, session, request)
 
 
 @router.post("/leaves/approve/batch", response_model=List[Leave])
 def batch_approve_leaves(
+    request: Request,
     current_user: dict = Depends(check_role(["admin", "reviewer"])),
     data: dict = Body(...),
     session: Session = Depends(get_session),
@@ -134,11 +140,12 @@ def batch_approve_leaves(
     """批量批准请假"""
     leave_ids = data.get("leave_ids", [])
     audit_remarks = data.get("audit_remarks", "")
-    return LeaveService.batch_approve_leaves(current_user, leave_ids, audit_remarks, session)
+    return LeaveService.batch_approve_leaves(current_user, leave_ids, audit_remarks, session, request)
 
 
 @router.post("/leaves/reject/batch", response_model=List[Leave])
 def batch_reject_leaves(
+    request: Request,
     current_user: dict = Depends(check_role(["admin", "reviewer"])),
     data: dict = Body(...),
     session: Session = Depends(get_session),
@@ -146,7 +153,7 @@ def batch_reject_leaves(
     """批量拒绝请假"""
     leave_ids = data.get("leave_ids", [])
     audit_remarks = data.get("audit_remarks", "")
-    return LeaveService.batch_reject_leaves(current_user, leave_ids, audit_remarks, session)
+    return LeaveService.batch_reject_leaves(current_user, leave_ids, audit_remarks, session, request)
 
 
 @router.get("/leaves/{leave_id}/qr")
@@ -191,8 +198,7 @@ def close_off_leave(
     session: Session = Depends(get_session),
 ):
     """销假 - 辅导员确认学生已返校报到"""
-    ip_address = request.client.host if request else None
-    return LeaveService.close_off_leave(current_user, leave_id, session, ip_address)
+    return LeaveService.close_off_leave(current_user, leave_id, session, request)
 
 
 @router.post("/leaves/upload")

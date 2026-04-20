@@ -1,7 +1,7 @@
 import re
 import os
 from sqlmodel import Session, select, func
-from fastapi import Depends, Query, HTTPException, UploadFile, File
+from fastapi import Depends, Query, HTTPException, UploadFile, File, Request
 from datetime import datetime, timedelta
 from typing import List
 
@@ -267,6 +267,7 @@ class LeaveService:
         current_user: dict,
         leave_data: LeaveCreate,
         session: Session,
+        request: Request = None,
     ):
         leave_dict = leave_data.model_dump()
 
@@ -381,6 +382,7 @@ class LeaveService:
             target_type="leave",
             target_id=leave.leave_id,
             detail=f"创建请假，类型={leave_dict.get('leave_type')}",
+            request=request,
             session=session,
         )
         return leave
@@ -463,6 +465,7 @@ class LeaveService:
         leave_id: int,
         leave_data: LeaveCreate,
         session: Session,
+        request: Request = None,
     ):
         """编辑请假记录"""
         leave = session.exec(
@@ -516,6 +519,7 @@ class LeaveService:
             target_type="leave",
             target_id=leave.leave_id,
             detail="编辑请假记录",
+            request=request,
             session=session,
         )
         return leave
@@ -526,6 +530,7 @@ class LeaveService:
         leave_id: int,
         audit_remarks: str,
         session: Session,
+        request: Request = None,
     ):
         """批准请假 - 基于审核员角色分级审批"""
         leave = session.exec(
@@ -597,6 +602,7 @@ class LeaveService:
             target_type="leave",
             target_id=leave.leave_id,
             detail=f"批准请假，意见={audit_remarks}",
+            request=request,
             session=session,
         )
 
@@ -619,6 +625,7 @@ class LeaveService:
         leave_id: int,
         audit_remarks: str,
         session: Session,
+        request: Request = None,
     ):
         """拒绝请假"""
         leave = session.exec(
@@ -652,6 +659,7 @@ class LeaveService:
             target_type="leave",
             target_id=leave.leave_id,
             detail=f"拒绝请假，意见={audit_remarks}",
+            request=request,
             session=session,
         )
 
@@ -665,6 +673,7 @@ class LeaveService:
         current_user: dict,
         leave_id: int,
         session: Session,
+        request: Request = None,
     ):
         """撤销请假"""
         leave = session.exec(
@@ -697,6 +706,7 @@ class LeaveService:
             target_type="leave",
             target_id=leave.leave_id,
             detail="撤销请假申请",
+            request=request,
             session=session,
         )
 
@@ -710,6 +720,7 @@ class LeaveService:
         leave_ids: List[int],
         audit_remarks: str,
         session: Session,
+        request: Request = None,
     ):
         """批量批准请假"""
         if not leave_ids:
@@ -787,6 +798,7 @@ class LeaveService:
             action=AuditAction.LEAVE_BATCH_APPROVE,
             target_type="leave",
             detail=f"批量批准 {len(approved_leaves)} 条请假",
+            request=request,
             session=session,
         )
 
@@ -804,6 +816,7 @@ class LeaveService:
         leave_ids: List[int],
         audit_remarks: str,
         session: Session,
+        request: Request = None,
     ):
         """批量拒绝请假"""
         if not leave_ids:
@@ -848,6 +861,7 @@ class LeaveService:
             action=AuditAction.LEAVE_BATCH_REJECT,
             target_type="leave",
             detail=f"批量拒绝 {len(rejected_leaves)} 条请假",
+            request=request,
             session=session,
         )
 
@@ -1010,6 +1024,7 @@ class LeaveService:
         current_user: dict,
         leave_id: int,
         session: Session,
+        request: Request = None,
         ip_address: str = None,
     ):
         """销假 - 辅导员确认学生已返校报到，请假流程闭环"""
@@ -1045,6 +1060,7 @@ class LeaveService:
             target_id=leave.leave_id,
             detail="销假：学生已返校报到",
             ip_address=ip_address,
+            request=request,
             session=session,
         )
 
