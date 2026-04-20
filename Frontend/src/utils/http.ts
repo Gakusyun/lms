@@ -6,9 +6,7 @@ const http = axios.create({
   // 开发环境使用localhost，生产环境使用环境变量或默认生产地址
   baseURL: import.meta.env.DEV ? 'http://localhost:8000/api/v1' : (import.meta.env.VITE_API_BASE_URL || 'https://lms.gxj62.cn/api/v1'),
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: {},
 })
 
 // 请求拦截器
@@ -17,6 +15,10 @@ http.interceptors.request.use(
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+    }
+    // 如果没有设置 Content-Type 且不是 FormData，设置 JSON
+    if (!config.headers['Content-Type'] && !(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json'
     }
     return config
   },
