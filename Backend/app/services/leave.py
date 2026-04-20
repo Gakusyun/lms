@@ -1133,10 +1133,10 @@ class LeaveService:
             if ext not in allowed_extensions:
                 continue
 
-            # 生成唯一文件名
-            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-            safe_name = f"{timestamp}_{file.filename}"
-            file_path = os.path.join(leave_folder, safe_name)
+            # 生成 UUID 文件名（无序、不可预测）
+            import uuid
+            uuid_name = f"{uuid.uuid4().hex}{ext}"
+            file_path = os.path.join(leave_folder, uuid_name)
 
             # 保存文件
             content = await file.read()
@@ -1144,7 +1144,7 @@ class LeaveService:
                 f.write(content)
 
             uploaded_files.append({
-                "file_path": f"uploads/{leave_id}/{safe_name}",
+                "file_path": f"uploads/{leave_id}/{uuid_name}",
                 "file_name": file.filename,
                 "file_size": len(content),
             })

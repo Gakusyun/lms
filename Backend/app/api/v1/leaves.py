@@ -6,7 +6,7 @@ from sqlmodel import Session
 from app.database.connection import get_session
 from app.models import Leave
 from app.schemas import LeaveCreate, LeaveResponse, PaginatedResponse
-from app.services.leave import LeaveService
+from app.services.leave import LeaveService, UPLOAD_DIR
 from app.services.qr_code import QRCodeService
 from app.api.deps import check_login, check_role
 
@@ -226,22 +226,19 @@ async def upload_leave_files(
 async def download_leave_file(
     leave_id: int,
     filename: str,
-    current_user: dict = Depends(check_login),
     session: Session = Depends(get_session),
 ):
-    """下载请假证明文件（受权限保护）"""
+    """下载请假证明文件（UUID文件名，无需认证）"""
     from fastapi.responses import FileResponse
-    from sqlmodel import select
-    from app.models import Leave
 
-    # 验证请假条存在
+    # 验证请假条存在（用于权限校验，可选）
     leave = session.exec(select(Leave).where(Leave.leave_id == leave_id)).first()
     if not leave:
         raise HTTPException(status_code=404, detail="请假记录不存在")
 
-    # 验证文件路径安全
+    # 文件存储路径
     safe_filename = os.path.basename(filename)
-    file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads", str(leave_id), safe_filename)
+    file_path = os.path.join(UPLOAD_DIR, str(leave_id), safe_filename)
 
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="文件不存在")
