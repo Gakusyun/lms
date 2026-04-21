@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import ChangePasswordModal from '../components/ChangePasswordModal.vue'
 import { formatDate } from '../utils/formatters'
-import { downloadStudentImportTemplate, importStudents } from '../api'
+import { importStudents } from '../api'
 
 // 当前用户角色
 const currentUserRole = computed(() => localStorage.getItem('role'))
@@ -42,9 +42,21 @@ const isDownloadingTemplate = ref(false)
 const handleDownloadTemplate = async () => {
   try {
     isDownloadingTemplate.value = true
-    const response = await downloadStudentImportTemplate()
-    const blob = response instanceof Blob ? response : response.data
-    const url = window.URL.createObjectURL(new Blob([blob]))
+    const token = localStorage.getItem('token')
+    const baseURL = import.meta.env.DEV
+      ? 'http://localhost:8000/api/v1'
+      : (import.meta.env.VITE_API_BASE_URL || 'https://lms.gxj62.cn/api/v1')
+
+    const response = await fetch(`${baseURL}/students/import/template`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
+
+    if (!response.ok) {
+      throw new Error(`下载失败: ${response.status}`)
+    }
+
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     link.setAttribute('download', 'student_import_template.xlsx')
