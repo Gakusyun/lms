@@ -179,11 +179,10 @@ def get_approval_recommendation(
 
 @router.post("/leaves/verify-qr")
 def verify_qr_code(
-    current_user: dict = Depends(check_role(["admin", "teacher", "reviewer"])),
     data: dict = Body(...),
     session: Session = Depends(get_session),
 ):
-    """核验二维码凭证"""
+    """核验二维码凭证（公开接口，无需登录）"""
     qr_content = data.get("qr_content", "")
     if not qr_content:
         from fastapi import HTTPException
