@@ -468,3 +468,27 @@ export const uploadLeaveFiles = async (leaveId: number, files: File[]) => {
     throw error
   }
 }
+
+// 下载学生导入模板
+export const downloadStudentImportTemplate = async () => {
+  try {
+    const response = await http.get('/students/import/template', { responseType: 'blob' })
+    return response
+  } catch (error) {
+    console.error('下载模板失败:', error)
+    throw error
+  }
+}
+
+// 批量导入学生
+export const importStudents = async (file: File) => {
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await http.post('/students/import', formData)
+    return response
+  } catch (error) {
+    console.error('导入学生失败:', error)
+    throw error
+  }
+}

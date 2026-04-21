@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import ChangePasswordModal from '../components/ChangePasswordModal.vue'
 import { formatDate } from '../utils/formatters'
+import { downloadStudentImportTemplate, importStudents } from '../api'
 
 // 当前用户角色
 const currentUserRole = computed(() => localStorage.getItem('role'))
@@ -35,13 +36,65 @@ const onPasswordChanged = () => {
   // 可以显示成功消息或刷新列表
   console.log('密码修改成功')
 }
+
+// 下载导入模板
+const isDownloadingTemplate = ref(false)
+const handleDownloadTemplate = async () => {
+  try {
+    isDownloadingTemplate.value = true
+    const response = await downloadStudentImportTemplate()
+    const blob = response instanceof Blob ? response : response.data
+    const url = window.URL.createObjectURL(new Blob([blob]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'student_import_template.xlsx')
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error('下载模板失败:', error)
+    alert('下载模板失败')
+  } finally {
+    isDownloadingTemplate.value = false
+  }
+}
+
+// 导入学生相关
+const isImporting = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
+
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+const handleFileChange = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  try {
+    isImporting.value = true
+    await importStudents(file)
+    alert('导入成功')
+    window.location.reload()
+  } catch (error) {
+    console.error('导入失败:', error)
+    alert('导入失败')
+  } finally {
+    isImporting.value = false
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+  }
+}
 </script>
 
 <template>
   <div>
-    <GenericList 
-      endpoint="/students" 
-      title="学生列表" 
+    <GenericList
+      endpoint="/students"
+      title="学生列表"
       :columns="[
         { key: 'student_id', label: '学号' },
         { key: 'student_name', label: '学生姓名' },
@@ -49,12 +102,27 @@ const onPasswordChanged = () => {
         { key: 'guarantee_permission', label: '担保权限生效时间', formatter: formatDate },
         { key: 'reviewer_id', label: '审核人ID' },
         { key: 'reviewer_name', label: '审核人姓名' }
-      ]" 
-      item-label="名学生" 
+      ]"
+      item-label="名学生"
       :show-actions="isAdmin"
       :show-create="isAdmin || isReviewer"
       create-type="student"
     >
+      <template #header-buttons>
+        <button v-if="isAdmin" @click="handleDownloadTemplate" class="btn btn-template" :disabled="isDownloadingTemplate">
+          {{ isDownloadingTemplate ? '下载中...' : '下载导入模板' }}
+        </button>
+        <button v-if="isAdmin" @click="triggerFileInput" class="btn btn-import" :disabled="isImporting">
+          {{ isImporting ? '导入中...' : '导入学生' }}
+        </button>
+        <input
+          ref="fileInput"
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          style="display: none"
+          @change="handleFileChange"
+        />
+      </template>
       <template #actions="{ item }">
         <button v-if="isAdmin" @click="openChangePassword(item)" class="btn btn-sm btn-outline" title="修改密码">
           修改密码
@@ -92,5 +160,51 @@ const onPasswordChanged = () => {
 
 .btn-outline {
   border: 1px solid var(--border-medium);
+}
+
+.btn-template {
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-template:hover {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.btn-template:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-import {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-import:hover {
+  background-color: #d97706;
+  color: white;
+}
+
+.btn-import:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 </style>
