@@ -124,6 +124,7 @@ const handleFileChange = async (event: Event) => {
           {{ isImporting ? '导入中...' : '批量导入' }}
           <input ref="fileInput" type="file" accept=".xlsx,.xls,.csv" style="display: none" @change="handleFileChange" :disabled="isImporting" />
         </label>
+      </template>
       <template #actions="{ item }">
         <button v-if="isAdmin" @click="openChangePassword(item)" class="btn btn-sm btn-outline" title="修改密码">
           修改密码
