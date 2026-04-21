@@ -132,7 +132,7 @@ onMounted(() => {
     </div>
 
     <!-- 添加学生弹窗 -->
-    <div v-if="showAddModal" class="modal-overlay" @click.self="closeAddModal">
+    <div v-if="showAddModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
           <h3>添加学生到课程</h3>
@@ -189,5 +189,32 @@ onMounted(() => {
   background: #dcfce7;
   color: #166534;
   border: 1px solid #6ee7b7;
+}
+
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center;
+  align-items: center; z-index: 1000;
+}
+.modal-content {
+  background: var(--bg-primary); border-radius: var(--radius-lg);
+  width: 400px; max-width: 90vw;
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--spacing); border-bottom: 1px solid var(--border-light);
+}
+.modal-header h3 { margin: 0; font-size: var(--text-lg); }
+.close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+.modal-form { padding: var(--spacing); }
+.form-group { margin-bottom: var(--spacing); }
+.form-group label { display: block; margin-bottom: 0.25rem; font-size: var(--text-sm); font-weight: 500; }
+.form-group input {
+  width: 100%; padding: 0.5rem; border: 1px solid var(--border-medium);
+  border-radius: var(--radius); box-sizing: border-box;
+}
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: var(--spacing);
+  padding: var(--spacing); border-top: 1px solid var(--border-light);
 }
 </style>
