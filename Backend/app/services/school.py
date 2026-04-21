@@ -1,5 +1,6 @@
 from sqlmodel import Session, select, func
 from fastapi import Depends, Query, HTTPException
+import io
 
 from app.models import School
 from app.services.common import CommonService
@@ -54,3 +55,65 @@ class SchoolService:
             session.commit()
             session.refresh(school)
         return school
+
+    @staticmethod
+    def batch_import_schools(current_user: dict, file, session: Session):
+        """批量导入部门数据 (Excel或CSV)"""
+        filename = file.filename or ""
+        content = file.file.read()
+
+        if filename.endswith(('.xlsx', '.xls')):
+            import openpyxl
+            wb = openpyxl.load_workbook(io.BytesIO(content), read_only=True)
+            ws = wb.active
+            rows = list(ws.iter_rows(min_row=2, values_only=True))
+        elif filename.endswith('.csv'):
+            text = content.decode('utf-8-sig')
+            import csv as csv_mod
+            reader = csv_mod.reader(io.StringIO(text))
+            rows = list(reader)
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="不支持的文件格式，请使用 .xlsx 或 .csv 文件"
+            )
+
+        if not rows:
+            raise HTTPException(status_code=400, detail="文件内容为空")
+
+        imported = []
+        errors = []
+
+        for idx, row in enumerate(rows):
+            try:
+                if not row or len(row) < 1:
+                    errors.append({"row": idx + 2, "error": "数据不完整"})
+                    continue
+
+                school_name = str(row[0]).strip()
+                if not school_name:
+                    errors.append({"row": idx + 2, "error": "部门名称不能为空"})
+                    continue
+
+                # 检查是否已存在
+                existing = session.exec(
+                    select(School).where(School.school_name == school_name)
+                ).first()
+                if existing:
+                    errors.append({"row": idx + 2, "error": f"部门「{school_name}」已存在"})
+                    continue
+
+                school = School(school_name=school_name)
+                session.add(school)
+                session.commit()
+                session.refresh(school)
+                imported.append({"school_id": school.school_id, "school_name": school.school_name})
+
+            except Exception as e:
+                errors.append({"row": idx + 2, "error": str(e)})
+
+        return {
+            "imported": imported,
+            "total": len(imported),
+            "errors": errors
+        }

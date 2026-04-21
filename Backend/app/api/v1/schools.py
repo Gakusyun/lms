@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, UploadFile, File
+from fastapi.responses import StreamingResponse
 from sqlmodel import Session
 
 from app.database.connection import get_session
 from app.services.school import SchoolService
 from app.schemas import PaginatedResponse
-from app.api.deps import check_login
+from app.api.deps import check_login, check_role
 
 router = APIRouter()
 
@@ -42,3 +43,40 @@ def create_school(
 ):
     """创建院系（部门）"""
     return SchoolService.create_school(school_data, session)
+
+
+@router.get("/schools/import/template")
+def download_school_template():
+    """下载部门导入模板"""
+    import io
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "部门导入模板"
+
+    headers = ["school_name"]
+    ws.append(headers)
+
+    # 示例行
+    ws.append(["示例部门"])
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    return StreamingResponse(
+        iter([buffer.getvalue()]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=school_import_template.xlsx"},
+    )
+
+
+@router.post("/schools/import")
+async def import_schools(
+    current_user: dict = Depends(check_role(["admin"])),
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+):
+    """批量导入部门数据"""
+    return SchoolService.batch_import_schools(current_user, file, session)
