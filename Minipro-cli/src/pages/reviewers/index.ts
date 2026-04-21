@@ -115,6 +115,19 @@ export default defineComponent(() => {
     wx.navigateBack();
   };
 
+  // 查看审核员详情
+  const viewDetail = (e: any) => {
+    const reviewerId = e.currentTarget.dataset.reviewerId;
+    const reviewer = reviewers.value.find(r => r.reviewer_id === reviewerId);
+    if (reviewer) {
+      wx.showModal({
+        title: `审核员详情 #${reviewer.reviewer_id}`,
+        content: `姓名: ${reviewer.reviewer_name || '-'}\n职务: ${reviewer.role_name || '-'}\n院系: ${reviewer.school_name || '-'}`,
+        showCancel: false
+      });
+    }
+  };
+
   // 检查登录状态并获取数据
   const initializePage = async () => {
     const userInfo = await requireAuth();
@@ -140,6 +153,7 @@ export default defineComponent(() => {
     refreshData,
     onPullDownRefresh,
     goBack,
+    viewDetail,
     onReady
   };
 });

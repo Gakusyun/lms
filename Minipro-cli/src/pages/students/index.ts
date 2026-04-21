@@ -149,6 +149,19 @@ export default defineComponent(() => {
     wx.navigateBack();
   };
 
+  // 查看学生详情
+  const viewDetail = (e: any) => {
+    const studentId = e.currentTarget.dataset.studentId;
+    const student = students.value.find(s => s.student_id === studentId);
+    if (student) {
+      wx.showModal({
+        title: `学生详情 #${student.student_id}`,
+        content: `姓名: ${student.student_name || '-'}\n院系: ${student.school_name || '-'}\n审核人: ${student.reviewer_name || '-'}\n担保权限: ${student.guarantee_permission_formatted || '-'}`,
+        showCancel: false
+      });
+    }
+  };
+
   // 检查登录状态并获取数据
   const initializePage = async () => {
     const userInfo = await requireAuth();
@@ -173,6 +186,7 @@ export default defineComponent(() => {
     refreshData,
     onPullDownRefresh,
     goBack,
+    viewDetail,
     onReady
   };
 });

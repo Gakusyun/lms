@@ -100,15 +100,30 @@ export default defineComponent(() => {
     }
   };
 
-  // 查看课程的学生名单 - 与 Web App 对齐
+  // 查看课程详情
+  const viewDetail = (e: any) => {
+    const courseId = e.currentTarget.dataset.courseId;
+    const course = courses.value.find(c => c.course_id === courseId);
+    if (course) {
+      wx.showModal({
+        title: `课程详情 #${course.course_id}`,
+        content: `课程名: ${course.course_name || '-'}\n课时: ${course.class_hours || '-'}\n教师: ${course.teacher_name || '-'}\n选课人数: ${course.enrollment_count || 0} 人`,
+        showCancel: false
+      });
+    }
+  };
+
+  // 查看课程学生列表
   const viewStudents = (e: any) => {
     const courseId = e.currentTarget.dataset.courseId;
-    console.log('查看课程学生名单:', courseId);
-
-    // 跳转到课程学生详情页面
-    wx.navigateTo({
-      url: `/pages/courses/students?id=${courseId}`
-    });
+    const course = courses.value.find(c => c.course_id === courseId);
+    if (course) {
+      wx.showModal({
+        title: `学生列表 #${course.course_id}`,
+        content: `课程: ${course.course_name || '-'}\n选课人数: ${course.enrollment_count || 0} 人\n（暂无学生详细列表页面）`,
+        showCancel: false
+      });
+    }
   };
 
   // 刷新数据
@@ -150,6 +165,7 @@ export default defineComponent(() => {
     page,
     fetchCourses,
     loadMore,
+    viewDetail,
     viewStudents,
     refreshData,
     onPullDownRefresh,

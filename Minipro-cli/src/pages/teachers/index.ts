@@ -111,6 +111,19 @@ export default defineComponent(() => {
     wx.navigateBack();
   };
 
+  // 查看教师详情
+  const viewDetail = (e: any) => {
+    const teacherId = e.currentTarget.dataset.teacherId;
+    const teacher = teachers.value.find(t => t.teacher_id === teacherId);
+    if (teacher) {
+      wx.showModal({
+        title: `教师详情 #${teacher.teacher_id}`,
+        content: `姓名: ${teacher.teacher_name || '-'}`,
+        showCancel: false
+      });
+    }
+  };
+
   // 检查登录状态并获取数据
   const initializePage = async () => {
     const userInfo = await requireAuth();
@@ -136,6 +149,7 @@ export default defineComponent(() => {
     refreshData,
     onPullDownRefresh,
     goBack,
+    viewDetail,
     onReady
   };
 });

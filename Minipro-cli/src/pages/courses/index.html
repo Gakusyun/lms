@@ -17,7 +17,8 @@
       <view wx:for="{{courses}}" wx:key="course_id" class="card">
         <view class="card-header">
           <text class="card-title">{{item.course_name}}</text>
-          <button class="btn btn-primary btn-sm" data-course-id="{{item.course_id}}" bindtap="viewStudents">查看学生</button>
+          <button class="btn btn-primary btn-sm" data-course-id="{{item.course_id}}" bindtap="viewDetail">详情</button>
+          <button class="btn btn-secondary btn-sm" data-course-id="{{item.course_id}}" bindtap="viewStudents">学生</button>
         </view>
         <view class="card-row">
           <text class="card-label">课程ID</text>

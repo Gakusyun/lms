@@ -1,15 +1,9 @@
 import pxtorpx from 'postcss-pxtorpx-pro';
+import postcssImport from 'postcss-import';
 
 const config = {
   plugins: [
-    {
-      postcssPlugin: 'postcss-import-css-to-wxss',
-      AtRule: {
-        import: (atRule) => {
-          atRule.params = atRule.params.replace('.css', '.wxss');
-        },
-      },
-    },
+    postcssImport(),
     pxtorpx({ transform: (x) => x }),
   ],
 };
