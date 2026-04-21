@@ -169,7 +169,10 @@ export default defineComponent(() => {
 
   // 页面加载时获取数据
   const onReady = () => {
-    initializePage();
+    // 使用 onShow 而不是 onReady 来避免重复初始化
+    initializePage().catch((err) => {
+      console.error('初始化失败:', err);
+    });
   };
 
   // 页面显示时刷新数据

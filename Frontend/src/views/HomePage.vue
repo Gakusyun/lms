@@ -104,10 +104,6 @@ const goToSchoolsList = () => {
   router.push('/schools')
 }
 
-const goToStudentCourses = () => {
-  router.push('/student-courses')
-}
-
 const goToVerifyQR = () => {
   router.push('/verify-qr')
 }
@@ -219,8 +215,6 @@ onMounted(() => {
               :onClick="goToCoursesList" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学院管理" description="管理学院信息"
               :onClick="goToSchoolsList" />
-            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学生选课管理" description="管理学生选课关系"
-              :onClick="goToStudentCourses" />
             <GenericFeatureCard title="凭证核验" description="核验学生请假二维码凭证"
               :onClick="goToVerifyQR" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="auditLogResponse?.total || 0" description="查看系统操作审计日志"

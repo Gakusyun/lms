@@ -16,3 +16,4 @@ logs
 .playwright/
 
 *.db
+api.toon

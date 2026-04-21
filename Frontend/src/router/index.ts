@@ -65,12 +65,6 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/student-courses',
-      name: 'student-courses',
-      component: () => import('../views/StudentCoursesList.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
       path: '/verify-qr',
       name: 'verify-qr',
       component: () => import('../views/VerifyQRView.vue'),
