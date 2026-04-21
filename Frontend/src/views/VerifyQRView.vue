@@ -1,12 +1,59 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Html5Qrcode } from 'html5-qrcode'
 
 const router = useRouter()
 const qrContent = ref('')
 const verifyResult = ref<any>(null)
 const verifyError = ref('')
 const isVerifying = ref(false)
+const showScanner = ref(false)
+const scannerContainerId = 'qr-scanner'
+let html5Qrcode: Html5Qrcode | null = null
+
+// 打开摄像头扫描
+const startScanner = async () => {
+  showScanner.value = true
+  verifyError.value = ''
+
+  await new Promise(resolve => setTimeout(resolve, 100))
+
+  html5Qrcode = new Html5Qrcode(scannerContainerId)
+
+  try {
+    await html5Qrcode.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      (decodedText) => {
+        console.log('扫描到内容:', decodedText)
+        stopScanner()
+        showScanner.value = false
+        qrContent.value = decodedText
+        handleVerify()
+      },
+      () => {}
+    )
+  } catch (err) {
+    console.error('摄像头启动失败:', err)
+    verifyError.value = '摄像头启动失败，请检查权限'
+    showScanner.value = false
+  }
+}
+
+const stopScanner = async () => {
+  if (html5Qrcode && html5Qrcode.isScanning) {
+    try {
+      await html5Qrcode.stop()
+    } catch (e) {}
+    html5Qrcode = null
+  }
+}
+
+const closeScanner = () => {
+  stopScanner()
+  showScanner.value = false
+}
 
 // 核验二维码
 const handleVerify = async () => {
@@ -26,14 +73,11 @@ const handleVerify = async () => {
 
     const response = await fetch(`${baseURL}/leaves/verify-qr`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ qr_content: qrContent.value.trim() })
     })
 
     const data = await response.json()
-
     if (!response.ok) {
       verifyError.value = data.detail || '核验失败'
     } else {
@@ -64,18 +108,29 @@ const formatDate = (dateStr: string | null | undefined) => {
       </div>
 
       <div class="verify-card">
-        <p class="intro">请输入或扫描学生出示的二维码内容进行核验</p>
+        <p class="intro">扫描学生出示的二维码进行核验，或手动输入二维码内容</p>
 
-        <textarea
-          v-model="qrContent"
-          class="qr-input"
-          placeholder="请输入二维码内容字符串..."
-          rows="4"
-        ></textarea>
-
-        <button @click="handleVerify" class="btn btn-primary" :disabled="isVerifying">
-          {{ isVerifying ? '核验中...' : '核验' }}
+        <button v-if="!showScanner" @click="startScanner" class="btn btn-primary btn-scan">
+          扫描二维码
         </button>
+
+        <div v-if="showScanner" class="scanner-wrapper">
+          <div id="qr-scanner" class="scanner-container"></div>
+          <button @click="closeScanner" class="btn btn-secondary btn-close-scanner">关闭扫描</button>
+        </div>
+
+        <template v-if="!showScanner">
+          <textarea
+            v-model="qrContent"
+            class="qr-input"
+            placeholder="请输入二维码内容字符串..."
+            rows="4"
+          ></textarea>
+
+          <button @click="handleVerify" class="btn btn-primary" :disabled="isVerifying">
+            {{ isVerifying ? '核验中...' : '核验' }}
+          </button>
+        </template>
 
         <div v-if="verifyError" class="error-message">
           {{ verifyError }}
@@ -274,5 +329,38 @@ const formatDate = (dateStr: string | null | undefined) => {
 .status-approved {
   color: #166534;
   font-weight: 600;
+}
+
+.btn-scan {
+  width: 100%;
+  padding: 1rem;
+  font-size: var(--text-lg);
+}
+
+.scanner-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing);
+  margin-bottom: var(--spacing-lg);
+}
+
+.scanner-container {
+  width: 250px;
+  height: 250px;
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.btn-close-scanner {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .scanner-container {
+    width: 200px;
+    height: 200px;
+  }
 }
 </style>

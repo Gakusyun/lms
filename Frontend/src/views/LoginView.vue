@@ -78,6 +78,11 @@
             <button @click="generateQRCode" class="btn btn-outline w-full">刷新二维码</button>
           </div>
         </div>
+
+        <!-- 无需登录，核验凭证入口 -->
+        <div class="verify-entry">
+          <a href="/verify-qr" class="verify-link">核验请假凭证</a>
+        </div>
       </div>
     </div>
   </div>
@@ -298,6 +303,24 @@
 
 .qr-refresh {
   width: 100%;
+}
+
+.verify-entry {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-light);
+  text-align: center;
+}
+
+.verify-link {
+  color: var(--primary-600);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.verify-link:hover {
+  text-decoration: underline;
+  color: var(--primary-700);
 }
 
 /* 响应式设计 */
