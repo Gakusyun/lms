@@ -440,6 +440,17 @@ export const closeOffLeave = async (leaveId: number) => {
   }
 }
 
+// 学生退课API
+export const deleteStudentCourse = async (studentId: number, courseId: number) => {
+  try {
+    const response = await http.delete(`/student-courses/student/${studentId}/course/${courseId}`)
+    return response
+  } catch (error) {
+    console.error('退课失败:', error)
+    throw error
+  }
+}
+
 // 上传证明文件API
 export const uploadLeaveFile = async (file: File) => {
   try {

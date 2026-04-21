@@ -104,6 +104,10 @@ const goToSchoolsList = () => {
   router.push('/schools')
 }
 
+const goToStudentCourses = () => {
+  router.push('/student-courses')
+}
+
 // 获取角色显示名称
 const goToAuditLogs = () => {
   router.push('/audit-logs')
@@ -211,6 +215,8 @@ onMounted(() => {
               :onClick="goToCoursesList" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学院管理" description="管理学院信息"
               :onClick="goToSchoolsList" />
+            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学生选课管理" description="管理学生选课关系"
+              :onClick="goToStudentCourses" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="auditLogResponse?.total || 0" description="查看系统操作审计日志"
               :onClick="goToAuditLogs" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer'" title="数据统计" description="请假趋势与数据可视化分析"
