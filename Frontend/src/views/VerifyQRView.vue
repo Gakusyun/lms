@@ -141,7 +141,7 @@ const formatDate = (dateStr: string | null | undefined) => {
             {{ verifyResult.valid ? '✅ 核验通过' : '❌ 核验失败' }}
           </h3>
 
-          <div v-if="verifyResult.valid" class="leave-details">
+          <div class="leave-details">
             <div class="detail-row">
               <span class="label">学生姓名：</span>
               <span class="value">{{ verifyResult.student_name || '-' }}</span>
@@ -160,12 +160,16 @@ const formatDate = (dateStr: string | null | undefined) => {
             </div>
             <div class="detail-row">
               <span class="label">审核状态：</span>
-              <span class="value status-approved">{{ verifyResult.status }}</span>
+              <span class="value" :class="verifyResult.valid ? 'status-approved' : 'status-rejected'">{{ verifyResult.status }}</span>
             </div>
             <div v-if="verifyResult.audit_remarks" class="detail-row">
               <span class="label">审核意见：</span>
               <span class="value">{{ verifyResult.audit_remarks }}</span>
             </div>
+          </div>
+
+          <div v-if="!verifyResult.valid && verifyResult.error_msg" class="error-tip">
+            {{ verifyResult.error_msg }}
           </div>
         </div>
       </div>
@@ -329,6 +333,21 @@ const formatDate = (dateStr: string | null | undefined) => {
 .status-approved {
   color: #166534;
   font-weight: 600;
+}
+
+.status-rejected {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.error-tip {
+  margin-top: var(--spacing);
+  padding: var(--spacing);
+  background: var(--error-light);
+  color: var(--error);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  text-align: center;
 }
 
 .btn-scan {
