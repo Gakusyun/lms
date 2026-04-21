@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, UploadFile, File
 from fastapi.responses import StreamingResponse
-from sqlmodel import Session
+from sqlmodel import Session, select, func
 
 from app.database.connection import get_session
 from app.services.school import SchoolService
@@ -33,6 +33,16 @@ def schools_count(
     session: Session = Depends(get_session),
 ):
     return SchoolService.get_schools_count(session)
+
+
+@router.get("/schools/next-id")
+def get_next_school_id(
+    current_user: dict = Depends(check_role(["admin"])),
+    session: Session = Depends(get_session),
+):
+    # 部门 ID 自增，从 1 开始
+    max_id = session.exec(select(func.max(School.school_id))).one()
+    return {"next_id": (max_id or 0) + 1}
 
 
 @router.post("/schools")

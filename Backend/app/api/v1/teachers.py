@@ -100,8 +100,12 @@ def get_next_teacher_id(
     current_user: dict = Depends(check_role(["admin"])),
     session: Session = Depends(get_session),
 ):
-    max_id = session.exec(select(func.max(Teacher.teacher_id))).one()
-    return {"next_id": (max_id or 0) + 1}
+    # 教师 ID 格式: 2*** (2001起)
+    existing = session.exec(
+        select(Teacher.teacher_id).where(Teacher.teacher_id >= 2000)
+    ).all()
+    next_id = max(existing) + 1 if existing else 2001
+    return {"next_id": next_id}
 
 
 @router.get("/teachers/{teacher_id}", response_model=Teacher)

@@ -43,8 +43,12 @@ def get_next_reviewer_id(
     current_user: dict = Depends(check_role(["admin"])),
     session: Session = Depends(get_session),
 ):
-    max_id = session.exec(select(func.max(Reviewer.reviewer_id))).one()
-    return {"next_id": (max_id or 0) + 1}
+    # 审核员 ID 格式: 1*** (1001起)
+    existing = session.exec(
+        select(Reviewer.reviewer_id).where(Reviewer.reviewer_id >= 1000)
+    ).all()
+    next_id = max(existing) + 1 if existing else 1001
+    return {"next_id": next_id}
 
 
 @router.get("/reviewers/{reviewer_id}", response_model=Reviewer)

@@ -82,8 +82,12 @@ def get_next_course_id(
     current_user: dict = Depends(check_role(["admin", "reviewer", "teacher"])),
     session: Session = Depends(get_session),
 ):
-    max_id = session.exec(select(func.max(Course.course_id))).one()
-    return {"next_id": (max_id or 0) + 1}
+    # 课程 ID 格式: 3*** (3001起)
+    existing = session.exec(
+        select(Course.course_id).where(Course.course_id >= 3000)
+    ).all()
+    next_id = max(existing) + 1 if existing else 3001
+    return {"next_id": next_id}
 
 
 @router.get("/courses/{course_id}", response_model=Course)

@@ -35,8 +35,16 @@ class SchoolService:
 
     @staticmethod
     def create_school(school_data: dict, session: Session):
-        """创建学校/院系"""
-        school = School(**school_data)
+        """创建学校/院系（自动分配ID）"""
+        school_name = school_data.get("school_name")
+        if not school_name:
+            raise HTTPException(status_code=400, detail="部门名称不能为空")
+
+        # 自动生成下一个 school_id
+        max_id = session.exec(select(func.max(School.school_id))).one()
+        school_id = (max_id or 0) + 1
+
+        school = School(school_id=school_id, school_name=school_name)
         session.add(school)
         session.commit()
         session.refresh(school)
@@ -103,7 +111,11 @@ class SchoolService:
                     errors.append({"row": idx + 2, "error": f"部门「{school_name}」已存在"})
                     continue
 
-                school = School(school_name=school_name)
+                # 自动生成下一个 school_id
+                max_id = session.exec(select(func.max(School.school_id))).one()
+                school_id = (max_id or 0) + 1
+
+                school = School(school_id=school_id, school_name=school_name)
                 session.add(school)
                 session.commit()
                 session.refresh(school)
