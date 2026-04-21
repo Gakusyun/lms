@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi.responses import StreamingResponse
 from sqlmodel import Session, select, func
 
 from app.database.connection import get_session
@@ -86,3 +87,40 @@ def delete_reviewer_endpoint(
     session: Session = Depends(get_session),
 ):
     return ReviewerService.delete_reviewer(reviewer_id, session)
+
+
+@router.get("/reviewers/import/template")
+def download_reviewer_template():
+    """下载审核员导入模板"""
+    import io
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "审核员导入模板"
+
+    headers = ["reviewer_id", "reviewer_name", "school_id", "role_id", "password"]
+    ws.append(headers)
+
+    # 示例行
+    ws.append([1001, "示例审核员", 1, 1, "123456"])
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    return StreamingResponse(
+        iter([buffer.getvalue()]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=reviewer_import_template.xlsx"},
+    )
+
+
+@router.post("/reviewers/import")
+async def import_reviewers(
+    current_user: dict = Depends(check_role(["admin"])),
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+):
+    """批量导入审核员数据"""
+    return ReviewerService.batch_import_reviewers(current_user, file, session)

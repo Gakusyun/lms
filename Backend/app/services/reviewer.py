@@ -1,6 +1,7 @@
 from sqlmodel import Session, select, func
 from fastapi import Depends, Query, HTTPException
 from sqlalchemy import and_, or_
+import io
 
 from app.models import Reviewer, School, Role, Student
 from app.schemas import ReviewerCreate
@@ -190,16 +191,81 @@ class ReviewerService:
         """删除审核员"""
         # 获取审核员
         reviewer = CommonService.get_by_id(session, Reviewer, reviewer_id, "reviewer_id")
-        
+
         # 检查是否有学生关联
         from app.models import Student
         student_count = session.exec(
             select(func.count(Student.student_id)).where(Student.reviewer_id == reviewer_id)
         ).one()
-        
+
         if student_count > 0:
             raise HTTPException(status_code=400, detail="Cannot delete reviewer with assigned students")
-        
+
         session.delete(reviewer)
         session.commit()
         return {"message": "Reviewer deleted successfully"}
+
+    @staticmethod
+    def batch_import_reviewers(current_user: dict, file, session: Session):
+        """批量导入审核员数据 (Excel或CSV)"""
+        filename = file.filename or ""
+        content = file.file.read()
+
+        if filename.endswith(('.xlsx', '.xls')):
+            import openpyxl
+            wb = openpyxl.load_workbook(io.BytesIO(content), read_only=True)
+            ws = wb.active
+            rows = list(ws.iter_rows(min_row=2, values_only=True))
+        elif filename.endswith('.csv'):
+            text = content.decode('utf-8-sig')
+            import csv as csv_mod
+            reader = csv_mod.reader(io.StringIO(text))
+            rows = list(reader)
+        else:
+            raise HTTPException(status_code=400, detail="不支持的文件格式，请使用 .xlsx 或 .csv 文件")
+
+        if not rows:
+            raise HTTPException(status_code=400, detail="文件内容为空")
+
+        imported = []
+        errors = []
+
+        for idx, row in enumerate(rows):
+            try:
+                if not row or len(row) < 5:
+                    errors.append({"row": idx + 2, "error": "数据不完整，需提供: reviewer_id, reviewer_name, school_id, role_id, password"})
+                    continue
+
+                reviewer_id = int(row[0])
+                reviewer_name = str(row[1]).strip()
+                school_id = int(row[2])
+                role_id = int(row[3])
+                password = str(row[4]).strip()
+
+                if not reviewer_name:
+                    errors.append({"row": idx + 2, "error": "审核员姓名不能为空"})
+                    continue
+
+                # 检查是否已存在
+                existing = session.exec(
+                    select(Reviewer).where(Reviewer.reviewer_id == reviewer_id)
+                ).first()
+                if existing:
+                    errors.append({"row": idx + 2, "error": f"审核员ID {reviewer_id} 已存在"})
+                    continue
+
+                reviewer = Reviewer(
+                    reviewer_id=reviewer_id,
+                    reviewer_name=reviewer_name,
+                    school_id=school_id,
+                    role_id=role_id,
+                    password=hash_password(password)
+                )
+                session.add(reviewer)
+                session.commit()
+                imported.append({"reviewer_id": reviewer.reviewer_id, "reviewer_name": reviewer.reviewer_name})
+
+            except Exception as e:
+                errors.append({"row": idx + 2, "error": str(e)})
+
+        return {"imported": len(imported), "errors": errors}

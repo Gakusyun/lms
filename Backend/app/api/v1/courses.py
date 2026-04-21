@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi.responses import StreamingResponse
 from sqlmodel import Session, select, func
 
 from app.database.connection import get_session
@@ -126,3 +127,40 @@ def delete_course_endpoint(
     session: Session = Depends(get_session),
 ):
     return CourseService.delete_course(course_id, session)
+
+
+@router.get("/courses/import/template")
+def download_course_template():
+    """下载课程导入模板"""
+    import io
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "课程导入模板"
+
+    headers = ["course_id", "course_name", "teacher_id", "class_hours"]
+    ws.append(headers)
+
+    # 示例行
+    ws.append([3001, "示例课程", 2001, 32])
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    return StreamingResponse(
+        iter([buffer.getvalue()]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=course_import_template.xlsx"},
+    )
+
+
+@router.post("/courses/import")
+async def import_courses(
+    current_user: dict = Depends(check_role(["admin"])),
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+):
+    """批量导入课程数据"""
+    return CourseService.batch_import_courses(current_user, file, session)

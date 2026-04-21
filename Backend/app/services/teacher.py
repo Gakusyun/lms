@@ -1,5 +1,6 @@
 from sqlmodel import Session, select, func
-from fastapi import Depends, Query
+from fastapi import Depends, Query, HTTPException
+import io
 
 from app.models import Teacher, Course, StudentCourse
 from app.schemas import TeacherCreate
@@ -73,3 +74,64 @@ class TeacherService:
         session.commit()
         session.refresh(teacher)
         return teacher
+
+    @staticmethod
+    def batch_import_teachers(current_user: dict, file, session: Session):
+        """批量导入教师数据 (Excel或CSV)"""
+        filename = file.filename or ""
+        content = file.file.read()
+
+        if filename.endswith(('.xlsx', '.xls')):
+            import openpyxl
+            wb = openpyxl.load_workbook(io.BytesIO(content), read_only=True)
+            ws = wb.active
+            rows = list(ws.iter_rows(min_row=2, values_only=True))
+        elif filename.endswith('.csv'):
+            text = content.decode('utf-8-sig')
+            import csv as csv_mod
+            reader = csv_mod.reader(io.StringIO(text))
+            rows = list(reader)
+        else:
+            raise HTTPException(status_code=400, detail="不支持的文件格式，请使用 .xlsx 或 .csv 文件")
+
+        if not rows:
+            raise HTTPException(status_code=400, detail="文件内容为空")
+
+        imported = []
+        errors = []
+
+        for idx, row in enumerate(rows):
+            try:
+                if not row or len(row) < 3:
+                    errors.append({"row": idx + 2, "error": "数据不完整，需提供: teacher_id, name, password"})
+                    continue
+
+                teacher_id = int(row[0])
+                name = str(row[1]).strip()
+                password = str(row[2]).strip()
+
+                if not name:
+                    errors.append({"row": idx + 2, "error": "教师姓名不能为空"})
+                    continue
+
+                # 检查是否已存在
+                existing = session.exec(
+                    select(Teacher).where(Teacher.teacher_id == teacher_id)
+                ).first()
+                if existing:
+                    errors.append({"row": idx + 2, "error": f"教师ID {teacher_id} 已存在"})
+                    continue
+
+                teacher = Teacher(
+                    teacher_id=teacher_id,
+                    teacher_name=name,
+                    password=get_password_hash(password)
+                )
+                session.add(teacher)
+                session.commit()
+                imported.append({"teacher_id": teacher.teacher_id, "teacher_name": teacher.teacher_name})
+
+            except Exception as e:
+                errors.append({"row": idx + 2, "error": str(e)})
+
+        return {"imported": len(imported), "errors": errors}

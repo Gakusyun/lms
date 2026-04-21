@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, UploadFile, File
+from fastapi.responses import StreamingResponse
 from sqlmodel import Session, select, func
 
 from app.database.connection import get_session
@@ -124,3 +125,40 @@ def create_teacher_endpoint(
     session: Session = Depends(get_session),
 ):
     return TeacherService.create_teacher(teacher_data, session)
+
+
+@router.get("/teachers/import/template")
+def download_teacher_template():
+    """下载教师导入模板"""
+    import io
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "教师导入模板"
+
+    headers = ["teacher_id", "name", "password"]
+    ws.append(headers)
+
+    # 示例行
+    ws.append([2001, "示例教师", "123456"])
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    return StreamingResponse(
+        iter([buffer.getvalue()]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=teacher_import_template.xlsx"},
+    )
+
+
+@router.post("/teachers/import")
+async def import_teachers(
+    current_user: dict = Depends(check_role(["admin"])),
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+):
+    """批量导入教师数据"""
+    return TeacherService.batch_import_teachers(current_user, file, session)

@@ -434,7 +434,7 @@ watch(() => props.show, (newValue) => {
             <button @click="handleImport" class="btn btn-import" :disabled="isUploading">
               {{ isUploading ? '导入中...' : '导入Excel' }}
             </button>
-            <a v-if="type === 'student'" href="/api/v1/students/import/template" download class="btn btn-download-template" target="_blank">
+            <a v-if="type === 'student' || type === 'reviewer' || type === 'teacher' || type === 'course'" :href="`/api/v1/${type === 'student' ? 'students' : type === 'reviewer' ? 'reviewers' : type === 'teacher' ? 'teachers' : 'courses'}/import/template`" download class="btn btn-download-template" target="_blank">
               下载导入模板
             </a>
           </div>

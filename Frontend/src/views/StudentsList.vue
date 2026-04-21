@@ -76,10 +76,6 @@ const handleDownloadTemplate = async () => {
 const isImporting = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 
-const triggerFileInput = () => {
-  fileInput.value?.click()
-}
-
 const handleFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
@@ -121,15 +117,13 @@ const handleFileChange = async (event: Event) => {
       create-type="student"
     >
       <template #header-buttons>
-        <button v-if="isAdmin" @click="handleDownloadTemplate" class="btn btn-template" :disabled="isDownloadingTemplate">
-          {{ isDownloadingTemplate ? '下载中...' : '下载导入模板' }}
+        <button v-if="isAdmin" @click="handleDownloadTemplate" class="btn btn-outline" :disabled="isDownloadingTemplate">
+          {{ isDownloadingTemplate ? '下载中...' : '下载模板' }}
         </button>
-        <button v-if="isAdmin" @click="triggerFileInput" class="btn btn-import" :disabled="isImporting">
-          {{ isImporting ? '导入中...' : '导入学生' }}
-        </button>
-        <input
-          ref="fileInput"
-          type="file"
+        <label v-if="isAdmin" class="btn btn-secondary import-label">
+          {{ isImporting ? '导入中...' : '批量导入' }}
+          <input ref="fileInput" type="file" accept=".xlsx,.xls,.csv" style="display: none" @change="handleFileChange" :disabled="isImporting" />
+        </label>
           accept=".xlsx,.xls,.csv"
           style="display: none"
           @change="handleFileChange"
@@ -174,49 +168,4 @@ const handleFileChange = async (event: Event) => {
   border: 1px solid var(--border-medium);
 }
 
-.btn-template {
-  background-color: #6366f1;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btn-template:hover {
-  background-color: #4f46e5;
-  color: white;
-}
-
-.btn-template:disabled {
-  background-color: #9ca3af;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.btn-import {
-  background-color: #f59e0b;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btn-import:hover {
-  background-color: #d97706;
-  color: white;
-}
-
-.btn-import:disabled {
-  background-color: #9ca3af;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
 </style>
