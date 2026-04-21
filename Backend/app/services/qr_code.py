@@ -48,10 +48,10 @@ class QRCodeService:
     @staticmethod
     def generate_qr_for_leave(leave: Leave, session: Session) -> str:
         """为已批准的请假生成二维码凭证"""
-        # 默认有效期：请假当天 00:00 到 23:59
+        # 有效期：请假当天 00:00 到请假日期后 7 天 23:59
         leave_date = leave.leave_date
         valid_from = datetime.combine(leave_date.date(), datetime.min.time())
-        valid_until = datetime.combine(leave_date.date(), datetime.max.time())
+        valid_until = datetime.combine((leave_date + timedelta(days=7)).date(), datetime.max.time())
 
         # 构建凭证内容
         payload = {
@@ -59,7 +59,7 @@ class QRCodeService:
             "student_id": leave.student_id,
             "valid_from": valid_from.isoformat(),
             "valid_until": valid_until.isoformat(),
-            "max_uses": 1,
+            "max_uses": 0,  # 0 表示不限制次数
             "ts": datetime.now().isoformat(),
         }
 
@@ -77,7 +77,7 @@ class QRCodeService:
         leave.qr_code = qr_base64
         leave.qr_valid_from = valid_from
         leave.qr_valid_until = valid_until
-        leave.qr_max_uses = 1
+        leave.qr_max_uses = 0
         leave.qr_use_count = 0
         session.commit()
 
@@ -116,6 +116,15 @@ class QRCodeService:
             }
 
         # 检查请假状态
+        if leave.status == "已销假":
+            return {
+                "valid": False,
+                "student_name": QRCodeService._get_student_name(leave.student_id, session),
+                "leave_date": leave.leave_date.isoformat() if leave.leave_date else None,
+                "status": leave.status,
+                "error_code": "QR_ALREADY_CLOSED",
+                "error_msg": "请假已销假，该凭证已失效",
+            }
         if leave.status != "已批准":
             return {
                 "valid": False,
@@ -148,29 +157,14 @@ class QRCodeService:
                 "error_msg": "二维码已过期",
             }
 
-        # 检查使用次数
-        current_uses = leave.qr_use_count or 0
-        if current_uses >= max_uses:
-            return {
-                "valid": False,
-                "student_name": QRCodeService._get_student_name(leave.student_id, session),
-                "leave_date": leave.leave_date.isoformat() if leave.leave_date else None,
-                "status": leave.status,
-                "error_code": "QR_USED_UP",
-                "error_msg": "二维码已使用次数上限",
-            }
-
-        # 核验通过，记录使用
-        leave.qr_use_count = current_uses + 1
-        session.commit()
-
         return {
             "valid": True,
             "student_name": QRCodeService._get_student_name(leave.student_id, session),
             "leave_date": leave.leave_date.isoformat() if leave.leave_date else None,
             "status": leave.status,
             "leave_type": leave.leave_type,
-            "remarks": leave.remarks,
+            "leave_hours": leave.leave_hours,
+            "audit_remarks": leave.audit_remarks,
             "error_code": None,
             "error_msg": None,
         }
