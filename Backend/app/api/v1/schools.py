@@ -32,3 +32,13 @@ def schools_count(
     session: Session = Depends(get_session),
 ):
     return SchoolService.get_schools_count(session)
+
+
+@router.post("/schools")
+def create_school(
+    school_data: dict,
+    current_user: dict = Depends(check_login),
+    session: Session = Depends(get_session),
+):
+    """创建院系（部门）"""
+    return SchoolService.create_school(school_data, session)
