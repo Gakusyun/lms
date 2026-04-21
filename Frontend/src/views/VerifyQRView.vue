@@ -141,7 +141,7 @@ const formatDate = (dateStr: string | null | undefined) => {
             {{ verifyResult.valid ? '✅ 核验通过' : '❌ 核验失败' }}
           </h3>
 
-          <div class="leave-details">
+          <div v-if="verifyResult.valid" class="leave-details">
             <div class="detail-row">
               <span class="label">学生姓名：</span>
               <span class="value">{{ verifyResult.student_name || '-' }}</span>
@@ -160,7 +160,7 @@ const formatDate = (dateStr: string | null | undefined) => {
             </div>
             <div class="detail-row">
               <span class="label">审核状态：</span>
-              <span class="value" :class="verifyResult.valid ? 'status-approved' : 'status-rejected'">{{ verifyResult.status }}</span>
+              <span class="value status-approved">{{ verifyResult.status }}</span>
             </div>
             <div v-if="verifyResult.audit_remarks" class="detail-row">
               <span class="label">审核意见：</span>
