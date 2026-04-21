@@ -71,6 +71,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/verify-qr',
+      name: 'verify-qr',
+      component: () => import('../views/VerifyQRView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('../views/ProfileView.vue'),

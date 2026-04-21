@@ -108,6 +108,10 @@ const goToStudentCourses = () => {
   router.push('/student-courses')
 }
 
+const goToVerifyQR = () => {
+  router.push('/verify-qr')
+}
+
 // 获取角色显示名称
 const goToAuditLogs = () => {
   router.push('/audit-logs')
@@ -217,6 +221,8 @@ onMounted(() => {
               :onClick="goToSchoolsList" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学生选课管理" description="管理学生选课关系"
               :onClick="goToStudentCourses" />
+            <GenericFeatureCard title="凭证核验" description="核验学生请假二维码凭证"
+              :onClick="goToVerifyQR" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="审计日志" :count="auditLogResponse?.total || 0" description="查看系统操作审计日志"
               :onClick="goToAuditLogs" />
             <GenericFeatureCard v-if="userInfo?.role === 'admin' || userInfo?.role === 'reviewer'" title="数据统计" description="请假趋势与数据可视化分析"
