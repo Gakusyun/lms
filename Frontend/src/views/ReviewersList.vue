@@ -143,28 +143,7 @@ const onPasswordChanged = () => {
 </template>
 
 <style scoped>
-.btn {
-  padding: 0.25rem 0.5rem;
-  font-size: var(--text-xs);
-  border-radius: var(--radius);
-  border: 1px solid var(--border-medium);
-  background-color: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btn:hover {
-  background-color: var(--gray-100);
-  color: var(--text-primary);
-  border-color: var(--border-dark);
-}
-
 .btn-sm {
   padding: 0.25rem 0.5rem;
-}
-
-.btn-outline {
-  border: 1px solid var(--border-medium);
 }
 </style>
