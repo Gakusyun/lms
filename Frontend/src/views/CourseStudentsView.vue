@@ -186,6 +186,16 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.course-students-page {
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  padding: var(--spacing-xl);
+}
+
+.header-info {
+  flex: 1;
+}
+
 .badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
@@ -200,13 +210,15 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: var(--bg-primary);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-radius: var(--radius-lg);
   margin-bottom: var(--spacing-xl);
-  padding-bottom: var(--spacing);
-  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .page-title {
-  font-size: var(--text-2xl);
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;

@@ -16,6 +16,7 @@ const { data: courseResponse, fetchCount: getCourseCount } = useApiCount<Record<
 const reviewerResponse = ref<Record<string, number> | null>(null)
 const teacherResponse = ref<Record<string, number> | null>(null)
 const auditLogResponse = ref<{ total: number } | null>(null)
+const schoolResponse = ref<Record<string, number> | null>(null)
 
 // 定义获取计数的函数
 const getReviewerCount = async () => {
@@ -39,6 +40,14 @@ const getAuditLogCount = async () => {
     const api = useApiCount<{ total: number }>('/audit-logs/count')
     await api.fetchCount()
     auditLogResponse.value = api.data.value
+  }
+}
+
+const getSchoolCount = async () => {
+  if (userInfo.value?.role === 'admin') {
+    const api = useApiCount<Record<string, number>>('/schools/count')
+    await api.fetchCount()
+    schoolResponse.value = api.data.value
   }
 }
 
@@ -149,6 +158,7 @@ onMounted(() => {
 
   if (userInfo.value?.role === 'admin') {
     getAuditLogCount()
+    getSchoolCount()
   }
 })
 </script>
@@ -213,7 +223,7 @@ onMounted(() => {
               :onClick="goToTeachersList" />
             <GenericFeatureCard title="课程管理" :count="courseResponse?.courses_count || 0" description="设置和管理课程信息"
               :onClick="goToCoursesList" />
-            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学院管理" description="管理学院信息"
+            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学院管理" :count="schoolResponse?.schools_count || 0" description="管理学院信息"
               :onClick="goToSchoolsList" />
             <GenericFeatureCard title="凭证核验" description="核验学生请假二维码凭证"
               :onClick="goToVerifyQR" />
