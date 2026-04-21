@@ -94,7 +94,7 @@ def download_import_template():
     ws.append(headers)
 
     # 添加示例行
-    ws.append([1001, "张三", "123456", 1, 1])
+    ws.append([4001, "张三", "123456", 1, 1001])
 
     buffer = io.BytesIO()
     wb.save(buffer)
