@@ -223,7 +223,7 @@ onMounted(() => {
               :onClick="goToTeachersList" />
             <GenericFeatureCard title="课程管理" :count="courseResponse?.courses_count || 0" description="设置和管理课程信息"
               :onClick="goToCoursesList" />
-            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="学院管理" :count="schoolResponse?.schools_count || 0" description="管理学院信息"
+            <GenericFeatureCard v-if="userInfo?.role === 'admin'" title="部门管理" :count="schoolResponse?.schools_count || 0" description="管理部门信息"
               :onClick="goToSchoolsList" />
             <GenericFeatureCard title="凭证核验" description="核验学生请假二维码凭证"
               :onClick="goToVerifyQR" />
