@@ -9,11 +9,6 @@ const isCreating = ref(false)
 const createError = ref('')
 const createSuccess = ref('')
 
-const isImporting = ref(false)
-const importError = ref('')
-const importSuccess = ref('')
-const importResult = ref<{ imported: number; errors: any[] } | null>(null)
-
 const openCreateModal = () => {
   showCreateModal.value = true
   newSchoolName.value = ''
@@ -82,26 +77,25 @@ const handleFileChange = (event: Event) => {
   input.value = ''
 }
 
+const isImporting = ref(false)
+const importError = ref('')
+const importSuccess = ref('')
+
 const importFile = async (file: File) => {
   isImporting.value = true
   importError.value = ''
   importSuccess.value = ''
-  importResult.value = null
-
   try {
     const formData = new FormData()
     formData.append('file', file)
     const result = await http.post('/schools/import', formData) as any
-    importResult.value = result
     if (result.errors && result.errors.length > 0) {
       importError.value = `导入完成，成功 ${result.imported} 条，失败 ${result.errors.length} 条`
     } else {
       importSuccess.value = `成功导入 ${result.imported} 条部门`
     }
     setTimeout(() => {
-      if (result.errors && result.errors.length === 0) {
-        window.location.reload()
-      }
+      if (!importError.value) window.location.reload()
     }, 2000)
   } catch (e: any) {
     importError.value = e.response?.data?.detail || '导入失败'
@@ -125,31 +119,17 @@ const importFile = async (file: File) => {
       hide-export
     >
       <template #header-buttons>
+        <button class="btn btn-outline" @click="handleDownloadTemplate">下载模板</button>
+        <label class="btn btn-secondary import-label">
+          {{ isImporting ? '导入中...' : '批量导入' }}
+          <input type="file" accept=".xlsx,.xls,.csv" @change="handleFileChange" :disabled="isImporting" hidden />
+        </label>
         <button class="btn btn-primary" @click="openCreateModal">创建部门</button>
       </template>
     </GenericList>
 
-    <!-- 模板下载和批量导入 -->
-    <div class="import-toolbar">
-      <button class="btn btn-outline" @click="handleDownloadTemplate">
-        下载模板
-      </button>
-      <label class="btn btn-secondary import-label">
-        {{ isImporting ? '导入中...' : '批量导入' }}
-        <input type="file" accept=".xlsx,.xls,.csv" @change="handleFileChange" :disabled="isImporting" hidden />
-      </label>
-    </div>
-
     <div v-if="importSuccess" class="alert alert-success">{{ importSuccess }}</div>
     <div v-if="importError" class="alert alert-danger">{{ importError }}</div>
-    <div v-if="importResult && importResult.errors.length > 0" class="import-errors">
-      <details>
-        <summary>查看失败详情 ({{ importResult.errors.length }} 条)</summary>
-        <ul>
-          <li v-for="(err, i) in importResult.errors" :key="i">第{{ err.row }}行: {{ err.error }}</li>
-        </ul>
-      </details>
-    </div>
 
     <!-- 创建部门弹窗 -->
     <div v-if="showCreateModal" class="modal-overlay" @click.self="closeCreateModal">
@@ -161,12 +141,7 @@ const importFile = async (file: File) => {
         <div class="modal-form">
           <div class="form-group">
             <label>部门名称</label>
-            <input
-              v-model="newSchoolName"
-              type="text"
-              placeholder="请输入部门名称"
-              @keyup.enter="handleCreate"
-            />
+            <input v-model="newSchoolName" type="text" placeholder="请输入部门名称" @keyup.enter="handleCreate" />
           </div>
           <div v-if="createError" class="error-message">{{ createError }}</div>
           <div v-if="createSuccess" class="success-message">{{ createSuccess }}</div>
@@ -183,165 +158,41 @@ const importFile = async (file: File) => {
 </template>
 
 <style scoped>
-.import-toolbar {
-  display: flex;
-  gap: var(--spacing);
-  margin-bottom: var(--spacing-lg);
-}
-
-.btn {
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-  border: none;
-}
-
-.btn-primary {
-  background: var(--primary-600);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-700);
-}
-
-.btn-primary:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: var(--gray-100);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-medium);
-}
-
-.btn-secondary:hover {
-  background: var(--gray-200);
-  color: var(--text-primary);
-}
-
-.btn-secondary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--primary-600);
-  border: 1px solid var(--primary-600);
-}
-
-.btn-outline:hover {
-  background: var(--primary-50);
-}
-
-.import-label {
-  display: inline-flex;
-  align-items: center;
-}
-
 .alert {
   padding: var(--spacing);
   border-radius: var(--radius);
   margin-bottom: var(--spacing);
   font-size: var(--text-sm);
 }
-
-.alert-success {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.alert-danger {
-  background: var(--error-light);
-  color: var(--error);
-}
-
-.import-errors {
-  padding: var(--spacing);
-  background: var(--error-light);
-  border-radius: var(--radius);
-  margin-bottom: var(--spacing);
-  font-size: var(--text-sm);
-}
-
-.import-errors summary {
-  cursor: pointer;
-  color: var(--error);
-  font-weight: 500;
-}
-
-.import-errors ul {
-  margin: var(--spacing-sm) 0 0 var(--spacing-lg);
-  padding: 0;
-}
-
-.import-errors li {
-  color: var(--error);
-  margin-bottom: 0.25rem;
-}
+.alert-success { background: #dcfce7; color: #166534; }
+.alert-danger { background: var(--error-light); color: var(--error); }
 
 .modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center;
+  align-items: center; z-index: 1000;
 }
-
 .modal-content {
-  background: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  width: 400px;
-  max-width: 90vw;
+  background: var(--bg-primary); border-radius: var(--radius-lg);
+  width: 400px; max-width: 90vw;
 }
-
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing);
-  border-bottom: 1px solid var(--border-light);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--spacing); border-bottom: 1px solid var(--border-light);
 }
-
 .modal-header h3 { margin: 0; font-size: var(--text-lg); }
 .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
 .modal-form { padding: var(--spacing); }
 .form-group { margin-bottom: var(--spacing); }
 .form-group label { display: block; margin-bottom: 0.25rem; font-size: var(--text-sm); font-weight: 500; }
 .form-group input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius);
-  box-sizing: border-box;
+  width: 100%; padding: 0.5rem; border: 1px solid var(--border-medium);
+  border-radius: var(--radius); box-sizing: border-box;
 }
 .modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing);
-  padding: var(--spacing);
-  border-top: 1px solid var(--border-light);
+  display: flex; justify-content: flex-end; gap: var(--spacing);
+  padding: var(--spacing); border-top: 1px solid var(--border-light);
 }
-
-.error-message {
-  padding: var(--spacing);
-  background: var(--error-light);
-  color: var(--error);
-  border-radius: var(--radius);
-  font-size: var(--text-sm);
-}
-
-.success-message {
-  padding: var(--spacing);
-  background: #dcfce7;
-  color: #166534;
-  border-radius: var(--radius);
-  font-size: var(--text-sm);
-}
+.error-message { padding: var(--spacing); background: var(--error-light); color: var(--error); border-radius: var(--radius); font-size: var(--text-sm); }
+.success-message { padding: var(--spacing); background: #dcfce7; color: #166534; border-radius: var(--radius); font-size: var(--text-sm); }
 </style>
