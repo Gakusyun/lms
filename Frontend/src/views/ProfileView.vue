@@ -83,16 +83,15 @@ const handleSaveName = async () => {
   try {
     nameError.value = ''
     nameSuccess.value = ''
-    const response = await http.put('/profile', { name: editNameValue.value.trim() }) as any
-    if (response?.name) {
-      userInfo.value.name = response.name
-      localStorage.setItem('name', response.name)
-      nameSuccess.value = '姓名修改成功！'
-      setTimeout(() => {
-        isEditingName.value = false
-        nameSuccess.value = ''
-      }, 1500)
-    }
+    const newName = editNameValue.value.trim()
+    await http.put('/profile', { name: newName }) as any
+    userInfo.value.name = newName
+    localStorage.setItem('name', newName)
+    nameSuccess.value = '姓名修改成功！'
+    setTimeout(() => {
+      isEditingName.value = false
+      nameSuccess.value = ''
+    }, 1500)
   } catch (error: any) {
     nameError.value = error.response?.data?.detail || '修改失败'
   }
