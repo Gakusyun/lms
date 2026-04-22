@@ -23,6 +23,19 @@ async def lifespan(app: FastAPI):
         SQLModel.metadata.create_all(engine, checkfirst=True)
         logger.info("数据库表创建成功")
 
+        # 初始化默认角色
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT COUNT(*) FROM role"))
+            if result.fetchone()[0] == 0:
+                logger.info("正在初始化默认角色...")
+                for idx, name in enumerate(["辅导员", "书记", "学工处"], start=1):
+                    conn.execute(text(f"INSERT INTO role (role_id, role_name) VALUES ({idx}, '{name}')"))
+                conn.commit()
+                logger.info("默认角色初始化完成")
+            else:
+                logger.info("角色数据已存在，跳过初始化")
+
         # 自动迁移：为 Login 表添加 jwt_token 字段
         # 自动迁移：为 Leave 表添加二维码凭证相关字段
         from sqlalchemy import text
