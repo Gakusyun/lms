@@ -44,7 +44,8 @@ def get_next_student_id(
     session: Session = Depends(get_session),
 ):
     max_id = session.exec(select(func.max(Student.student_id))).one()
-    return {"next_id": (max_id or 0) + 1}
+    base_id = 4001
+    return {"next_id": max(base_id, (max_id or 0) + 1)}
 
 
 @router.get("/students/{student_id}", response_model=Student)
