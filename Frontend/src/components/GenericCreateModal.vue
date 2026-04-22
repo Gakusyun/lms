@@ -37,7 +37,6 @@ const teachers = ref<any[]>([])
 const courses = ref<any[]>([])
 const schools = ref<any[]>([])
 const roles = ref<any[]>([])
-const students = ref<any[]>([])
 const loadingOptions = ref(false)
 
 // Get options data
@@ -77,12 +76,8 @@ const fetchOptions = async () => {
       teachers.value = (response as any).items || []
       formData.value.course_id = String((nextIdRes as any).next_id || '')
     } else if (props.type === 'leave') {
-      const [coursesRes, studentsRes] = await Promise.all([
-        http.get('/courses'),
-        http.get('/students', { params: { page_size: 1000 } })
-      ])
-      courses.value = (coursesRes as any).items || []
-      students.value = (studentsRes as any).items || []
+      const response = await http.get('/courses')
+      courses.value = (response as any).items || []
     }
   } catch (error) {
     console.error('获取选项数据失败:', error)
@@ -473,14 +468,9 @@ watch(() => props.show, (newValue) => {
             </div>
 
             <div class="form-group">
-              <label for="guarantee_student_id">担保人（紧急请假可选）</label>
-              <select id="guarantee_student_id" v-model="formData.guarantee_student_id">
-                <option :value="null">请选择担保人（可选，不填则走正常审批流程）</option>
-                <option v-if="loadingOptions" value="">加载中...</option>
-                <option v-for="student in students" :key="student.student_id" :value="student.student_id">
-                  {{ student.student_name }} ({{ student.student_id }})
-                </option>
-              </select>
+              <label for="guarantee_student_id">担保人学生ID（紧急请假可选）</label>
+              <input type="number" id="guarantee_student_id" v-model="formData.guarantee_student_id"
+                placeholder="填写担保人的学生ID，不填则走正常审批流程" min="1" />
             </div>
             
             <div class="form-group">
