@@ -1,11 +1,4 @@
 <view class="list-page">
-  <!-- 页面头部 -->
-  <view class="page-header">
-    <view class="header-info">
-      <text class="page-title">{{courseName}} - 学生名单</text>
-    </view>
-  </view>
-
   <!-- 学生列表 -->
   <scroll-view scroll-y class="scroll-container" bindscrolltolower="loadMore">
     <view wx:if="{{students.length > 0}}" class="card-list">
