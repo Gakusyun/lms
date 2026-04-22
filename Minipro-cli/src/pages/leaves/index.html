@@ -81,7 +81,7 @@
 
   <!-- 创建请假条模态框 -->
   <view wx:if="{{showCreateModal}}" class="modal-overlay" bindtap="closeCreateModal">
-    <view class="modal-content" catchtap="">
+    <view class="modal-content" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">创建请假条</text>
         <view class="modal-close" bindtap="closeCreateModal">×</view>
@@ -89,7 +89,7 @@
       <view class="modal-body">
         <view class="form-group">
           <text class="form-label">学生ID</text>
-          <input class="form-input" type="number" placeholder="请输入学生ID" value="{{leaveForm.student_id}}" bindinput="onStudentIdInput" />
+          <input class="form-input" type="number" placeholder="请输入学生ID" value="{{leaveForm.student_id}}" bindinput="onStudentIdInput" disabled />
         </view>
         <view class="form-group">
           <text class="form-label">请假日期</text>
@@ -103,7 +103,7 @@
         </view>
         <view class="form-group">
           <text class="form-label">请假课时</text>
-          <input class="form-input" type="text" placeholder="请输入请假课时" value="{{leaveForm.leave_hours}}" bindinput="onLeaveHoursInput" />
+          <input class="form-input" type="number" placeholder="请输入请假课时" value="{{leaveForm.leave_hours}}" bindinput="onLeaveHoursInput" />
         </view>
         <view class="form-group">
           <text class="form-label">请假类型</text>
@@ -111,10 +111,10 @@
         </view>
         <view class="form-group">
           <text class="form-label">课程</text>
-          <picker range="{{courseOptions}}" range-key="label" value="{{selectedCourseIndex}}" bindchange="onCourseChange">
+          <picker mode="selector" range="{{courseOptions}}" range-key="label" value="{{selectedCourseIndex}}" bindchange="onCourseChange">
             <view class="form-picker">
-              <text class="{{selectedCourseIndex >= 0 ? '' : 'form-select-placeholder'}}">
-                {{selectedCourseIndex >= 0 ? courseOptions[selectedCourseIndex].label : '请选择课程（可选）'}}
+              <text class="{{selectedCourseIndex >= 0 && courseOptions[selectedCourseIndex].value > 0 ? '' : 'form-select-placeholder'}}">
+                {{selectedCourseIndex >= 0 && courseOptions[selectedCourseIndex].value > 0 ? courseOptions[selectedCourseIndex].label : '请选择课程（可选）'}}
               </text>
             </view>
           </picker>

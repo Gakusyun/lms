@@ -656,6 +656,7 @@ export default defineComponent(() => {
     loadMore,
     onPullDownRefresh,
     goBack,
+    noop: () => {},
     onReady,
     openCreateModal,
     closeCreateModal,
