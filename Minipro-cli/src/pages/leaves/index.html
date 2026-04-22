@@ -29,6 +29,8 @@
             <view class="badge badge-{{item.status === '已批准' ? 'success' : item.status === '已拒绝' ? 'danger' : 'warning'}}">{{item.status}}</view>
             <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}" class="btn btn-success btn-sm" data-id="{{item.leave_id}}" data-status="approve" bindtap="auditLeave">通过</button>
             <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}" class="btn btn-danger btn-sm" data-id="{{item.leave_id}}" data-status="reject" bindtap="auditLeave">拒绝</button>
+            <!-- 担保按钮：自己是担保人且状态为待审批 -->
+            <button wx:if="{{item.status === '待审批' && isGuarantorFor(item) && userInfo.role === 'student'}}" class="btn btn-primary btn-sm" data-id="{{item.leave_id}}" bindtap="guaranteeLeave">担保</button>
             <button wx:if="{{item.status === '已批准'}}" class="btn btn-info btn-sm" data-id="{{item.leave_id}}" bindtap="showLeaveQR">查看凭证</button>
           </view>
         </view>
@@ -47,6 +49,10 @@
         <view class="card-row">
           <text class="card-label">日期</text>
           <text class="card-value">{{item.leave_date_formatted || '-'}}</text>
+        </view>
+        <view wx:if="{{item.guarantee_student_name}}" class="card-row">
+          <text class="card-label">担保人</text>
+          <text class="card-value">{{item.guarantee_student_name}}</text>
         </view>
         <view wx:if="{{item.remarks}}" class="card-row">
           <text class="card-label">备注</text>

@@ -119,7 +119,11 @@ class LeaveService:
 
         # 普通查询（非scope=school）
         if current_user["role"] == "student":
-            query = query.where(Leave.student_id == current_user["id"])
+            # 查看自己创建的 + 自己作为担保人的请假条
+            query = query.where(
+                (Leave.student_id == current_user["id"]) |
+                (Leave.guarantee_student_id == current_user["id"])
+            )
         elif current_user["role"] == "reviewer":
             reviewer = session.exec(
                 select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
@@ -1027,8 +1031,11 @@ class LeaveService:
         session: Session,
         request: Request = None,
         ip_address: str = None,
+        penalty_days: int = None,
     ):
-        """销假 - 辅导员确认学生已返校报到，请假流程闭环"""
+        """销假 - 辅导员确认学生已返校报到，请假流程闭环
+        penalty_days: 可选惩罚天数（7或30），设置双方担保权限为now+penalty_days
+        """
         leave = session.exec(select(Leave).where(Leave.leave_id == leave_id)).first()
 
         if not leave:
@@ -1042,7 +1049,6 @@ class LeaveService:
                 select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
             ).first()
             role_name = get_reviewer_role_name(reviewer, session) if reviewer else ""
-            # 辅导员可以销假（学生向辅导员报到）
             if "辅导员" not in role_name and "书记" not in role_name:
                 raise HTTPException(status_code=403, detail="只有辅导员或书记可以执行销假操作")
         elif current_user["role"] != "admin":
@@ -1050,6 +1056,23 @@ class LeaveService:
 
         leave.status = "已销假"
         leave.audit_time = datetime.now()
+
+        # 惩罚：设置双方担保权限失效
+        if penalty_days in (7, 30):
+            penalty_time = datetime.now() + timedelta(days=penalty_days)
+            # 被担保学生
+            student = session.exec(
+                select(Student).where(Student.student_id == leave.student_id)
+            ).first()
+            if student:
+                student.guarantee_permission = penalty_time
+            # 担保学生
+            if leave.guarantee_student_id:
+                guarantor = session.exec(
+                    select(Student).where(Student.student_id == leave.guarantee_student_id)
+                ).first()
+                if guarantor:
+                    guarantor.guarantee_permission = penalty_time
 
         session.commit()
         session.refresh(leave)
@@ -1059,7 +1082,7 @@ class LeaveService:
             action="close_off",
             target_type="leave",
             target_id=leave.leave_id,
-            detail="销假：学生已返校报到",
+            detail=f"销假：学生已返校报到{('，处罚双方担保权限'+str(penalty_days)+'天') if penalty_days else ''}",
             ip_address=ip_address,
             request=request,
             session=session,
@@ -1067,6 +1090,65 @@ class LeaveService:
 
         NotificationService.notify_leave_status_change(leave, "已销假", session)
 
+        return leave
+
+    @staticmethod
+    def guarantee_leave(current_user: dict, leave_id: int, session: Session):
+        """担保请假条 - 担保学生点击担保按钮
+        条件：双方的 guarantee_permission 都在当前时间之前
+        """
+        leave = session.exec(select(Leave).where(Leave.leave_id == leave_id)).first()
+        if not leave:
+            raise HTTPException(status_code=404, detail="Leave record not found")
+
+        if leave.status != "待审批":
+            raise HTTPException(status_code=403, detail="只能担保待审批状态的请假条")
+
+        if leave.guarantee_student_id != current_user["id"]:
+            raise HTTPException(status_code=403, detail="你不是该请假条的担保人")
+
+        now = datetime.now()
+
+        # 验证担保学生有权限
+        guarantor = session.exec(
+            select(Student).where(Student.student_id == current_user["id"])
+        ).first()
+        if not guarantor or not guarantor.guarantee_permission or guarantor.guarantee_permission > now:
+            raise HTTPException(status_code=403, detail="你当前没有担保权限或权限已过期")
+
+        # 验证被担保学生有权限
+        student = session.exec(
+            select(Student).where(Student.student_id == leave.student_id)
+        ).first()
+        if not student or not student.guarantee_permission or student.guarantee_permission > now:
+            raise HTTPException(status_code=403, detail="请假学生没有担保权限或权限已过期，无法生效")
+
+        # 紧急请假无需审核员审批，直接批准
+        leave.status = "已批准"
+        leave.audit_time = now
+        leave.audit_remarks = f"紧急请假，担保人{guarantor.student_name}担保生效"
+
+        session.commit()
+        session.refresh(leave)
+
+        # 生成二维码凭证
+        from app.services.qr_code import QRCodeService
+        try:
+            QRCodeService.generate_qr_for_leave(leave, session)
+            session.refresh(leave)
+        except Exception:
+            pass
+
+        AuditLogService.log(
+            current_user=current_user,
+            action=AuditAction.LEAVE_APPROVE,
+            target_type="leave",
+            target_id=leave.leave_id,
+            detail=f"紧急请假担保生效，担保人={guarantor.student_name}",
+            session=session,
+        )
+
+        NotificationService.notify_leave_status_change(leave, "已批准", session)
         return leave
 
     @staticmethod

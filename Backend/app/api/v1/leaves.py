@@ -196,9 +196,21 @@ def close_off_leave(
     current_user: dict = Depends(check_role(["admin", "reviewer"])),
     request: Request = None,
     session: Session = Depends(get_session),
+    penalty_days: int = Query(None, description="惩罚天数：7或30，设置双方担保权限为当前时间+该天数"),
 ):
-    """销假 - 辅导员确认学生已返校报到"""
-    return LeaveService.close_off_leave(current_user, leave_id, session, request)
+    """销假 - 辅导员确认学生已返校报到，可选传入penalty_days对双方学生处罚"""
+    return LeaveService.close_off_leave(current_user, leave_id, session, request, penalty_days=penalty_days)
+
+
+@router.post("/leaves/guarantee/{leave_id}", response_model=LeaveResponse)
+def guarantee_leave(
+    leave_id: int,
+    current_user: dict = Depends(check_role(["student"])),
+    session: Session = Depends(get_session),
+):
+    """担保请假条 - 担保学生确认担保，双方担保权限均需在当前时间之前方可生效"""
+    from app.services.leave import LeaveService
+    return LeaveService.guarantee_leave(current_user, leave_id, session)
 
 
 @router.post("/leaves/upload")

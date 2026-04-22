@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import { formatDate } from '../utils/formatters'
-import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave, getLeaveQRCode, closeOffLeave } from '../api'
+import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave, getLeaveQRCode, closeOffLeave, guaranteeLeave } from '../api'
 import http from '../utils/http'
 import type { Leave, LeaveCreate, Course, StudentCourseResponse } from '../types'
 
@@ -302,15 +302,49 @@ const handleCancelLeave = async (leave: Leave) => {
 
 // 销假 - 辅导员确认学生已返校报到
 const handleCloseOff = async (leave: Leave) => {
-  if (!confirm(`确定要对该请假执行销假操作吗？\n学生: ${leave.student_name}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}`)) return
+  const isGuarantor = leave.guarantee_student_id === currentUserId && leave.student_id !== currentUserId
+  let penaltyDays: number | undefined
+
+  if (isGuarantor) {
+    // 担保人操作销假，可选择惩罚天数
+    const confirmText = `确定要对该请假执行销假操作吗？\n学生: ${leave.student_name}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}\n\n是否对双方学生进行处罚？`
+    const userConfirm = confirm(confirmText + '\n\n点确定：处罚7天\n点取消：仅销假')
+
+    if (userConfirm) {
+      penaltyDays = 7
+    } else {
+      penaltyDays = undefined
+    }
+  } else {
+    if (!confirm(`确定要对该请假执行销假操作吗？\n学生: ${leave.student_name}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}`)) return
+  }
 
   try {
-    await closeOffLeave(leave.leave_id)
+    await closeOffLeave(leave.leave_id, penaltyDays)
     listKey.value++
   } catch (error: any) {
     console.error('销假失败:', error)
     alert(error.response?.data?.detail || '销假失败')
   }
+}
+
+// 担保请假条
+const handleGuarantee = async (leave: Leave) => {
+  if (!confirm(`确定要担保这张请假条吗？\n学生: ${leave.student_name}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}`)) return
+
+  try {
+    await guaranteeLeave(leave.leave_id)
+    alert('担保成功，请假条已生效')
+    listKey.value++
+  } catch (error: any) {
+    console.error('担保失败:', error)
+    alert(error.response?.data?.detail || '担保失败')
+  }
+}
+
+// 判断是否为该学生的担保人
+const isGuarantorFor = (leave: Leave): boolean => {
+  return leave.guarantee_student_id === currentUserId && leave.student_id !== currentUserId
 }
 
 // 判断是否可以编辑（学生只能编辑自己的待审批请假条）
@@ -466,6 +500,10 @@ const formatMaterials = (value: string): string => {
           key: 'status',
           label: '状态'
         },
+        {
+          key: 'guarantee_student_name',
+          label: '担保人'
+        },
         { key: 'reviewer_name', label: '审核人姓名' },
         { key: 'audit_remarks', label: '审核意见' },
         { key: 'materials', label: '证明材料' }
@@ -477,6 +515,9 @@ const formatMaterials = (value: string): string => {
           </button>
           <button v-if="canCancel(item)" @click="handleCancelLeave(item)" class="btn btn-danger btn-sm">
             撤销
+          </button>
+          <button v-if="isGuarantorFor(item) && item.status === '待审批'" @click="handleGuarantee(item)" class="btn btn-primary btn-sm">
+            担保
           </button>
           <button v-if="item.status === '已批准'" @click="showQRCode(item)" class="btn btn-info btn-sm">
             查看凭证

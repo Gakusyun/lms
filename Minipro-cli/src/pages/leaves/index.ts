@@ -23,6 +23,8 @@ interface Leave {
   qr_valid_until?: string;
   qr_use_count?: number;
   qr_max_uses?: number;
+  guarantee_student_id?: number;
+  guarantee_student_name?: string;
 }
 
 interface Course {
@@ -441,6 +443,51 @@ export default defineComponent(() => {
     auditLeave({ currentTarget: { dataset: { id: e.currentTarget.dataset.id, status: 'reject' } } });
   };
 
+  // 担保请假条
+  const guaranteeLeave = (e: any) => {
+    const { id } = e.currentTarget.dataset;
+    const leave = leaves.value.find(l => l.leave_id === id);
+    if (!leave) return;
+
+    wx.showModal({
+      title: '确认担保',
+      content: `确定要担保这张请假条吗？\n学生: ${leave.student_name || '-'}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}`,
+      success: (res) => {
+        if (res.confirm) {
+          const token = wx.getStorageSync('token');
+          wx.request({
+            url: `${BASE_URL}/leaves/guarantee/${id}`,
+            method: 'POST',
+            header: {
+              'Authorization': `Bearer ${token}`
+            },
+            success: () => {
+              wx.showToast({
+                title: '担保成功',
+                icon: 'success'
+              });
+              fetchLeaves(true);
+            },
+            fail: (error: any) => {
+              console.error('担保失败:', error);
+              wx.showToast({
+                title: (error?.response?.data?.detail) || '担保失败',
+                icon: 'error'
+              });
+            }
+          });
+        }
+      }
+    });
+  };
+
+  // 判断是否为该学生的担保人
+  const isGuarantorFor = (leave: Leave): boolean => {
+    const userInfo = wx.getStorageSync('userInfo');
+    if (!userInfo) return false;
+    return leave.guarantee_student_id === parseInt(userInfo.id) && leave.student_id !== parseInt(userInfo.id);
+  };
+
   // 返回上一页
   const goBack = () => {
     wx.navigateBack();
@@ -630,5 +677,7 @@ export default defineComponent(() => {
     showLeaveQR,
     closeQRModal,
     handleScanVerify,
+    guaranteeLeave,
+    isGuarantorFor,
   };
 });

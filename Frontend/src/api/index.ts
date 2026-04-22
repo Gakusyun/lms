@@ -430,12 +430,25 @@ export const exportStudentsJSON = async () => {
 }
 
 // 销假API - 辅导员确认学生已返校报到
-export const closeOffLeave = async (leaveId: number) => {
+export const closeOffLeave = async (leaveId: number, penaltyDays?: number) => {
   try {
-    const response = await http.post(`/leaves/close-off/${leaveId}`)
+    const response = await http.post(`/leaves/close-off/${leaveId}`, null, {
+      params: penaltyDays ? { penalty_days: penaltyDays } : undefined
+    })
     return response
   } catch (error) {
     console.error('销假失败:', error)
+    throw error
+  }
+}
+
+// 担保请假条API - 紧急请假担保生效
+export const guaranteeLeave = async (leaveId: number) => {
+  try {
+    const response = await http.post(`/leaves/guarantee/${leaveId}`)
+    return response
+  } catch (error) {
+    console.error('担保失败:', error)
     throw error
   }
 }
