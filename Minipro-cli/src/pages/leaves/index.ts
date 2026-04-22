@@ -386,10 +386,16 @@ export default defineComponent(() => {
 
   // 审核请假条 - 使用与 Web App 相同的 API 端点
   const auditLeave = (e: any) => {
+    console.log('auditLeave called', e);
+    console.log('currentTarget.dataset:', e.currentTarget?.dataset);
     const { id, status } = e.currentTarget.dataset;
+    console.log('parsed id:', id, 'status:', status);
     const leave = leaves.value.find(l => l.leave_id === id);
 
-    if (!leave) return;
+    if (!leave) {
+      console.log('leave not found for id:', id);
+      return;
+    }
 
     // 审核状态映射
     const statusMap: { [key: string]: string } = {
@@ -398,6 +404,7 @@ export default defineComponent(() => {
     };
 
     const auditStatus = statusMap[status];
+    console.log('auditStatus:', auditStatus);
     if (!auditStatus) return;
 
     wx.showModal({
@@ -677,6 +684,7 @@ export default defineComponent(() => {
     onCourseChange,
     onLeaveTypeChange,
     handleCreateLeave,
+    auditLeave,
     approveLeave,
     rejectLeave,
     showQRModal,
