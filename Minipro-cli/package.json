@@ -34,13 +34,13 @@
     "fs-extra": "^11.3.4",
     "kolorist": "^1.8.0",
     "local-pkg": "^1.1.2",
-    "postcss": "^8.5.9",
+    "postcss": "^8.5.10",
     "postcss-import": "^16.1.1",
     "postcss-load-config": "^6.0.1",
     "postcss-pxtorpx-pro": "^2.0.0",
-    "rollup": "^4.60.1",
+    "rollup": "^4.60.2",
     "terser": "^5.46.1",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   },
   "browserslist": [
     "iOS >= 10",

@@ -15,23 +15,23 @@
   },
   "dependencies": {
     "@types/qrcode": "^1.5.6",
-    "axios": "^1.15.0",
-    "echarts": "^5.5.0",
+    "axios": "^1.15.2",
+    "echarts": "^6.0.0",
     "html5-qrcode": "^2.3.8",
     "qrcode": "^1.5.4",
-    "vue": "^3.5.32",
-    "vue-echarts": "^7.0.3",
-    "vue-router": "^5.0.4",
+    "vue": "^3.5.33",
+    "vue-echarts": "^8.0.1",
+    "vue-router": "^5.0.6",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^25.6.0",
-    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitejs/plugin-vue": "^6.0.6",
     "@vue/tsconfig": "^0.9.1",
     "npm-run-all2": "^8.0.4",
-    "typescript": "~6.0.2",
-    "vite": "^8.0.8",
-    "vue-tsc": "^3.2.6"
+    "typescript": "~6.0.3",
+    "vite": "^8.0.9",
+    "vue-tsc": "^3.2.7"
   }
 }
