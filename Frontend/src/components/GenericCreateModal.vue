@@ -37,6 +37,7 @@ const teachers = ref<any[]>([])
 const courses = ref<any[]>([])
 const schools = ref<any[]>([])
 const roles = ref<any[]>([])
+const students = ref<any[]>([])
 const loadingOptions = ref(false)
 
 // Get options data
@@ -76,8 +77,12 @@ const fetchOptions = async () => {
       teachers.value = (response as any).items || []
       formData.value.course_id = String((nextIdRes as any).next_id || '')
     } else if (props.type === 'leave') {
-      const response = await http.get('/courses')
-      courses.value = (response as any).items || []
+      const [coursesRes, studentsRes] = await Promise.all([
+        http.get('/courses'),
+        http.get('/students', { params: { page_size: 1000 } })
+      ])
+      courses.value = (coursesRes as any).items || []
+      students.value = (studentsRes as any).items || []
     }
   } catch (error) {
     console.error('获取选项数据失败:', error)
@@ -113,6 +118,7 @@ const getDefaultFormData = () => {
     case 'leave':
       return {
         student_id: null,
+        guarantee_student_id: null,
         course_id: 0,
         leave_date: '',
         leave_hours: null,
@@ -268,6 +274,7 @@ const handleCreate = async () => {
         // 先创建请假条（不包含materials），得到leave_id后再上传文件
         payload = {
           student_id: toInt(formData.value.student_id),
+          guarantee_student_id: formData.value.guarantee_student_id || null,
           course_id: formData.value.course_id === 0 ? null : formData.value.course_id,
           leave_date: formData.value.leave_date,
           leave_hours: formData.value.leave_hours ? formData.value.leave_hours.toString() : null,
@@ -463,6 +470,17 @@ watch(() => props.show, (newValue) => {
                 <label for="leave_date">请假日期 *</label>
                 <input type="date" id="leave_date" v-model="formData.leave_date" required />
               </div>
+            </div>
+
+            <div class="form-group">
+              <label for="guarantee_student_id">担保人（紧急请假可选）</label>
+              <select id="guarantee_student_id" v-model="formData.guarantee_student_id">
+                <option :value="null">请选择担保人（可选，不填则走正常审批流程）</option>
+                <option v-if="loadingOptions" value="">加载中...</option>
+                <option v-for="student in students" :key="student.student_id" :value="student.student_id">
+                  {{ student.student_name }} ({{ student.student_id }})
+                </option>
+              </select>
             </div>
             
             <div class="form-group">
