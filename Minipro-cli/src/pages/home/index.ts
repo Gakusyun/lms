@@ -181,7 +181,7 @@ export default defineComponent(() => {
     if (user) {
       userInfo.value = user;
     }
-    unreadCount.value = getUnreadCount();
+    unreadCount.value = getUnreadCount() as number;
     onUnreadChange((count) => {
       unreadCount.value = count;
     });

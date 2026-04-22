@@ -57,6 +57,11 @@ class NotificationService:
                 "content": "您的请假申请（日期：{leave_date}，类型：{leave_type}）已撤销。",
                 "type": "info",
             },
+            "已销假": {
+                "title": "请假已销假",
+                "content": "您的请假申请（日期：{leave_date}，类型：{leave_type}）已销假，请假流程已闭环。",
+                "type": "info",
+            },
         }
 
         msg_info = status_messages.get(new_status)
