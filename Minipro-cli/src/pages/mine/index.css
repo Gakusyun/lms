@@ -1,9 +1,10 @@
 /* 个人中心页面 - 小程序适配 */
 
 .profile-page {
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--bg-secondary);
-  padding-bottom: 120rpx; /* 避免被tabBar遮挡 */
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
 /* 容器 */

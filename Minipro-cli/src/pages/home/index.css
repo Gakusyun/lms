@@ -1,8 +1,9 @@
 /* 页面容器 - 小程序适配 */
 .dashboard-page {
-  min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--gray-50) 100%);
-  padding-bottom: 120rpx; /* 避免被tabBar遮挡 */
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
 /* 用户信息卡片 - 替代冗余header */

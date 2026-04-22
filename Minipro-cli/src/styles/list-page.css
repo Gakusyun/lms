@@ -16,9 +16,10 @@ button::after {
 
 /* 页面容器 */
 .list-page {
-  min-height: 100vh;
+  height: 100vh;
   background-color: #f3f4f6;
-  padding-bottom: 200rpx;
+  padding-bottom: calc(200rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
 /* 统计卡片 */
@@ -191,7 +192,8 @@ button::after {
 
 /* 滚动容器 */
 .scroll-container {
-  height: calc(100vh - 200rpx);
+  height: calc(100vh - 200rpx - env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
 /* ===== 表单元素（微信原生样式） ===== */

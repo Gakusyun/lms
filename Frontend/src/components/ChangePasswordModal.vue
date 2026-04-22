@@ -133,7 +133,7 @@ const handleSubmit = async () => {
           <div class="form-group">
             <label for="new_password">新密码</label>
             <input type="password" id="new_password" v-model="passwordForm.new_password" class="form-input"
-              placeholder="请输入新密码（至少6位）" minlength="6" required :disabled="loading" />
+              placeholder="请输入新密码" minlength="6" required :disabled="loading" />
           </div>
 
           <div class="form-group">
