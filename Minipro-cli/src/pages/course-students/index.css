@@ -1,0 +1,24 @@
+/* ============================================
+   课程学生列表页样式
+   ============================================ */
+@import "../../styles/list-page.css";
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #e5e7eb;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #111827;
+}

@@ -118,10 +118,8 @@ export default defineComponent(() => {
     const courseId = e.currentTarget.dataset.courseId;
     const course = courses.value.find(c => c.course_id === courseId);
     if (course) {
-      wx.showModal({
-        title: `学生列表 #${course.course_id}`,
-        content: `课程: ${course.course_name || '-'}\n选课人数: ${course.enrollment_count || 0} 人\n（暂无学生详细列表页面）`,
-        showCancel: false
+      wx.navigateTo({
+        url: `/pages/course-students/index?courseId=${courseId}&courseName=${encodeURIComponent(course.course_name || '')}`
       });
     }
   };

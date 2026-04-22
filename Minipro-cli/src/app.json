@@ -10,7 +10,8 @@
     "pages/notifications/index",
     "pages/reviewers/index",
     "pages/teachers/index",
-    "pages/courses/index"
+    "pages/courses/index",
+    "pages/course-students/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "@bgColor",

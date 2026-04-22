@@ -1,0 +1,48 @@
+<view class="list-page">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <view class="header-info">
+      <text class="page-title">{{courseName}} - 学生名单</text>
+    </view>
+  </view>
+
+  <!-- 学生列表 -->
+  <scroll-view scroll-y class="scroll-container" bindscrolltolower="loadMore">
+    <view wx:if="{{students.length > 0}}" class="card-list">
+      <view wx:for="{{students}}" wx:key="student_id" class="card">
+        <view class="card-header">
+          <text class="card-title">{{item.student_name || '未知学生'}}</text>
+          <view class="badge badge-{{item.status === '已选课' ? 'success' : 'warning'}}">{{item.status}}</view>
+        </view>
+        <view class="card-row">
+          <text class="card-label">学生ID</text>
+          <text class="card-value">{{item.student_id}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">课程</text>
+          <text class="card-value">{{item.course_name || '-'}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">教师</text>
+          <text class="card-value">{{item.teacher_name || '-'}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">选课日期</text>
+          <text class="card-value">{{item.enrollment_date || '-'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading">
+      <text>正在加载...</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{!loading && students.length === 0}}" class="empty-state">
+      <text class="empty-icon">📚</text>
+      <text class="empty-title">暂无学生选课此课程</text>
+      <text class="empty-desc">暂无学生选修此课程</text>
+    </view>
+  </scroll-view>
+</view>
