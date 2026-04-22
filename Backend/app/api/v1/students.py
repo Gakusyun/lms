@@ -90,11 +90,11 @@ def download_import_template():
     ws = wb.active
     ws.title = "学生导入模板"
 
-    headers = ["student_id", "student_name", "password", "school_id", "reviewer_id"]
+    headers = ["student_id", "student_name", "password", "school_id", "reviewer_id", "guarantee_permission"]
     ws.append(headers)
 
-    # 添加示例行
-    ws.append([4001, "张三", "123456", 1, 1001])
+    # 添加示例行（guarantee_permission: 0表示从未处罚有权限，填时间戳表示处罚截止时间）
+    ws.append([4001, "张三", "123456", 1, 1001, 0])
 
     buffer = io.BytesIO()
     wb.save(buffer)
