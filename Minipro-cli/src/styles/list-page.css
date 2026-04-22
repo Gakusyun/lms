@@ -1,4 +1,4 @@
-/* 微信小程序统一列表页面样式 */
+/* 微信小程序统一列表页面样式 - 最小化自定义 */
 
 /* WeChat button 默认样式重置 */
 button {
@@ -79,11 +79,7 @@ button::after {
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
 }
 
-.card:active {
-  background-color: #f9fafb;
-}
-
-/* 卡片头部 - ID和操作 */
+/* 卡片头部 */
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -105,16 +101,12 @@ button::after {
   flex-shrink: 0;
 }
 
-/* 卡片内容行 - key-value */
+/* 卡片内容行 */
 .card-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12rpx 0;
-}
-
-.card-row:last-child {
-  padding-bottom: 0;
 }
 
 .card-label {
@@ -131,7 +123,6 @@ button::after {
 }
 
 /* ===== 按钮样式 ===== */
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -142,35 +133,17 @@ button::after {
   border-radius: 10rpx;
   border: none;
   line-height: 1.4;
-  box-sizing: border-box;
   min-height: 64rpx;
-}
-
-.btn::after {
-  border: none;
 }
 
 .btn-back {
   background-color: #f3f4f6;
   color: #374151;
-  border: 1rpx solid #d1d5db;
-}
-
-.btn-back:active {
-  background-color: #e5e7eb;
 }
 
 .btn-primary {
-  background-color: #0284c7;
+  background-color: #07c160;
   color: #ffffff;
-}
-
-.btn-primary:active {
-  background-color: #0369a1;
-}
-
-.btn-primary[disabled] {
-  background-color: #9ca3af;
 }
 
 .btn-secondary {
@@ -178,46 +151,20 @@ button::after {
   color: #374151;
 }
 
-.btn-secondary:active {
-  background-color: #e5e7eb;
+.btn-success {
+  background-color: #07c160;
+  color: #ffffff;
 }
 
 .btn-danger {
-  background-color: #ef4444;
+  background-color: #fa5151;
   color: #ffffff;
-}
-
-.btn-danger:active {
-  background-color: #dc2626;
-}
-
-.btn-success {
-  background-color: #10b981;
-  color: #ffffff;
-}
-
-.btn-success:active {
-  background-color: #059669;
 }
 
 .btn-sm {
   padding: 12rpx 20rpx;
   font-size: 24rpx;
   min-height: 56rpx;
-}
-
-.btn-block {
-  width: 100%;
-  display: flex;
-}
-
-.btn-info {
-  background-color: #3b82f6;
-  color: #ffffff;
-}
-
-.btn-info:active {
-  background-color: #2563eb;
 }
 
 /* 状态徽章 */
@@ -244,41 +191,24 @@ button::after {
   color: #991b1b;
 }
 
-.badge-secondary {
-  background-color: #f3f4f6;
-  color: #374151;
-}
-
 /* 加载和空状态 */
 .loading {
   text-align: center;
   padding: 128rpx 0;
   color: #6b7280;
   font-size: 28rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .empty-state {
   text-align: center;
   padding: 128rpx 32rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16rpx;
-}
-
-.empty-icon {
-  font-size: 96rpx;
-  margin-bottom: 16rpx;
 }
 
 .empty-title {
   font-size: 32rpx;
   font-weight: 600;
   color: #111827;
+  margin-bottom: 16rpx;
 }
 
 .empty-desc {
@@ -291,8 +221,72 @@ button::after {
   height: calc(100vh - 200rpx);
 }
 
-/* ===== 弹窗样式 ===== */
+/* ===== 表单元素（微信原生样式） ===== */
+.form-group {
+  margin-bottom: 32rpx;
+}
 
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 12rpx;
+}
+
+/* 微信原生 input 样式 */
+.weui-input {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  color: #111827;
+  background-color: #ffffff;
+  border: 1rpx solid #d1d5db;
+  border-radius: 12rpx;
+  box-sizing: border-box;
+}
+
+.weui-input[disabled] {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.weui-input::placeholder {
+  color: #9ca3af;
+}
+
+/* 微信原生 picker 样式 */
+.weui-picker {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 24rpx;
+  display: flex;
+  align-items: center;
+  font-size: 32rpx;
+  color: #111827;
+  background-color: #ffffff;
+  border: 1rpx solid #d1d5db;
+  border-radius: 12rpx;
+  box-sizing: border-box;
+}
+
+.weui-picker text {
+  color: #111827;
+}
+
+.weui-picker text:first-child {
+  color: #9ca3af;
+}
+
+.error-message {
+  padding: 16rpx 24rpx;
+  font-size: 26rpx;
+  color: #fa5151;
+  background-color: #fff2f2;
+  border-radius: 8rpx;
+  margin-top: 16rpx;
+}
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -329,14 +323,9 @@ button::after {
 }
 
 .modal-close {
-  width: 48rpx;
-  height: 48rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 48rpx;
   color: #9ca3af;
-  line-height: 1;
+  padding: 8rpx;
 }
 
 .modal-body {
@@ -354,96 +343,20 @@ button::after {
   background-color: #f9fafb;
 }
 
-/* ===== 表单样式 ===== */
-
-.form-group {
-  margin-bottom: 32rpx;
-}
-
-.form-group:last-child {
-  margin-bottom: 0;
-}
-
-.form-label {
-  display: block;
-  font-size: 28rpx;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 12rpx;
-}
-
-.form-input {
-  width: 100%;
-  height: 88rpx;
-  padding: 0 24rpx;
-  font-size: 32rpx;
-  color: #111827;
-  background-color: #ffffff;
-  border: 2rpx solid #d1d5db;
-  border-radius: 12rpx;
-  box-sizing: border-box;
-}
-
-.form-input:focus {
-  border-color: #0ea5e9;
-}
-
-.form-input::placeholder {
-  color: #9ca3af;
-}
-
-.form-input[disabled] {
-  background-color: #f3f4f6;
-  color: #6b7280;
-}
-
-.form-picker {
-  width: 100%;
-  height: 88rpx;
-  padding: 0 24rpx;
-  display: flex;
-  align-items: center;
-  font-size: 32rpx;
-  color: #111827;
-  background-color: #ffffff;
-  border: 2rpx solid #d1d5db;
-  border-radius: 12rpx;
-  box-sizing: border-box;
-}
-
-.form-picker-placeholder,
-.form-select-placeholder {
-  color: #9ca3af;
-}
-
-.error-message {
-  padding: 16rpx 24rpx;
-  font-size: 26rpx;
-  color: #dc2626;
-  background-color: #fef2f2;
-  border-radius: 8rpx;
-  margin-top: 16rpx;
-}
-
 /* ===== 创建按钮 ===== */
-
 .create-btn {
   position: fixed;
   right: 32rpx;
   bottom: 160rpx;
   width: 120rpx;
   height: 120rpx;
-  background-color: #0284c7;
+  background-color: #07c160;
   border-radius: 60rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(2, 132, 199, 0.4);
+  box-shadow: 0 8rpx 24rpx rgba(7, 193, 96, 0.4);
   z-index: 99;
-}
-
-.create-btn:active {
-  opacity: 0.8;
 }
 
 .create-btn-text {
@@ -451,73 +364,4 @@ button::after {
   font-size: 64rpx;
   font-weight: 300;
   line-height: 1;
-}
-
-/* ===== 扫码核验 ===== */
-
-.scan-verify-bar {
-  padding: 24rpx 32rpx;
-  background-color: #ffffff;
-  border-bottom: 1rpx solid #e5e7eb;
-}
-
-/* ===== 二维码凭证 ===== */
-
-.qr-modal-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 48rpx 32rpx;
-}
-
-.qr-loading,
-.qr-error {
-  text-align: center;
-  padding: 64rpx 0;
-  font-size: 28rpx;
-  color: #6b7280;
-}
-
-.qr-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.qr-image {
-  width: 400rpx;
-  height: 400rpx;
-  margin-bottom: 32rpx;
-  border: 1rpx solid #e5e7eb;
-  border-radius: 12rpx;
-}
-
-.qr-info {
-  width: 100%;
-  padding: 24rpx;
-  background-color: #f9fafb;
-  border-radius: 12rpx;
-  margin-bottom: 24rpx;
-}
-
-.qr-info-text {
-  display: block;
-  font-size: 28rpx;
-  color: #111827;
-  line-height: 2;
-}
-
-.qr-expiry {
-  color: #f59e0b;
-}
-
-.qr-usage {
-  color: #6b7280;
-}
-
-.qr-tip {
-  font-size: 24rpx;
-  color: #9ca3af;
-  text-align: center;
 }

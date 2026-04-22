@@ -89,39 +89,35 @@
       <view class="modal-body">
         <view class="form-group">
           <text class="form-label">学生ID</text>
-          <input class="form-input" type="number" placeholder="请输入学生ID" value="{{leaveForm.student_id}}" bindinput="onStudentIdInput" disabled />
+          <input class="weui-input" type="number" placeholder="系统自动填充" value="{{leaveForm.student_id}}" disabled />
         </view>
         <view class="form-group">
           <text class="form-label">请假日期</text>
           <picker mode="date" value="{{leaveForm.leave_date}}" bindchange="onDateChange">
-            <view class="form-picker">
-              <text class="{{leaveForm.leave_date ? '' : 'form-picker-placeholder'}}">
-                {{leaveForm.leave_date || '请选择请假日期'}}
-              </text>
+            <view class="weui-picker">
+              <text>{{leaveForm.leave_date || '请选择请假日期'}}</text>
             </view>
           </picker>
         </view>
         <view class="form-group">
           <text class="form-label">请假课时</text>
-          <input class="form-input" type="number" placeholder="请输入请假课时" value="{{leaveForm.leave_hours}}" bindinput="onLeaveHoursInput" />
+          <input class="weui-input" type="number" placeholder="请输入请假课时" value="{{leaveForm.leave_hours}}" bindinput="onLeaveHoursInput" />
         </view>
         <view class="form-group">
           <text class="form-label">请假类型</text>
-          <input class="form-input" type="text" placeholder="请输入请假类型（可选）" value="{{leaveForm.leave_type}}" bindinput="onLeaveTypeInput" />
+          <input class="weui-input" type="text" placeholder="请输入请假类型（可选）" value="{{leaveForm.leave_type}}" bindinput="onLeaveTypeInput" />
         </view>
         <view class="form-group">
           <text class="form-label">课程</text>
           <picker mode="selector" range="{{courseOptions}}" range-key="label" value="{{selectedCourseIndex}}" bindchange="onCourseChange">
-            <view class="form-picker">
-              <text class="{{selectedCourseIndex >= 0 && courseOptions[selectedCourseIndex].value > 0 ? '' : 'form-select-placeholder'}}">
-                {{selectedCourseIndex >= 0 && courseOptions[selectedCourseIndex].value > 0 ? courseOptions[selectedCourseIndex].label : '请选择课程（可选）'}}
-              </text>
+            <view class="weui-picker">
+              <text>{{selectedCourseIndex >= 0 ? courseOptions[selectedCourseIndex].label : '请选择课程（可选）'}}</text>
             </view>
           </picker>
         </view>
         <view class="form-group">
           <text class="form-label">备注</text>
-          <input class="form-input" type="text" placeholder="请输入备注（可选）" value="{{leaveForm.remarks}}" bindinput="onRemarksInput" />
+          <input class="weui-input" type="text" placeholder="请输入备注（可选）" value="{{leaveForm.remarks}}" bindinput="onRemarksInput" />
         </view>
         <view wx:if="{{createError}}" class="error-message">
           <text>{{createError}}</text>
