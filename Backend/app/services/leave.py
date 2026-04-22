@@ -345,13 +345,13 @@ class LeaveService:
                     status_code=400,
                     detail="担保学生不存在"
                 )
-            if guarantee_student.guarantee_permission is None or guarantee_student.guarantee_permission < datetime.now():
+            if guarantee_student.guarantee_permission is not None and guarantee_student.guarantee_permission > datetime.now():
                 raise HTTPException(
                     status_code=400,
                     detail="担保学生无担保权限或权限已过期"
                 )
-            # 被担保学生本人也需要有有效的担保权限
-            if student.guarantee_permission is None or student.guarantee_permission < datetime.now():
+            # 被担保学生本人也需要有有效的担保权限（None/0/过去时间=有权限）
+            if student.guarantee_permission is not None and student.guarantee_permission > datetime.now():
                 raise HTTPException(
                     status_code=400,
                     detail="你当前无担保权限或权限已过期，不能发起紧急请假"
@@ -1113,14 +1113,14 @@ class LeaveService:
         guarantor = session.exec(
             select(Student).where(Student.student_id == current_user["id"])
         ).first()
-        if not guarantor or guarantor.guarantee_permission is None or guarantor.guarantee_permission > now:
+        if not guarantor or (guarantor.guarantee_permission is not None and guarantor.guarantee_permission > now):
             raise HTTPException(status_code=403, detail="你当前没有担保权限或权限已过期")
 
-        # 验证被担保学生有权限
+        # 验证被担保学生有权限（None/0/过去时间=有权限）
         student = session.exec(
             select(Student).where(Student.student_id == leave.student_id)
         ).first()
-        if not student or student.guarantee_permission is None or student.guarantee_permission > now:
+        if not student or (student.guarantee_permission is not None and student.guarantee_permission > now):
             raise HTTPException(status_code=403, detail="请假学生没有担保权限或权限已过期，无法生效")
 
         # 紧急请假无需审核员审批，直接批准
