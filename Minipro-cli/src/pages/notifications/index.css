@@ -1,76 +1,8 @@
-/* 通知页面样式 */
+/* ============================================
+   通知页面样式 - 仅包含页面私有样式
+   公共组件样式已迁移到 styles/common.css
+   通知卡片样式已迁移到 styles/list-page.css
+   ============================================ */
+@import "../../styles/list-page.css";
 
-.notification-card {
-  display: flex;
-  align-items: flex-start;
-  padding: var(--spacing);
-  gap: var(--spacing-sm);
-}
-
-.notification-read {
-  opacity: 0.65;
-}
-
-.notification-unread {
-  background-color: var(--primary-50, #eff6ff);
-}
-
-.notification-icon {
-  flex-shrink: 0;
-  width: 72rpx;
-  height: 72rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36rpx;
-  background-color: var(--bg-secondary);
-  border-radius: 50%;
-}
-
-.notification-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.notification-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-xs);
-}
-
-.notification-title {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-}
-
-.notification-time {
-  font-size: var(--text-xs);
-  color: var(--text-tertiary);
-  flex-shrink: 0;
-  margin-left: var(--spacing-sm);
-}
-
-.notification-content {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.unread-dot {
-  flex-shrink: 0;
-  width: 16rpx;
-  height: 16rpx;
-  background-color: var(--error);
-  border-radius: 50%;
-  margin-top: var(--spacing-sm);
-}
+/* 通知页面私有样式 - 暂无额外需要 */

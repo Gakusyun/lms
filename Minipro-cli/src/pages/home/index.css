@@ -1,21 +1,26 @@
-/* 页面容器 - 小程序适配 */
+/* ============================================
+   首页样式 - 仅包含页面私有样式
+   公共组件样式已迁移到 styles/common.css
+   ============================================ */
+
+/* 页面容器 */
 .dashboard-page {
   height: 100vh;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--gray-50) 100%);
+  background: #f3f4f6;
   padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
-/* 用户信息卡片 - 替代冗余header */
+/* 用户信息卡片 */
 .user-info-card {
   display: flex;
   align-items: center;
   gap: 32rpx;
-  background: var(--bg-primary);
+  background: #ffffff;
   margin: 32rpx;
   padding: 48rpx;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .user-avatar {
@@ -24,15 +29,15 @@
   justify-content: center;
   width: 128rpx;
   height: 128rpx;
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
   border-radius: 50%;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8rpx 16rpx rgba(14, 165, 233, 0.3);
 }
 
 .avatar-text {
   font-size: 64rpx;
   font-weight: bold;
-  color: var(--text-inverse);
+  color: #ffffff;
 }
 
 .user-details {
@@ -45,12 +50,12 @@
 .user-name {
   font-size: 36rpx;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #111827;
 }
 
 .user-role {
   font-size: 28rpx;
-  color: var(--text-secondary);
+  color: #6b7280;
 }
 
 /* 主要内容区域 */
@@ -69,40 +74,22 @@
   gap: 24rpx;
 }
 
-/* 功能卡片 - 与 Web App 对齐 */
+/* 功能卡片 */
 .feature-card {
-  background: var(--bg-primary);
-  border-radius: var(--radius-xl);
+  background: #ffffff;
+  border-radius: 24rpx;
   padding: 48rpx 32rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16rpx;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.feature-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6rpx;
-  background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
 }
 
 .feature-card:active {
   transform: scale(0.98);
-  box-shadow: var(--shadow-md);
-}
-
-.feature-card:active::before {
-  opacity: 1;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .card-icon {
@@ -113,20 +100,20 @@
 .card-title {
   font-size: 32rpx;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #111827;
   text-align: center;
 }
 
 .card-count {
   font-size: 48rpx;
   font-weight: bold;
-  color: var(--primary-600);
+  color: #0ea5e9;
   text-align: center;
 }
 
 .card-desc {
   font-size: 24rpx;
-  color: var(--text-tertiary);
+  color: #6b7280;
   text-align: center;
   line-height: 1.4;
 }
@@ -135,35 +122,4 @@
 .logout-section {
   margin-top: 48rpx;
   padding: 0 32rpx;
-}
-
-/* 按钮样式 - 与 Web App 对齐 */
-.btn {
-  padding: 24rpx 48rpx;
-  border-radius: var(--radius-lg);
-  font-size: 32rpx;
-  font-weight: 600;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-  color: var(--text-inverse);
-}
-
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--border-medium);
-  color: var(--text-primary);
-}
-
-.btn-outline:active {
-  background: var(--bg-secondary);
-  border-color: var(--border-heavy);
-}
-
-.btn-block {
-  width: 100%;
-  display: block;
 }

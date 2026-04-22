@@ -123,6 +123,11 @@
           </picker>
         </view>
         <view class="form-group">
+          <text class="form-label">担保人学生ID（紧急请假可选）</text>
+          <input class="weui-input" type="number" placeholder="填写担保人的学生ID，不填则走正常审批流程"
+            value="{{leaveForm.guarantee_student_id}}" bindinput="onGuaranteeStudentIdInput" />
+        </view>
+        <view class="form-group">
           <text class="form-label">备注</text>
           <input class="weui-input" type="text" placeholder="请输入备注" value="{{leaveForm.remarks}}"
             bindinput="onRemarksInput" />

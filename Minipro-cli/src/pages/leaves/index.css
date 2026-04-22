@@ -1,86 +1,9 @@
+/* ============================================
+   请假页面样式 - 仅包含页面私有样式
+   公共组件样式已迁移到 styles/common.css
+   列表、卡片等样式已迁移到 styles/list-page.css
+   ============================================ */
 @import "../../styles/list-page.css";
 
-/* 请假页面特有样式 */
-
-/* 创建按钮 */
-.create-btn {
-  position: fixed;
-  right: 32rpx;
-  bottom: 160rpx;
-  width: 120rpx;
-  height: 120rpx;
-  background-color: #07c160;
-  border-radius: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(7, 193, 96, 0.4);
-  z-index: 99;
-}
-
-.create-btn-text {
-  color: #ffffff;
-  font-size: 64rpx;
-  font-weight: 300;
-  line-height: 1;
-}
-
-/* 扫码核验按钮栏 */
-.scan-verify-bar {
-  padding: 24rpx 32rpx;
-  background-color: #ffffff;
-  border-bottom: 1rpx solid #e5e7eb;
-}
-
-/* 二维码凭证弹窗 */
-.qr-modal-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 48rpx 32rpx;
-}
-
-.qr-image {
-  width: 400rpx;
-  height: 400rpx;
-  margin-bottom: 32rpx;
-  border: 1rpx solid #e5e7eb;
-  border-radius: 12rpx;
-}
-
-.qr-info {
-  width: 100%;
-  padding: 24rpx;
-  background-color: #f9fafb;
-  border-radius: 12rpx;
-  margin-bottom: 24rpx;
-}
-
-.qr-info-text {
-  display: block;
-  font-size: 28rpx;
-  color: #111827;
-  line-height: 2;
-}
-
-.qr-tip {
-  font-size: 24rpx;
-  color: #9ca3af;
-  text-align: center;
-}
-
-/* 信息按钮颜色 */
-.btn-info {
-  background-color: #5765f2;
-  color: #ffffff;
-}
-
-.btn-info:active {
-  background-color: #4155e2;
-}
-
-/* 成功状态徽章 */
-.badge-success {
-  background-color: #d1fae5;
-  color: #065f46;
-}
+/* 请假页面私有样式 - 暂无可额外提取的公共样式 */
+/* 所有按钮样式、徽章、模态框等已在 list-page.css 中定义 */

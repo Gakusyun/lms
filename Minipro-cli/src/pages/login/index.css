@@ -1,4 +1,10 @@
-/* 页面容器 - 小程序适配 */
+/* ============================================
+   登录页样式 - 仅包含页面私有样式
+   公共组件样式已迁移到 styles/common.css
+   ============================================ */
+@import "../../styles/common.css";
+
+/* 页面容器 */
 .login-page {
   position: fixed;
   top: 0;
@@ -8,8 +14,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-100) 0%, var(--bg-secondary) 100%);
-  padding: var(--spacing);
+  background: linear-gradient(135deg, #e0f2fe 0%, #f3f4f6 100%);
+  padding: 32rpx;
   z-index: 1;
 }
 
@@ -19,19 +25,19 @@
 }
 
 .login-card {
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
-  padding: var(--spacing-xl);
-  border: 1px solid var(--border-light);
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  box-shadow: 0 20rpx 50rpx rgba(0, 0, 0, 0.1);
+  padding: 64rpx 48rpx;
+  border: 1rpx solid #e5e7eb;
   position: relative;
   overflow: hidden;
 }
 
-/* Logo区域 - 与 Web App 对齐 */
+/* Logo区域 */
 .login-header {
   text-align: center;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 48rpx;
 }
 
 .login-logo {
@@ -40,86 +46,55 @@
   justify-content: center;
   width: 128rpx;
   height: 128rpx;
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-  border-radius: var(--radius-xl);
-  margin: 0 auto var(--spacing);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  border-radius: 24rpx;
+  margin: 0 auto 32rpx;
+  box-shadow: 0 8rpx 16rpx rgba(14, 165, 233, 0.3);
 }
 
 .logo-icon {
   font-size: 48rpx;
-  color: var(--text-inverse);
 }
 
 .login-title {
   display: block;
-  font-size: var(--text-2xl);
+  font-size: 48rpx;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-sm);
-  line-height: var(--leading-tight);
+  color: #111827;
+  margin-bottom: 16rpx;
+  line-height: 1.2;
 }
 
 .login-subtitle {
   display: block;
-  font-size: var(--text-base);
-  color: var(--text-secondary);
+  font-size: 28rpx;
+  color: #6b7280;
   font-weight: 500;
 }
 
 /* 表单容器 */
 .login-form-container {
-  margin-bottom: var(--spacing);
+  margin-bottom: 32rpx;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing);
+  gap: 32rpx;
 }
 
-/* 表单组 - 与 Web App 对齐 */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.form-label {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.form-input {
-  padding: var(--spacing-sm) var(--spacing);
-  font-size: var(--text-base);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-lg);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: all var(--transition);
-  height: 88rpx;
-  box-sizing: border-box;
-}
-
-.form-input:focus {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 6rpx rgba(14, 165, 233, 0.1);
-}
-
-/* 登录按钮 - 与 Web App 对齐 */
+/* 登录按钮 */
 .login-btn {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-  color: var(--text-inverse);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #ffffff;
   border: none;
-  border-radius: var(--radius-lg);
-  font-size: var(--text-base);
+  border-radius: 16rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  margin-top: var(--spacing);
-  transition: all var(--transition);
+  margin-top: 16rpx;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,32 +105,7 @@
   opacity: 0.9;
 }
 
-.login-btn.loading {
-  opacity: 0.6;
-}
-
+.login-btn.loading,
 .login-btn[disabled] {
   opacity: 0.6;
-}
-
-/* 错误提示 - 与 Web App 对齐 */
-.alert {
-  padding: var(--spacing);
-  border-radius: var(--radius);
-  margin-top: var(--spacing);
-  border: 1px solid;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.alert-danger {
-  background-color: var(--error-light);
-  color: #991b1b;
-  border-color: #fca5a5;
-}
-
-.alert text {
-  font-size: var(--text-sm);
-  font-weight: 500;
 }

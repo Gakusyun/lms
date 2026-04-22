@@ -56,6 +56,7 @@ export default defineComponent(() => {
   // 创建请假条表单数据
   const leaveForm = reactive({
     student_id: 0,
+    guarantee_student_id: 0,
     leave_date: '',
     leave_hours: '',
     leave_type: '',
@@ -305,6 +306,10 @@ export default defineComponent(() => {
     leaveForm.leave_type = leaveTypeOptions[e.detail.value] || '';
   };
 
+  const onGuaranteeStudentIdInput = (e: any) => {
+    leaveForm.guarantee_student_id = parseInt(e.detail.value) || 0;
+  };
+
   // 创建请假条
   const handleCreateLeave = async () => {
     try {
@@ -335,6 +340,9 @@ export default defineComponent(() => {
       if (leaveForm.course_id > 0) {
         formattedData.course_id = leaveForm.course_id;
         formattedData.teacher_id = leaveForm.teacher_id;
+      }
+      if (leaveForm.guarantee_student_id > 0) {
+        formattedData.guarantee_student_id = leaveForm.guarantee_student_id;
       }
 
       console.log('提交请假条数据:', formattedData);
@@ -683,6 +691,7 @@ export default defineComponent(() => {
     onRemarksInput,
     onCourseChange,
     onLeaveTypeChange,
+    onGuaranteeStudentIdInput,
     handleCreateLeave,
     auditLeave,
     approveLeave,

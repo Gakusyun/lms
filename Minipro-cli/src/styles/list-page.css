@@ -1,18 +1,9 @@
-/* 微信小程序统一列表页面样式 - 最小化自定义 */
-
-/* WeChat button 默认样式重置 */
-button {
-  min-height: auto;
-  padding: 0;
-  margin: 0;
-  line-height: inherit;
-  background: none;
-  border: none;
-}
-
-button::after {
-  border: none;
-}
+/* ============================================
+   列表页面统一样式
+   包含：统计卡片、卡片列表、滚动容器等
+   基础按钮/表单/徽章/模态框已迁移到 common.css
+   ============================================ */
+@import "./common.css";
 
 /* 页面容器 */
 .list-page {
@@ -67,12 +58,18 @@ button::after {
   font-size: 32rpx;
   font-weight: 600;
   color: #111827;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-actions {
   display: flex;
   gap: 12rpx;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 /* 卡片内容行 */
@@ -96,230 +93,13 @@ button::after {
   word-break: break-all;
 }
 
-/* ===== 按钮样式 ===== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16rpx 28rpx;
-  font-size: 28rpx;
-  font-weight: 500;
-  border-radius: 10rpx;
-  border: none;
-  line-height: 1.4;
-  min-height: 64rpx;
-}
-
-.btn-back {
-  background-color: #f3f4f6;
-  color: #374151;
-}
-
-.btn-primary {
-  background-color: #07c160;
-  color: #ffffff;
-}
-
-.btn-secondary {
-  background-color: #f3f4f6;
-  color: #374151;
-}
-
-.btn-success {
-  background-color: #07c160;
-  color: #ffffff;
-}
-
-.btn-danger {
-  background-color: #fa5151;
-  color: #ffffff;
-}
-
-.btn-sm {
-  padding: 12rpx 20rpx;
-  font-size: 24rpx;
-  min-height: 56rpx;
-}
-
-/* 状态徽章 */
-.badge {
-  display: inline-block;
-  padding: 6rpx 16rpx;
-  font-size: 24rpx;
-  font-weight: 500;
-  border-radius: 8rpx;
-}
-
-.badge-success {
-  background-color: #d1fae5;
-  color: #065f46;
-}
-
-.badge-warning {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-.badge-danger {
-  background-color: #fee2e2;
-  color: #991b1b;
-}
-
-/* 加载和空状态 */
-.loading {
-  text-align: center;
-  padding: 128rpx 0;
-  color: #6b7280;
-  font-size: 28rpx;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 128rpx 32rpx;
-}
-
-.empty-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 16rpx;
-}
-
-.empty-desc {
-  font-size: 26rpx;
-  color: #6b7280;
-}
-
 /* 滚动容器 */
 .scroll-container {
   height: calc(100vh - 200rpx - env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
-/* ===== 表单元素（微信原生样式） ===== */
-.form-group {
-  margin-bottom: 32rpx;
-}
-
-.form-label {
-  display: block;
-  font-size: 28rpx;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 12rpx;
-}
-
-/* 微信原生 input 样式 */
-.weui-input {
-  width: 100%;
-  height: 80rpx;
-  padding: 0 24rpx;
-  font-size: 32rpx;
-  color: #111827;
-  background-color: #ffffff;
-  border: 1rpx solid #d1d5db;
-  border-radius: 12rpx;
-  box-sizing: border-box;
-}
-
-.weui-input[disabled] {
-  background-color: #f3f4f6;
-  color: #6b7280;
-}
-
-.weui-input::placeholder {
-  color: #9ca3af;
-}
-
-/* 微信原生 picker 样式 */
-.weui-picker {
-  width: 100%;
-  height: 80rpx;
-  padding: 0 24rpx;
-  display: flex;
-  align-items: center;
-  font-size: 32rpx;
-  color: #111827;
-  background-color: #ffffff;
-  border: 1rpx solid #d1d5db;
-  border-radius: 12rpx;
-  box-sizing: border-box;
-}
-
-.weui-picker text {
-  color: #111827;
-}
-
-.weui-picker text:first-child {
-  color: #9ca3af;
-}
-
-.error-message {
-  padding: 16rpx 24rpx;
-  font-size: 26rpx;
-  color: #fa5151;
-  background-color: #fff2f2;
-  border-radius: 8rpx;
-  margin-top: 16rpx;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  width: 640rpx;
-  max-height: 80vh;
-  background-color: #ffffff;
-  border-radius: 24rpx;
-  overflow: hidden;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 32rpx;
-  border-bottom: 1rpx solid #e5e7eb;
-}
-
-.modal-title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #111827;
-}
-
-.modal-close {
-  font-size: 48rpx;
-  color: #9ca3af;
-  padding: 8rpx;
-}
-
-.modal-body {
-  padding: 32rpx;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 24rpx;
-  padding: 24rpx 32rpx;
-  border-top: 1rpx solid #e5e7eb;
-  background-color: #f9fafb;
-}
-
-/* ===== 创建按钮 ===== */
+/* ===== 创建按钮（浮动） ===== */
 .create-btn {
   position: fixed;
   right: 32rpx;
@@ -340,4 +120,124 @@ button::after {
   font-size: 64rpx;
   font-weight: 300;
   line-height: 1;
+}
+
+/* 扫码核验按钮栏 */
+.scan-verify-bar {
+  padding: 24rpx 32rpx;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #e5e7eb;
+}
+
+/* ===== 二维码凭证弹窗 ===== */
+.qr-modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 32rpx;
+}
+
+.qr-image {
+  width: 400rpx;
+  height: 400rpx;
+  margin-bottom: 32rpx;
+  border: 1rpx solid #e5e7eb;
+  border-radius: 12rpx;
+}
+
+.qr-info {
+  width: 100%;
+  padding: 24rpx;
+  background-color: #f9fafb;
+  border-radius: 12rpx;
+  margin-bottom: 24rpx;
+}
+
+.qr-info-text {
+  display: block;
+  font-size: 28rpx;
+  color: #111827;
+  line-height: 2;
+}
+
+.qr-tip {
+  font-size: 24rpx;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* 通知卡片样式 */
+.notification-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 24rpx;
+  gap: 16rpx;
+}
+
+.notification-read {
+  opacity: 0.65;
+}
+
+.notification-unread {
+  background-color: #eff6ff;
+}
+
+.notification-icon {
+  flex-shrink: 0;
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+}
+
+.notification-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.notification-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.notification-time {
+  font-size: 24rpx;
+  color: #6b7280;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.notification-content {
+  font-size: 28rpx;
+  color: #4b5563;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.unread-dot {
+  flex-shrink: 0;
+  width: 16rpx;
+  height: 16rpx;
+  background-color: #fa5151;
+  border-radius: 50%;
+  margin-top: 8rpx;
 }
