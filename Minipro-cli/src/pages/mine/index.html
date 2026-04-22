@@ -54,7 +54,7 @@
 
   <!-- 修改密码模态框 -->
   <view wx:if="{{showChangePassword}}" class="modal-overlay" bindtap="hideChangePasswordModal">
-    <view class="modal-content" catchtap="">
+    <view class="modal-content" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">修改密码</text>
         <view class="modal-close" bindtap="hideChangePasswordModal">×</view>

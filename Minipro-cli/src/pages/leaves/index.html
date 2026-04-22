@@ -142,7 +142,7 @@
 
   <!-- 二维码凭证弹窗 -->
   <view wx:if="{{showQRModal}}" class="modal-overlay" bindtap="closeQRModal">
-    <view class="modal-content" catchtap="">
+    <view class="modal-content" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">请假凭证</text>
         <view class="modal-close" bindtap="closeQRModal">×</view>
