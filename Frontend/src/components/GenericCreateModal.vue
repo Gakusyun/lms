@@ -9,10 +9,15 @@ interface Props {
   onClose: () => void
   onSuccess: () => void
   itemLabel?: string
+  // 编辑模式
+  editId?: number | null
+  editData?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  itemLabel: ''
+  itemLabel: '',
+  editId: null,
+  editData: null
 })
 
 // Current user role
@@ -164,13 +169,6 @@ const toInt = (v: any): number | null => {
   return isNaN(n) ? null : n
 }
 
-// Handle file change
-const handleFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files[0]) {
-    file.value = target.files[0]
-  }
-}
 
 // Handle proof file change for leave (multiple files)
 const handleProofFileChange = (event: Event) => {
@@ -196,87 +194,43 @@ const clearProofFiles = () => {
   uploadedFilePaths.value = []
 }
 
-// Handle import
-const handleImport = async () => {
-  if (!file.value) {
-    error.value = '请选择要导入的文件'
-    return
-  }
 
-  try {
-    isUploading.value = true
-    error.value = ''
-    success.value = ''
-
-    const formData = new FormData()
-    formData.append('file', file.value)
-
-    let endpoint = ''
-    switch (props.type) {
-      case 'student':
-        endpoint = '/students/import'
-        break
-      case 'reviewer':
-        endpoint = '/reviewers/import'
-        break
-      case 'teacher':
-        endpoint = '/teachers/import'
-        break
-      case 'course':
-        endpoint = '/courses/import'
-        break
-      default:
-        return
-    }
-
-    await http.post(endpoint, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-
-    success.value = '导入成功'
-    setTimeout(() => {
-      closeModal()
-      props.onSuccess()
-    }, 1500)
-  } catch (error: any) {
-    console.error('导入失败:', error)
-    const detail = error.response?.data?.detail
-    if (Array.isArray(detail)) {
-      error.value = detail.map((e: any) => e.msg || JSON.stringify(e)).join('; ')
-    } else {
-      error.value = detail || error.response?.data?.message || error.message || '导入失败，请稍后重试'
-    }
-  } finally {
-    isUploading.value = false
-  }
-}
-
-// Handle create
+// Handle create / edit
 const handleCreate = async () => {
   try {
     isSubmitting.value = true
     error.value = ''
     success.value = ''
 
+    const isEditMode = props.editId != null
     let endpoint = ''
     let payload: any = {}
 
     switch (props.type) {
       case 'leave':
-        endpoint = '/leaves'
-        // 先创建请假条（不包含materials），得到leave_id后再上传文件
-        payload = {
-          student_id: toInt(formData.value.student_id),
-          guarantee_student_id: formData.value.guarantee_student_id || null,
-          course_id: formData.value.course_id === 0 ? null : formData.value.course_id,
-          leave_date: formData.value.leave_date,
-          leave_hours: formData.value.leave_hours ? formData.value.leave_hours.toString() : null,
-          status: '待审批',
-          leave_type: formData.value.leave_type || null,
-          remarks: formData.value.remarks || null,
-          materials: null  // 先不传materials，等上传文件后再更新
+        if (isEditMode) {
+          endpoint = `/leaves/edit/${props.editId}`
+          payload = {
+            course_id: formData.value.course_id === 0 ? null : formData.value.course_id,
+            leave_date: formData.value.leave_date,
+            leave_hours: formData.value.leave_hours ? formData.value.leave_hours.toString() : null,
+            leave_type: formData.value.leave_type || null,
+            remarks: formData.value.remarks || null,
+          }
+        } else {
+          endpoint = '/leaves'
+          // 先创建请假条（不包含materials），得到leave_id后再上传文件
+          payload = {
+            student_id: toInt(formData.value.student_id),
+            guarantee_student_id: formData.value.guarantee_student_id || null,
+            course_id: formData.value.course_id === 0 ? null : formData.value.course_id,
+            leave_date: formData.value.leave_date,
+            leave_hours: formData.value.leave_hours ? formData.value.leave_hours.toString() : null,
+            status: '待审批',
+            leave_type: formData.value.leave_type || null,
+            remarks: formData.value.remarks || null,
+            materials: null
+          }
         }
         break
       case 'student':
@@ -322,9 +276,14 @@ const handleCreate = async () => {
     }
 
     // Validation - check required fields per type
-    if (props.type === 'leave') {
+    if (props.type === 'leave' && !isEditMode) {
       if (!payload.student_id || !payload.leave_date || !payload.leave_hours || payload.leave_hours <= 0) {
         error.value = '请填写所有必填字段（学生ID、请假日期、请假课时，课时需大于0）'
+        return
+      }
+    } else if (props.type === 'leave' && isEditMode) {
+      if (!payload.leave_date || !payload.leave_hours || payload.leave_hours <= 0) {
+        error.value = '请填写必填字段（请假日期、请假课时，课时需大于0）'
         return
       }
     } else if (Object.values(payload).some(value => value === '' || value === null)) {
@@ -332,10 +291,13 @@ const handleCreate = async () => {
       return
     }
 
-    const result = await http.post(endpoint, payload)
+    // 编辑模式用PUT，创建模式用POST
+    const result = isEditMode
+      ? await http.put(endpoint, payload)
+      : await http.post(endpoint, payload)
 
     // 如果是请假条创建，且有选中文件，则上传文件
-    if (props.type === 'leave' && proofFiles.value.length > 0) {
+    if (props.type === 'leave' && !isEditMode && proofFiles.value.length > 0) {
       // 尝试多种可能的ID字段名
       const leaveId = (result as any).leave_id || (result as any).id || (result as any)['leave_id']
       if (!leaveId) {
@@ -382,8 +344,19 @@ const handleCreate = async () => {
 watch(() => props.show, (newValue) => {
   if (newValue) {
     fetchOptions()
-    // Reset form when modal opens
-    formData.value = getDefaultFormData()
+    // 编辑模式：使用editData填充表单
+    if (props.editData) {
+      formData.value = { ...getDefaultFormData(), ...props.editData }
+    } else {
+      formData.value = getDefaultFormData()
+    }
+  }
+})
+
+// 监听editData变化
+watch(() => props.editData, (newData) => {
+  if (newData && props.show) {
+    formData.value = { ...getDefaultFormData(), ...newData }
   }
 })
 
@@ -420,29 +393,15 @@ watch(() => props.show, (newValue) => {
     <div class="modal-content">
       <div class="modal-header">
         <h3>
-          {{ type === 'leave' ? '创建请假条' : 
-             type === 'student' ? '学生管理' : 
-             type === 'reviewer' ? '审核人管理' : 
+          {{ type === 'leave' ? (editId ? '修改请假条' : '创建请假条') :
+             type === 'student' ? '学生管理' :
+             type === 'reviewer' ? '审核人管理' :
              type === 'teacher' ? '教师管理' : '课程管理' }}
         </h3>
       </div>
 
       <div class="modal-body">
         <!-- Import Section (only for non-leave types) -->
-        <div v-if="type !== 'leave'" class="import-section">
-          <h4>批量导入</h4>
-          <div class="file-upload">
-            <input type="file" accept=".xlsx,.xls,.csv" @change="handleFileChange" />
-            <button @click="handleImport" class="btn btn-import" :disabled="isUploading">
-              {{ isUploading ? '导入中...' : '导入Excel' }}
-            </button>
-            <a v-if="type === 'student' || type === 'reviewer' || type === 'teacher' || type === 'course'" :href="`/api/v1/${type === 'student' ? 'students' : type === 'reviewer' ? 'reviewers' : type === 'teacher' ? 'teachers' : 'courses'}/import/template`" download class="btn btn-download-template" target="_blank">
-              下载导入模板
-            </a>
-          </div>
-        </div>
-
-        <hr v-if="type !== 'leave'" class="divider" />
 
         <!-- Create Section -->
         <div class="create-section">

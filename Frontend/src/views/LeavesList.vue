@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import GenericList from '../components/GenericList.vue'
+import GenericCreateModal from '../components/GenericCreateModal.vue'
 import { formatDate } from '../utils/formatters'
-import { getAllCourses, getStudentCourses, editLeave, approveLeave, rejectLeave, cancelLeave, getLeaveQRCode, closeOffLeave, guaranteeLeave } from '../api'
+import { approveLeave, rejectLeave, cancelLeave, getLeaveQRCode, closeOffLeave, guaranteeLeave } from '../api'
 import http from '../utils/http'
-import type { Leave, LeaveCreate, Course, StudentCourseResponse } from '../types'
+import type { Leave } from '../types'
 
-// 课程列表
-const courses = ref<Course[]>([])
-const coursesLoading = ref(false)
-const listKey = ref(0) // 用于刷新GenericList
+// 列表刷新key
+const listKey = ref(0)
 
 // 审核员Tab状态 - 书记/学工处默认显示"全院"，辅导员默认显示"我的"
 const reviewerTab = ref<'mine' | 'school'>('school')
@@ -45,9 +44,8 @@ const fetchSchoolLeaves = async () => {
 
 // 编辑请假条相关状态
 const showEditModal = ref(false)
-const isEditing = ref(false)
-const editError = ref('')
 const currentEditLeave = ref<Leave | null>(null)
+const editFormData = ref<any>(null)
 
 // 审核请假条相关状态
 const showAuditModal = ref(false)
@@ -76,147 +74,26 @@ onMounted(() => {
   }
 })
 
-// 创建请假条表单数据(用于编辑)
-const leaveForm = reactive<LeaveCreate>({
-  student_id: currentUserId,
-  leave_date: '',
-  leave_hours: '',
-  status: '待审批',
-  leave_type: '',
-  remarks: '',
-  materials: '',
-  course_id: 0,
-  teacher_id: 0
-})
-
-// 获取课程数据
-const fetchCourses = async () => {
-  try {
-    coursesLoading.value = true
-
-    if (currentUserRole === 'student') {
-      const studentCoursesResponse = await getStudentCourses(currentUserId) as unknown as StudentCourseResponse[]
-
-      courses.value = studentCoursesResponse.map((sc: StudentCourseResponse) => ({
-        course_id: sc.course_id,
-        course_name: sc.course_name || `课程 ${sc.course_id}`,
-        class_hours: '0',
-        teacher_id: 0,
-        teacher_name: sc.teacher_name || '未知教师'
-      }))
-    } else {
-      const response = await getAllCourses() as unknown as { items: Course[] }
-      courses.value = response.items || []
-    }
-  } catch (error) {
-    console.error('获取课程失败:', error)
-    courses.value = []
-  } finally {
-    coursesLoading.value = false
-  }
-}
-
-// 处理课程选择变化
-const handleCourseChange = () => {
-  leaveForm.teacher_id = 0
-
-  if (leaveForm.course_id && leaveForm.course_id > 0) {
-    const selectedCourse = courses.value.find(c => c.course_id === leaveForm.course_id)
-    if (selectedCourse) {
-      leaveForm.teacher_id = selectedCourse.teacher_id
-    }
-  }
-}
-
 // 打开编辑弹窗
-const openEditModal = async (leave: Leave) => {
-  showEditModal.value = true
-  editError.value = ''
+const openEditModal = (leave: Leave) => {
   currentEditLeave.value = leave
-
-  await fetchCourses()
-
-  Object.assign(leaveForm, {
+  editFormData.value = {
     student_id: leave.student_id,
+    course_id: leave.course_id || 0,
     leave_date: leave.leave_date ? new Date(leave.leave_date).toISOString().split('T')[0] : '',
     leave_hours: leave.leave_hours || '',
     leave_type: leave.leave_type || '',
     remarks: leave.remarks || '',
-    materials: leave.materials || '',
-    course_id: leave.course_id || 0,
-    teacher_id: leave.teacher_id || 0
-  })
+    guarantee_student_id: leave.guarantee_student_id || null
+  }
+  showEditModal.value = true
 }
 
 // 关闭编辑弹窗
 const closeEditModal = () => {
   showEditModal.value = false
-  editError.value = ''
   currentEditLeave.value = null
-}
-
-// 处理编辑请假条
-const handleEditLeave = async () => {
-  try {
-    isEditing.value = true
-    editError.value = ''
-
-    if (!currentEditLeave.value) return
-
-    if (!leaveForm.student_id || !leaveForm.leave_date || !leaveForm.leave_hours) {
-      editError.value = '请填写必填字段：学生ID、请假日期、请假课时'
-      return
-    }
-
-    const formattedData: any = {
-      student_id: parseInt(leaveForm.student_id.toString()),
-      leave_date: leaveForm.leave_date,
-      leave_hours: leaveForm.leave_hours ? leaveForm.leave_hours.toString() : '',
-    }
-
-    if (leaveForm.course_id && leaveForm.course_id > 0) {
-      formattedData.course_id = parseInt(leaveForm.course_id.toString())
-
-      const selectedCourse = courses.value.find(c => c.course_id === leaveForm.course_id)
-      if (selectedCourse) {
-        formattedData.teacher_id = selectedCourse.teacher_id
-      }
-    }
-
-    if (leaveForm.leave_type) {
-      formattedData.leave_type = leaveForm.leave_type.slice(0, 8)
-    }
-    if (leaveForm.remarks) {
-      formattedData.remarks = leaveForm.remarks.slice(0, 100)
-    }
-    if (leaveForm.materials) {
-      formattedData.materials = leaveForm.materials.slice(0, 100)
-    }
-
-    await editLeave(currentEditLeave.value.leave_id, formattedData)
-
-    closeEditModal()
-    listKey.value++
-
-  } catch (error: any) {
-    console.error('编辑请假条失败:', error)
-
-    let errorMessage = '编辑失败，请重试'
-    if (error.response?.data) {
-      const errorData = error.response.data
-      if (errorData.detail && Array.isArray(errorData.detail)) {
-        errorMessage = errorData.detail.map((item: any) => `${item.loc?.join('.')}: ${item.msg}`).join('; ')
-      } else if (errorData.message) {
-        errorMessage = errorData.message
-      } else if (typeof errorData === 'string') {
-        errorMessage = errorData
-      }
-    }
-
-    editError.value = errorMessage
-  } finally {
-    isEditing.value = false
-  }
+  editFormData.value = null
 }
 
 // 打开审核弹窗
@@ -606,77 +483,16 @@ const formatMaterials = (value: string): string => {
       </template>
     </GenericList>
 
-    <!-- 编辑请假条弹窗 -->
-    <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>修改请假条</h3>
-        </div>
-
-        <form @submit.prevent="handleEditLeave" class="modal-form">
-          <div class="form-row-two">
-            <div class="form-group">
-              <label for="edit_student_id">
-                学生ID
-              </label>
-              <input type="number" id="edit_student_id" v-model="leaveForm.student_id" readonly disabled
-                class="readonly-input" :placeholder="`当前用户ID: ${currentUserId}`" min="1" />
-            </div>
-            <div class="form-group">
-              <label for="edit_leave_date">请假日期 *</label>
-              <input type="date" id="edit_leave_date" v-model="leaveForm.leave_date" required />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="edit_course">课程</label>
-            <select id="edit_course" v-model="leaveForm.course_id" @change="handleCourseChange">
-              <option value="0">请选择课程</option>
-              <option v-if="coursesLoading" value="">加载中...</option>
-              <option v-for="course in courses" :key="course.course_id" :value="course.course_id">
-                {{ course.course_name }} ({{ course.teacher_name }})
-              </option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit_leave_hours">请假课时 *</label>
-              <input type="number" id="edit_leave_hours" v-model="leaveForm.leave_hours" required placeholder="数字" />
-            </div>
-            <div class="form-group">
-              <label for="edit_leave_type">请假类型</label>
-              <select id="edit_leave_type" v-model="leaveForm.leave_type">
-                <option value="">请选择请假类型</option>
-                <option value="病假">病假</option>
-                <option value="事假">事假</option>
-                <option value="公假">公假</option>
-                <option value="其他">其他</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="edit_remarks">备注</label>
-            <textarea id="edit_remarks" v-model="leaveForm.remarks" rows="3" placeholder="请输入请假事由等备注信息"
-              maxlength="100"></textarea>
-          </div>
-
-          <div v-if="editError" class="error-message">
-            {{ editError }}
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" @click="closeEditModal" class="btn btn-secondary">
-              取消
-            </button>
-            <button type="submit" class="btn btn-primary" :disabled="isEditing">
-              {{ isEditing ? '修改中...' : '确认修改' }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <!-- 编辑请假条弹窗（复用GenericCreateModal） -->
+    <GenericCreateModal
+      v-if="showEditModal"
+      :show="showEditModal"
+      type="leave"
+      :edit-id="currentEditLeave?.leave_id"
+      :edit-data="editFormData"
+      :on-close="closeEditModal"
+      :on-success="() => { closeEditModal(); listKey++ }"
+    />
 
     <!-- 审核请假条弹窗 -->
     <div v-if="showAuditModal" class="modal-overlay" @click.self="closeAuditModal">
