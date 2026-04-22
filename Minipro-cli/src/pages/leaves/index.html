@@ -1,15 +1,5 @@
 <view class="list-page">
 
-  <!-- 页面头部 -->
-  <view class="page-header">
-    <view class="header-content">
-      <text class="page-title">请假条管理</text>
-      <view class="header-buttons">
-        <button class="btn btn-back btn-sm" bindtap="goBack">返回</button>
-      </view>
-    </view>
-  </view>
-
   <!-- 统计卡片 -->
   <view class="stats-card">
     <text class="stats-text">共 {{total}} 条请假 (第 {{page}} / {{totalPages || 1}} 页)</text>
@@ -116,9 +106,10 @@
         </view>
         <view class="form-group">
           <text class="form-label">请假类型</text>
-          <picker mode="selector" range="{{leaveTypeOptions}}" value="{{selectedLeaveTypeIndex}}" bindchange="onLeaveTypeChange">
+          <picker mode="selector" range="{{leaveTypeOptions}}" value="{{selectedLeaveTypeIndex}}"
+            bindchange="onLeaveTypeChange">
             <view class="weui-picker">
-              <text>{{selectedLeaveTypeIndex >= 0 ? leaveTypeOptions[selectedLeaveTypeIndex] : '请选择请假类型（可选）'}}</text>
+              <text>{{selectedLeaveTypeIndex >= 0 ? leaveTypeOptions[selectedLeaveTypeIndex] : '请选择请假类型'}}</text>
             </view>
           </picker>
         </view>
@@ -127,13 +118,13 @@
           <picker mode="selector" range="{{courseOptions}}" range-key="label" value="{{selectedCourseIndex}}"
             bindchange="onCourseChange">
             <view class="weui-picker">
-              <text>{{selectedCourseIndex >= 0 ? courseOptions[selectedCourseIndex].label : '请选择课程（可选）'}}</text>
+              <text>{{selectedCourseIndex >= 0 ? courseOptions[selectedCourseIndex].label : '请选择课程'}}</text>
             </view>
           </picker>
         </view>
         <view class="form-group">
           <text class="form-label">备注</text>
-          <input class="weui-input" type="text" placeholder="请输入备注（可选）" value="{{leaveForm.remarks}}"
+          <input class="weui-input" type="text" placeholder="请输入备注" value="{{leaveForm.remarks}}"
             bindinput="onRemarksInput" />
         </view>
         <view wx:if="{{createError}}" class="error-message">
@@ -164,7 +155,7 @@
           <text>{{qrError}}</text>
         </view>
         <view wx:else class="qr-display">
-          <image wx:if="{{qrCodeBase64}}" class="qr-image" src="{{qrCodeBase64}}" mode="aspectFit" />
+          <image wx:if="{{qrCodeBase64}}" class="qr-image" src="data:image/png;base64,{{qrCodeBase64}}" mode="aspectFit" />
           <view class="qr-info">
             <text class="qr-info-text">请假ID: #{{qrLeaveItem.leave_id}}</text>
             <text class="qr-info-text">学生: {{qrLeaveItem.student_name || qrLeaveItem.student_id}}</text>
