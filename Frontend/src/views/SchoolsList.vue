@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import GenericList from '../components/GenericList.vue'
 import http from '../utils/http'
+
+const currentUserRole = computed(() => localStorage.getItem('role'))
+const isAdmin = computed(() => currentUserRole.value === 'admin')
 
 const showCreateModal = ref(false)
 const newSchoolName = ref('')
@@ -119,8 +122,8 @@ const importFile = async (file: File) => {
       hide-export
     >
       <template #header-buttons>
-        <button class="btn btn-outline" @click="handleDownloadTemplate">下载模板</button>
-        <label class="btn btn-secondary import-label">
+        <button v-if="isAdmin" class="btn btn-outline" @click="handleDownloadTemplate">下载模板</button>
+        <label v-if="isAdmin" class="btn btn-secondary import-label">
           {{ isImporting ? '导入中...' : '批量导入' }}
           <input type="file" accept=".xlsx,.xls,.csv" @change="handleFileChange" :disabled="isImporting" hidden />
         </label>

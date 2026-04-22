@@ -118,10 +118,10 @@ const onPasswordChanged = () => {
       create-type="reviewer"
     >
       <template #header-buttons>
-        <button class="btn btn-outline" @click="handleDownloadTemplate" :disabled="isDownloadingTemplate">
+        <button v-if="isAdmin" class="btn btn-outline" @click="handleDownloadTemplate" :disabled="isDownloadingTemplate">
           {{ isDownloadingTemplate ? '下载中...' : '下载模板' }}
         </button>
-        <label class="btn btn-secondary import-label">
+        <label v-if="isAdmin" class="btn btn-secondary import-label">
           {{ isImporting ? '导入中...' : '批量导入' }}
           <input type="file" accept=".xlsx,.xls,.csv" @change="handleFileChange" :disabled="isImporting" hidden />
         </label>
