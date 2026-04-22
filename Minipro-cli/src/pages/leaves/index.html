@@ -1,4 +1,5 @@
 <view class="list-page">
+
   <!-- 页面头部 -->
   <view class="page-header">
     <view class="header-content">
@@ -15,7 +16,8 @@
   </view>
 
   <!-- 教师扫码核验按钮 -->
-  <view wx:if="{{userInfo.role === 'teacher' || userInfo.role === 'admin' || userInfo.role === 'reviewer'}}" class="scan-verify-bar">
+  <view wx:if="{{userInfo.role === 'teacher' || userInfo.role === 'admin' || userInfo.role === 'reviewer'}}"
+    class="scan-verify-bar">
     <button class="btn btn-success btn-sm" bindtap="handleScanVerify">扫一扫核验请假凭证</button>
   </view>
 
@@ -26,12 +28,20 @@
         <view class="card-header">
           <text class="card-title">#{{item.leave_id}}</text>
           <view class="card-actions">
-            <view class="badge badge-{{item.status === '已批准' ? 'success' : item.status === '已拒绝' ? 'danger' : 'warning'}}">{{item.status}}</view>
-            <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}" class="btn btn-success btn-sm" data-id="{{item.leave_id}}" data-status="approve" bindtap="auditLeave">通过</button>
-            <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}" class="btn btn-danger btn-sm" data-id="{{item.leave_id}}" data-status="reject" bindtap="auditLeave">拒绝</button>
+            <view
+              class="badge badge-{{item.status === '已批准' ? 'success' : item.status === '已拒绝' ? 'danger' : 'warning'}}">
+              {{item.status}}</view>
+            <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}"
+              class="btn btn-success btn-sm" data-id="{{item.leave_id}}" data-status="approve"
+              bindtap="auditLeave">通过</button>
+            <button wx:if="{{item.status === '待审批' && (userInfo.role === 'reviewer' || userInfo.role === 'admin')}}"
+              class="btn btn-danger btn-sm" data-id="{{item.leave_id}}" data-status="reject"
+              bindtap="auditLeave">拒绝</button>
             <!-- 担保按钮：自己是担保人且状态为待审批 -->
-            <button wx:if="{{item.status === '待审批' && isGuarantorFor(item) && userInfo.role === 'student'}}" class="btn btn-primary btn-sm" data-id="{{item.leave_id}}" bindtap="guaranteeLeave">担保</button>
-            <button wx:if="{{item.status === '已批准'}}" class="btn btn-info btn-sm" data-id="{{item.leave_id}}" bindtap="showLeaveQR">查看凭证</button>
+            <button wx:if="{{item.status === '待审批' && isGuarantorFor(item) && userInfo.role === 'student'}}"
+              class="btn btn-primary btn-sm" data-id="{{item.leave_id}}" bindtap="guaranteeLeave">担保</button>
+            <button wx:if="{{item.status === '已批准'}}" class="btn btn-info btn-sm" data-id="{{item.leave_id}}"
+              bindtap="showLeaveQR">查看凭证</button>
           </view>
         </view>
         <view class="card-row">
@@ -101,15 +111,21 @@
         </view>
         <view class="form-group">
           <text class="form-label">请假课时</text>
-          <input class="weui-input" type="number" placeholder="请输入请假课时" value="{{leaveForm.leave_hours}}" bindinput="onLeaveHoursInput" />
+          <input class="weui-input" type="number" placeholder="请输入请假课时" value="{{leaveForm.leave_hours}}"
+            bindinput="onLeaveHoursInput" />
         </view>
         <view class="form-group">
           <text class="form-label">请假类型</text>
-          <input class="weui-input" type="text" placeholder="请输入请假类型（可选）" value="{{leaveForm.leave_type}}" bindinput="onLeaveTypeInput" />
+          <picker mode="selector" range="{{leaveTypeOptions}}" value="{{selectedLeaveTypeIndex}}" bindchange="onLeaveTypeChange">
+            <view class="weui-picker">
+              <text>{{selectedLeaveTypeIndex >= 0 ? leaveTypeOptions[selectedLeaveTypeIndex] : '请选择请假类型（可选）'}}</text>
+            </view>
+          </picker>
         </view>
         <view class="form-group">
           <text class="form-label">课程</text>
-          <picker mode="selector" range="{{courseOptions}}" range-key="label" value="{{selectedCourseIndex}}" bindchange="onCourseChange">
+          <picker mode="selector" range="{{courseOptions}}" range-key="label" value="{{selectedCourseIndex}}"
+            bindchange="onCourseChange">
             <view class="weui-picker">
               <text>{{selectedCourseIndex >= 0 ? courseOptions[selectedCourseIndex].label : '请选择课程（可选）'}}</text>
             </view>
@@ -117,7 +133,8 @@
         </view>
         <view class="form-group">
           <text class="form-label">备注</text>
-          <input class="weui-input" type="text" placeholder="请输入备注（可选）" value="{{leaveForm.remarks}}" bindinput="onRemarksInput" />
+          <input class="weui-input" type="text" placeholder="请输入备注（可选）" value="{{leaveForm.remarks}}"
+            bindinput="onRemarksInput" />
         </view>
         <view wx:if="{{createError}}" class="error-message">
           <text>{{createError}}</text>
@@ -155,7 +172,8 @@
             <text class="qr-info-text">日期: {{qrLeaveItem.leave_date_formatted || qrLeaveItem.leave_date}}</text>
             <text class="qr-info-text">课时: {{qrLeaveItem.leave_hours || '-'}}</text>
             <text wx:if="{{qrValidInfo.until}}" class="qr-info-text qr-expiry">有效期至: {{qrValidInfo.until}}</text>
-            <text wx:if="{{qrValidInfo.max > 0}}" class="qr-info-text qr-usage">已使用: {{qrValidInfo.used}} / {{qrValidInfo.max}}</text>
+            <text wx:if="{{qrValidInfo.max > 0}}" class="qr-info-text qr-usage">已使用: {{qrValidInfo.used}} /
+              {{qrValidInfo.max}}</text>
           </view>
           <text class="qr-tip">请将二维码出示给教师核验</text>
         </view>

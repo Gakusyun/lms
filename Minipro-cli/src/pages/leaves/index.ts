@@ -50,6 +50,8 @@ export default defineComponent(() => {
   const courses = ref<Course[]>([]);
   const courseOptions = ref<{ label: string, value: number }[]>([]);
   const selectedCourseIndex = ref(-1);
+  const leaveTypeOptions = ['事假', '病假', '公假', '婚假', '丧假', '其他'];
+  const selectedLeaveTypeIndex = ref(-1);
 
   // 创建请假条表单数据
   const leaveForm = reactive({
@@ -296,6 +298,11 @@ export default defineComponent(() => {
       leaveForm.course_id = 0;
       leaveForm.teacher_id = 0;
     }
+  };
+
+  const onLeaveTypeChange = (e: any) => {
+    selectedLeaveTypeIndex.value = e.detail.value;
+    leaveForm.leave_type = leaveTypeOptions[e.detail.value] || '';
   };
 
   // 创建请假条
@@ -651,6 +658,8 @@ export default defineComponent(() => {
     courses,
     courseOptions,
     selectedCourseIndex,
+    leaveTypeOptions,
+    selectedLeaveTypeIndex,
     userInfo,
     fetchLeaves,
     loadMore,
@@ -666,6 +675,7 @@ export default defineComponent(() => {
     onLeaveTypeInput,
     onRemarksInput,
     onCourseChange,
+    onLeaveTypeChange,
     handleCreateLeave,
     approveLeave,
     rejectLeave,

@@ -21,33 +21,6 @@ button::after {
   padding-bottom: 200rpx;
 }
 
-/* 页面头部 */
-.page-header {
-  background-color: #ffffff;
-  border-bottom: 1rpx solid #e5e7eb;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24rpx 32rpx;
-}
-
-.page-title {
-  font-size: 40rpx;
-  font-weight: 700;
-  color: #111827;
-}
-
-.header-buttons {
-  display: flex;
-  gap: 16rpx;
-}
-
 /* 统计卡片 */
 .stats-card {
   background-color: #eff6ff;
@@ -287,6 +260,7 @@ button::after {
   border-radius: 8rpx;
   margin-top: 16rpx;
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
