@@ -389,7 +389,7 @@ watch(() => props.show, (newValue) => {
 </script>
 
 <template>
-  <div v-if="show" class="modal-overlay" @click.self="closeModal">
+  <div v-if="show" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
         <h3>

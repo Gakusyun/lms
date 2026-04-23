@@ -495,7 +495,7 @@ const formatMaterials = (value: string): string => {
     />
 
     <!-- 审核请假条弹窗 -->
-    <div v-if="showAuditModal" class="modal-overlay" @click.self="closeAuditModal">
+    <div v-if="showAuditModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
           <h3>审核请假条</h3>
@@ -534,7 +534,7 @@ const formatMaterials = (value: string): string => {
     </div>
 
     <!-- 二维码凭证弹窗 -->
-    <div v-if="showQRModal" class="modal-overlay" @click.self="closeQRModal">
+    <div v-if="showQRModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
           <h3>请假凭证</h3>

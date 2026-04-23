@@ -135,7 +135,7 @@ const importFile = async (file: File) => {
     <div v-if="importError" class="alert alert-danger">{{ importError }}</div>
 
     <!-- 创建部门弹窗 -->
-    <div v-if="showCreateModal" class="modal-overlay" @click.self="closeCreateModal">
+    <div v-if="showCreateModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
           <h3>创建部门</h3>
