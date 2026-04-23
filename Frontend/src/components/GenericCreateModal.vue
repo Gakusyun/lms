@@ -391,14 +391,14 @@ watch(() => props.show, (newValue) => {
 <template>
   <div v-if="show" class="modal-overlay">
     <div class="modal-content">
-      <div class="modal-header">
+      <!-- <div class="modal-header">
         <h3>
           {{ type === 'leave' ? (editId ? '修改请假条' : '创建请假条') :
              type === 'student' ? '学生管理' :
              type === 'reviewer' ? '审核人管理' :
              type === 'teacher' ? '教师管理' : '课程管理' }}
         </h3>
-      </div>
+      </div> -->
 
       <div class="modal-body">
         <!-- Import Section (only for non-leave types) -->
