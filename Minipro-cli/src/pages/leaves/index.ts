@@ -67,6 +67,9 @@ export default defineComponent(() => {
     status: '待审批'
   });
 
+  // 附件上传相关状态
+  const selectedFiles = ref<{ name: string; path: string; size: number }[]>([]);
+
   // 格式化日期显示
   const formatDate = (dateStr: string): string => {
     if (!dateStr) return '';
@@ -264,6 +267,7 @@ export default defineComponent(() => {
   const closeCreateModal = () => {
     showCreateModal.value = false;
     createError.value = '';
+    selectedFiles.value = [];
   };
 
   // 表单输入处理
@@ -310,6 +314,82 @@ export default defineComponent(() => {
     leaveForm.guarantee_student_id = parseInt(e.detail.value) || 0;
   };
 
+  // 选择证明材料附件
+  const selectProofFiles = () => {
+    wx.chooseMessageFile({
+      count: 5, // 最多选择5个文件
+      success: (res) => {
+        const tempFiles = res.tempFiles.map((f: any) => ({
+          name: f.name,
+          path: f.path,
+          size: f.size
+        }));
+        selectedFiles.value = [...selectedFiles.value, ...tempFiles].slice(0, 5);
+        wx.showToast({ title: `已选择 ${tempFiles.length} 个文件`, icon: 'none' });
+      }
+    });
+  };
+
+  // 移除已选附件
+  const removeProofFile = (index: number) => {
+    selectedFiles.value.splice(index, 1);
+  };
+
+  // 清空已选附件
+  const clearProofFiles = () => {
+    selectedFiles.value = [];
+  };
+
+  // 判断是否可以下载证明材料
+  const canDownloadMaterials = (leave: Leave): boolean => {
+    return !!(leave.materials && leave.materials.trim());
+  };
+
+  // 下载证明材料
+  const downloadMaterials = (e: any) => {
+    const { id } = e.currentTarget.dataset;
+    const leave = leaves.value.find(l => l.leave_id === id);
+    if (!leave || !leave.materials) return;
+
+    const files = leave.materials.split(',').filter((f: string) => f.trim());
+    if (files.length === 0) return;
+
+    wx.showLoading({ title: '下载中...' });
+
+    // 下载并打开第一个文件（小程序只能打开一个文件）
+    const filePath = files[0].trim();
+    const parts = filePath.split('/');
+    const filename = parts[parts.length - 1];
+    const token = wx.getStorageSync('token');
+
+    wx.downloadFile({
+      url: `${BASE_URL}/leaves/${leave.leave_id}/download/${encodeURIComponent(filename)}`,
+      header: { Authorization: `Bearer ${token}` },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.statusCode === 200) {
+          wx.openDocument({
+            filePath: res.tempFilePath,
+            success: () => {
+              console.log('打开文件成功');
+            },
+            fail: (err) => {
+              console.error('打开文件失败:', err);
+              wx.showToast({ title: '无法打开该文件类型', icon: 'none' });
+            }
+          });
+        } else {
+          wx.showToast({ title: '下载失败', icon: 'error' });
+        }
+      },
+      fail: (err) => {
+        wx.hideLoading();
+        console.error('下载文件失败:', err);
+        wx.showToast({ title: '下载失败', icon: 'error' });
+      }
+    });
+  };
+
   // 创建请假条
   const handleCreateLeave = async () => {
     try {
@@ -319,6 +399,7 @@ export default defineComponent(() => {
       // 验证必填字段
       if (!leaveForm.student_id || !leaveForm.leave_date || !leaveForm.leave_hours) {
         createError.value = '请填写必填字段：学生ID、请假日期、请假课时';
+        isCreating.value = false;
         return;
       }
 
@@ -347,47 +428,91 @@ export default defineComponent(() => {
 
       console.log('提交请假条数据:', formattedData);
 
-      wx.request({
-        url: `${BASE_URL}/leaves`,
-        method: 'POST',
-        data: formattedData,
-        header: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        success: (res) => {
-          console.log('创建请假条成功:', res);
-          wx.showToast({
-            title: '创建成功',
-            icon: 'success'
-          });
-          closeCreateModal();
-          fetchLeaves(true);
-        },
-        fail: (error: any) => {
-          console.error('创建请假条失败:', error);
-          let errorMessage = '创建失败，请重试';
-          if (error && error.response && error.response.data) {
-            const errorData = error.response.data;
-            if (errorData.detail && Array.isArray(errorData.detail)) {
-              errorMessage = errorData.detail.map((item: any) => `${item.loc?.join('.')}: ${item.msg}`).join('; ');
-            } else if (errorData.message) {
-              errorMessage = errorData.message;
+      // 先创建请假条
+      const createRes = await new Promise<any>((resolve, reject) => {
+        wx.request({
+          url: `${BASE_URL}/leaves`,
+          method: 'POST',
+          data: formattedData,
+          header: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          success: (res) => {
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              resolve(res.data);
+            } else {
+              reject(res);
             }
-          }
-          createError.value = errorMessage;
-          wx.showToast({
-            title: errorMessage,
-            icon: 'error'
-          });
-        },
-        complete: () => {
-          isCreating.value = false;
-        }
+          },
+          fail: reject
+        });
       });
-    } catch (error) {
+
+      const leaveId = createRes.leave_id || createRes.id;
+      console.log('创建请假条成功, leave_id:', leaveId);
+
+      // 如果有选中的附件，则上传
+      if (selectedFiles.value.length > 0 && leaveId) {
+        wx.showLoading({ title: '上传附件中...' });
+
+        // 上传文件
+        const uploadRes = await new Promise<any>((resolve, reject) => {
+          wx.uploadFile({
+            url: `${BASE_URL}/leaves/${leaveId}/upload`,
+            filePath: selectedFiles.value[0].path,
+            name: 'files',
+            header: { Authorization: `Bearer ${token}` },
+            success: (res) => {
+              if (res.statusCode >= 200 && res.statusCode < 300) {
+                resolve(JSON.parse(res.data));
+              } else {
+                reject(res);
+              }
+            },
+            fail: reject
+          });
+        });
+
+        // 更新请假条的materials字段
+        if (uploadRes.files && uploadRes.files.length > 0) {
+          const filePaths = uploadRes.files.map((f: any) => f.file_path).join(',');
+          await new Promise<any>((resolve, reject) => {
+            wx.request({
+              url: `${BASE_URL}/leaves/edit/${leaveId}`,
+              method: 'PUT',
+              data: { materials: filePaths },
+              header: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+              },
+              success: (res) => resolve(res.data),
+              fail: reject
+            });
+          });
+        }
+        wx.hideLoading();
+      }
+
+      wx.showToast({ title: '创建成功', icon: 'success' });
+      closeCreateModal();
+      fetchLeaves(true);
+    } catch (error: any) {
       console.error('创建请假条失败:', error);
-      createError.value = '创建失败，请重试';
+      let errorMessage = '创建失败，请重试';
+      if (error && error.response && error.response.data) {
+        const errorData = error.response.data;
+        if (errorData.detail && Array.isArray(errorData.detail)) {
+          errorMessage = errorData.detail.map((item: any) => `${item.loc?.join('.')}: ${item.msg}`).join('; ');
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } else if (error.data && error.data.detail) {
+        errorMessage = error.data.detail;
+      }
+      createError.value = errorMessage;
+      wx.showToast({ title: errorMessage, icon: 'error' });
+    } finally {
       isCreating.value = false;
     }
   };
@@ -750,5 +875,11 @@ export default defineComponent(() => {
     isGuarantorFor,
     closeOffLeave,
     canCloseOff,
+    selectedFiles,
+    selectProofFiles,
+    removeProofFile,
+    clearProofFiles,
+    canDownloadMaterials,
+    downloadMaterials,
   };
 });

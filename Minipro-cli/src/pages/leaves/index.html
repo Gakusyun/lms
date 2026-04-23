@@ -32,6 +32,8 @@
               class="btn btn-primary btn-sm" data-id="{{item.leave_id}}" bindtap="guaranteeLeave">担保</button>
             <button wx:if="{{item.status === '已批准'}}" class="btn btn-info btn-sm" data-id="{{item.leave_id}}"
               bindtap="showLeaveQR">查看凭证</button>
+            <button wx:if="{{canDownloadMaterials(item)}}" class="btn btn-warning btn-sm" data-id="{{item.leave_id}}"
+              bindtap="downloadMaterials">下载材料</button>
             <button wx:if="{{canCloseOff(item)}}" class="btn btn-success btn-sm" data-id="{{item.leave_id}}"
               bindtap="closeOffLeave">销假</button>
           </view>
@@ -133,6 +135,20 @@
           <text class="form-label">备注</text>
           <input class="weui-input" type="text" placeholder="请输入备注" value="{{leaveForm.remarks}}"
             bindinput="onRemarksInput" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">上传证明材料（可选，最多5个）</text>
+          <button class="btn btn-secondary btn-sm" bindtap="selectProofFiles">选择文件</button>
+          <view wx:if="{{selectedFiles.length > 0}}" class="selected-files">
+            <view wx:for="{{selectedFiles}}" wx:key="index" class="file-item">
+              <text class="file-name">{{item.name}}</text>
+              <text class="file-size">({{(item.size / 1024).toFixed(1)}}KB)</text>
+              <text class="btn-remove" bindtap="removeProofFile" data-index="{{index}}">×</text>
+            </view>
+          </view>
+          <view wx:if="{{selectedFiles.length > 0}}" class="clear-files" bindtap="clearProofFiles">
+            <text>清空已选文件</text>
+          </view>
         </view>
         <view wx:if="{{createError}}" class="error-message">
           <text>{{createError}}</text>
