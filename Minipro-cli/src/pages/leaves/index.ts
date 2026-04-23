@@ -510,6 +510,47 @@ export default defineComponent(() => {
     return leave.guarantee_student_id === parseInt(userInfo.id) && leave.student_id !== parseInt(userInfo.id);
   };
 
+  // 销假 - 辅导员确认学生已返校报到
+  const closeOffLeave = (e: any) => {
+    const { id } = e.currentTarget.dataset;
+    const leave = leaves.value.find(l => l.leave_id === id);
+    if (!leave) return;
+
+    wx.showModal({
+      title: '确认销假',
+      content: `确定要对该请假执行销假操作吗？\n学生: ${leave.student_name || '-'}\n类型: ${leave.leave_type || '-'}\n课时: ${leave.leave_hours || '-'}`
+    }).then((res: any) => {
+      if (res.confirm) {
+        const token = wx.getStorageSync('token');
+        wx.request({
+          url: `${BASE_URL}/leaves/close-off/${id}`,
+          method: 'POST',
+          header: {
+            'Authorization': `Bearer ${token}`
+          },
+          success: () => {
+            wx.showToast({ title: '销假成功', icon: 'success' });
+            fetchLeaves(true);
+          },
+          fail: (error: any) => {
+            console.error('销假失败:', error);
+            wx.showToast({
+              title: (error?.response?.data?.detail) || '销假失败',
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
+  };
+
+  // 判断是否可以销假（辅导员/管理员可以对已批准的请假执行销假）
+  const canCloseOff = (leave: Leave): boolean => {
+    const userInfo = wx.getStorageSync('userInfo');
+    if (!userInfo) return false;
+    return leave.status === '已批准' && (userInfo.role === 'reviewer' || userInfo.role === 'admin');
+  };
+
   // 返回上一页
   const goBack = () => {
     wx.navigateBack();
@@ -707,5 +748,7 @@ export default defineComponent(() => {
     handleScanVerify,
     guaranteeLeave,
     isGuarantorFor,
+    closeOffLeave,
+    canCloseOff,
   };
 });

@@ -32,6 +32,8 @@
               class="btn btn-primary btn-sm" data-id="{{item.leave_id}}" bindtap="guaranteeLeave">担保</button>
             <button wx:if="{{item.status === '已批准'}}" class="btn btn-info btn-sm" data-id="{{item.leave_id}}"
               bindtap="showLeaveQR">查看凭证</button>
+            <button wx:if="{{canCloseOff(item)}}" class="btn btn-success btn-sm" data-id="{{item.leave_id}}"
+              bindtap="closeOffLeave">销假</button>
           </view>
         </view>
         <view class="card-row">
