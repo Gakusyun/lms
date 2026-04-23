@@ -142,7 +142,7 @@
           <view wx:if="{{selectedFiles.length > 0}}" class="selected-files">
             <view wx:for="{{selectedFiles}}" wx:key="index" class="file-item">
               <text class="file-name">{{item.name}}</text>
-              <text class="file-size">({{(item.size / 1024).toFixed(1)}}KB)</text>
+              <text class="file-size">({{item.size}}B)</text>
               <text class="btn-remove" bindtap="removeProofFile" data-index="{{index}}">×</text>
             </view>
           </view>
