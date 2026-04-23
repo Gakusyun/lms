@@ -1045,12 +1045,8 @@ class LeaveService:
             raise HTTPException(status_code=403, detail="只能对已批准的请假进行销假操作")
 
         if current_user["role"] == "reviewer":
-            reviewer = session.exec(
-                select(Reviewer).where(Reviewer.reviewer_id == current_user["id"])
-            ).first()
-            role_name = get_reviewer_role_name(reviewer, session) if reviewer else ""
-            if "辅导员" not in role_name and "书记" not in role_name:
-                raise HTTPException(status_code=403, detail="只有辅导员或书记可以执行销假操作")
+            # 审核员（辅导员、书记、学工处）都可以执行销假操作
+            pass
         elif current_user["role"] != "admin":
             raise HTTPException(status_code=403, detail="Permission denied")
 
