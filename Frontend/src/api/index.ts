@@ -315,17 +315,6 @@ export const verifyQRCode = async (qrContent: string) => {
   }
 }
 
-// 获取智能审批推荐API
-export const getApprovalRecommendation = async (leaveId: number) => {
-  try {
-    const response = await http.get(`/leaves/${leaveId}/recommendation`)
-    return response
-  } catch (error) {
-    console.error('获取审批推荐失败:', error)
-    throw error
-  }
-}
-
 // 统计API
 export const getLeaveStatistics = async () => {
   try {

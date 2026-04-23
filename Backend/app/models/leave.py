@@ -19,7 +19,6 @@ class LeaveType(str, Enum):
     PERSONAL = "事假"
     SICK = "病假"
     PUBLIC = "公假"
-    MARRIAGE = "婚假"
     BEREAVEMENT = "丧假"
 
 

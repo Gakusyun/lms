@@ -50,7 +50,7 @@ export default defineComponent(() => {
   const courses = ref<Course[]>([]);
   const courseOptions = ref<{ label: string, value: number }[]>([]);
   const selectedCourseIndex = ref(-1);
-  const leaveTypeOptions = ['事假', '病假', '公假', '婚假', '丧假', '其他'];
+  const leaveTypeOptions = ['事假', '病假', '公假', '丧假', '其他'];
   const selectedLeaveTypeIndex = ref(-1);
 
   // 创建请假条表单数据
@@ -846,7 +846,7 @@ export default defineComponent(() => {
     loadMore,
     onPullDownRefresh,
     goBack,
-    noop: () => {},
+    noop: () => { },
     onReady,
     openCreateModal,
     closeCreateModal,

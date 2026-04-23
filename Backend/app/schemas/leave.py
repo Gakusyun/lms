@@ -8,7 +8,7 @@ class LeaveCreate(BaseModel):
     leave_date: Optional[Union[datetime, str]] = None
     leave_hours: Optional[str] = Field(max_length=8, default=None)
     status: Optional[str] = Field(max_length=8, default=None)  # 待审批、已批准、已拒绝、已撤销
-    leave_type: Optional[str] = Field(max_length=8, default=None)  # 事假、病假、公假、婚假、丧假
+    leave_type: Optional[str] = Field(max_length=8, default=None)  # 事假、病假、公假、丧假
     remarks: Optional[str] = Field(max_length=100, default=None)
     materials: Optional[str] = Field(max_length=100, default=None)
     reviewer_id: Optional[int] = None
