@@ -531,7 +531,7 @@ watch(() => props.show, (newValue) => {
               </div>
               <div class="form-group">
                 <label>辅导员</label>
-                <select v-model="formData.reviewer_id">
+                <select v-model="formData.reviewer_id" :disabled="!formData.school_id">
                   <option value="">请先选择院系</option>
                   <option v-if="loadingOptions" value="">加载中...</option>
                   <option v-for="reviewer in reviewers" :key="reviewer.reviewer_id" :value="reviewer.reviewer_id">
