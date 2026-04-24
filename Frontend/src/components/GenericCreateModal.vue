@@ -50,7 +50,7 @@ const fetchOptions = async () => {
   try {
     if (props.type === 'student') {
       const [reviewersRes, schoolsRes, nextIdRes] = await Promise.all([
-        http.get('/reviewers'),
+        http.get('/reviewers', { params: { page_size: 100, school_id: formData.value.school_id || undefined } }),
         http.get('/schools', { params: { page_size: 100 } }),
         http.get('/students/next-id')
       ])
@@ -367,6 +367,21 @@ watch(() => props.type, () => {
   }
 })
 
+// When school changes for student form, refetch reviewers for that school
+watch(() => formData.value.school_id, async (newSchoolId) => {
+  if (props.type === 'student' && newSchoolId) {
+    try {
+      const res = await http.get('/reviewers', { params: { page_size: 100, school_id: newSchoolId } })
+      reviewers.value = (res as any).items || []
+    } catch (error) {
+      console.error('获取辅导员列表失败:', error)
+      reviewers.value = []
+    }
+  } else if (props.type === 'student' && !newSchoolId) {
+    reviewers.value = []
+  }
+})
+
 // Get current user ID for leave creation
 const currentUserId = computed(() => {
   const id = localStorage.getItem('id')
@@ -515,12 +530,12 @@ watch(() => props.show, (newValue) => {
                 </select>
               </div>
               <div class="form-group">
-                <label>审核人</label>
+                <label>辅导员</label>
                 <select v-model="formData.reviewer_id">
-                  <option value="">请选择审核人</option>
+                  <option value="">请先选择院系</option>
                   <option v-if="loadingOptions" value="">加载中...</option>
                   <option v-for="reviewer in reviewers" :key="reviewer.reviewer_id" :value="reviewer.reviewer_id">
-                    {{ reviewer.reviewer_name }} ({{ reviewer.school_name }})
+                    {{ reviewer.reviewer_name }}
                   </option>
                 </select>
               </div>

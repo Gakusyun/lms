@@ -16,11 +16,12 @@ def read_reviewers(
     current_user: dict = Depends(check_login),
     page: int = 1,
     page_size: int = 20,
+    school_id: int = None,
     session: Session = Depends(get_session),
 ):
     # 学生：看自己辅导员+本院书记+学工处 | 其他角色：看全部
     reviewers, total, total_pages = ReviewerService.get_reviewers(
-        current_user, page, page_size, session
+        current_user, page, page_size, session, school_id
     )
     return PaginatedResponse(
         items=reviewers,

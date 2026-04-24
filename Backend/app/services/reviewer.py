@@ -17,11 +17,30 @@ class ReviewerService:
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
         session: Session = Depends(lambda: None),
+        school_id: int = None,
     ):
-        """分页获取审核员列表（学生看自己辅导员+本院书记+学工处）"""
+        """分页获取审核员列表
+        - school_id 参数用于创建学生时筛选该学院的辅导员（仅返回辅导员，不含书记/学工处）
+        - 学生角色：看自己辅导员+本院书记+学工处
+        """
         query = select(Reviewer)
 
-        if current_user["role"] == "student":
+        # school_id 参数用于创建学生时筛选该学院的辅导员（仅返回辅导员，不含书记/学工处）
+        if school_id is not None:
+            # 仅返回该学院的辅导员
+            counselor_role_ids = session.exec(
+                select(Role.role_id).where(Role.role_name.like("%辅导员%"))
+            ).all()
+            if counselor_role_ids:
+                query = query.where(
+                    and_(
+                        Reviewer.school_id == school_id,
+                        Reviewer.role_id.in_(counselor_role_ids)
+                    )
+                )
+            else:
+                query = query.where(Reviewer.reviewer_id == -1)
+        elif current_user["role"] == "student":
             student = session.exec(
                 select(Student).where(Student.student_id == current_user["id"])
             ).first()
