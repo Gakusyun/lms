@@ -189,11 +189,18 @@ const handleCloseOff = async (leave: Leave) => {
 
     if (userConfirm) {
       penaltyDays = 7
-    } else {
-      penaltyDays = undefined
     }
   } else {
-    if (!confirm(`确定要对该请假执行销假操作吗？\n学生: ${leave.student_name}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}`)) return
+    // 辅导员/书记/管理员选择惩罚天数
+    const choice = prompt(`确定要对该请假执行销假操作吗？\n学生: ${leave.student_name}\n类型: ${leave.leave_type}\n课时: ${leave.leave_hours}\n\n请输入惩罚天数：\n  0 - 仅销假（不处罚）\n  7 - 处罚7天\n 30 - 处罚30天`)
+
+    if (choice === null) return // 用户取消
+    const days = parseInt(choice)
+    if (isNaN(days) || days < 0 || days > 30) {
+      alert('请输入 0、7 或 30')
+      return
+    }
+    penaltyDays = days === 0 ? undefined : days
   }
 
   try {
