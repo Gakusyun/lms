@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Body
 from sqlmodel import Session, select
 
 from app.database.connection import get_session
@@ -158,7 +158,7 @@ async def update_profile(
 def change_password(
     request: Request,
     current_user: dict = Depends(check_login),
-    password_data: ChangePassword = None,
+    password_data: ChangePassword = Body(...),
     session: Session = Depends(get_session),
 ):
     """修改密码接口 - 修改自己的密码"""
@@ -172,7 +172,7 @@ def change_user_password(
     request: Request,
     user_id: int,
     current_user: dict = Depends(check_role(["admin"])),
-    password_data: ChangePassword = None,
+    password_data: ChangePassword = Body(...),
     session: Session = Depends(get_session),
 ):
     """修改指定用户密码接口 - 仅管理员可用"""
@@ -211,7 +211,7 @@ def confirm_password_reset(
 
 @router.post("/admin/test-db-connection", summary="测试数据库连接")
 def test_db_connection(
-    db_config: dict = None,
+    db_config: dict = {},
 ):
     """测试数据库连接接口 - 首次启动时无需认证"""
 
@@ -229,7 +229,8 @@ def test_db_connection(
             username = db_config.get("username", "root")
             password = db_config.get("password", "")
 
-            connection_string = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}"
+            from urllib.parse import quote_plus
+            connection_string = f"mysql+pymysql://{username}:{quote_plus(password)}@{host}:{port}/{database}"
         else:
             db_path = db_config.get("db_path", "./leave_management.db")
             connection_string = f"sqlite:///{db_path}"
