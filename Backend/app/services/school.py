@@ -11,7 +11,7 @@ class SchoolService:
     def get_schools(
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
-        session: Session = Depends(lambda: None),
+        session: Session = None,
     ):
         """分页获取学校/院系列表"""
         schools, total, total_pages = CommonService.paginate_query(

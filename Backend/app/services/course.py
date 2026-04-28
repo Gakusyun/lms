@@ -11,7 +11,7 @@ class CourseService:
     def get_courses(
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
-        session: Session = Depends(lambda: None)
+        session: Session = None
     ):
         """分页获取课程列表"""
         courses, total, total_pages = CommonService.paginate_query(session, Course, page, page_size)
@@ -38,7 +38,7 @@ class CourseService:
         course_ids: list,
         page: int = 1,
         page_size: int = 20,
-        session: Session = Depends(lambda: None)
+        session: Session = None
     ):
         """根据课程ID列表获取课程"""
         # 构建查询
@@ -78,7 +78,7 @@ class CourseService:
         teacher_id: int,
         page: int = 1,
         page_size: int = 20,
-        session: Session = Depends(lambda: None)
+        session: Session = None
     ):
         """获取教师的课程"""
         # 构建查询
