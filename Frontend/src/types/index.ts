@@ -108,7 +108,6 @@ export interface PaginatedResponse<T> {
 export interface LoginRequest {
   id: string
   password: string
-  token: string
 }
 
 export interface LoginResponse {

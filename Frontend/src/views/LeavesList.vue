@@ -173,7 +173,8 @@ const handleCancelLeave = async (leave: Leave) => {
     listKey.value++
   } catch (error: any) {
     console.error('撤销请假条失败:', error)
-    alert(error.response?.data?.detail || '撤销失败')
+    const msg = error.response?.data?.detail || (error.request ? '网络错误' : '撤销失败')
+    alert(msg)
   }
 }
 
@@ -208,7 +209,8 @@ const handleCloseOff = async (leave: Leave) => {
     listKey.value++
   } catch (error: any) {
     console.error('销假失败:', error)
-    alert(error.response?.data?.detail || '销假失败')
+    const msg = error.response?.data?.detail || (error.request ? '网络错误' : '销假失败')
+    alert(msg)
   }
 }
 
@@ -222,7 +224,8 @@ const handleGuarantee = async (leave: Leave) => {
     listKey.value++
   } catch (error: any) {
     console.error('担保失败:', error)
-    alert(error.response?.data?.detail || '担保失败')
+    const msg = error.response?.data?.detail || (error.request ? '网络错误' : '担保失败')
+    alert(msg)
   }
 }
 
@@ -271,7 +274,7 @@ const showQRCode = async (leave: Leave) => {
       qrCodeData.value = response.qr_code
     }
   } catch (error: any) {
-    qrError.value = error.response?.data?.detail || '获取二维码失败'
+    qrError.value = error.response?.data?.detail || (error.request ? '网络错误' : '获取二维码失败')
   } finally {
     qrLoading.value = false
   }
@@ -302,11 +305,17 @@ const downloadMaterials = (leave: Leave) => {
     const filename = parts[parts.length - 1]
     const leaveId = leave.leave_id
     const url = `${apiBase}/leaves/${leaveId}/download/${encodeURIComponent(filename)}`
-    window.open(url, '_blank')
+    window.open(url, '_blank', 'noopener,noreferrer')
   })
 }
 
 // 格式化材料字段为可点击链接
+const escapeHtml = (str: string): string => {
+  const div = document.createElement('div')
+  div.textContent = str
+  return div.innerHTML
+}
+
 const formatMaterials = (value: string): string => {
   if (!value || !value.trim()) return '-'
   const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
@@ -314,7 +323,7 @@ const formatMaterials = (value: string): string => {
     const parts = fileName.split('/')
     const filename = parts[parts.length - 1]
     const leaveId = parts.length >= 2 ? parts[parts.length - 2] : ''
-    return `<a href="${apiBase}/leaves/${leaveId}/download/${encodeURIComponent(filename)}" target="_blank" class="material-link">${filename}</a>`
+    return `<a href="${apiBase}/leaves/${leaveId}/download/${encodeURIComponent(filename)}" target="_blank" class="material-link">${escapeHtml(filename)}</a>`
   }).join('<br>')
 }
 
