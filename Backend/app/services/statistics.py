@@ -236,7 +236,7 @@ class StatisticsService:
                 "total_leaves": result.total_leaves,
                 "approved_leaves": result.approved_leaves,
                 "rejected_leaves": result.rejected_leaves,
-                "approval_rate": round(result.approved_leaves / result.total_leaves * 100, 2) if result.total_leaves > 0 else 0
+                "approval_rate": round((result.approved_leaves or 0) / result.total_leaves * 100, 2) if result.total_leaves > 0 else 0
             }
             for result in results
         ]
@@ -298,7 +298,7 @@ class StatisticsService:
                 "approved_leaves": result.approved_leaves,
                 "rejected_leaves": result.rejected_leaves,
                 "pending_leaves": result.pending_leaves,
-                "approval_rate": round(result.approved_leaves / result.total_leaves * 100, 2) if result.total_leaves > 0 else 0
+                "approval_rate": round((result.approved_leaves or 0) / result.total_leaves * 100, 2) if result.total_leaves > 0 else 0
             }
             for result in results
         ]
