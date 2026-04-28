@@ -120,7 +120,6 @@ def export_students_json(
             "student_id": student.student_id,
             "student_name": student.student_name,
             "school_name": school_name,
-            "class_name": student.class_name,
             "reviewer_id": student.reviewer_id,
         })
 
