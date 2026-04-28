@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
             if result.fetchone()[0] == 0:
                 logger.info("正在初始化默认角色...")
                 for idx, name in enumerate(["辅导员", "书记", "学工处"], start=1):
-                    conn.execute(text(f"INSERT INTO role (role_id, role_name) VALUES ({idx}, '{name}')"))
+                    conn.execute(text("INSERT INTO role (role_id, role_name) VALUES (:idx, :name)"), {"idx": idx, "name": name})
                 conn.commit()
                 logger.info("默认角色初始化完成")
             else:
@@ -93,7 +93,7 @@ app = FastAPI(
 
 # 全局异常处理器
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
+async def global_exception_handler(_request: Request, exc: Exception):
     """全局异常处理器"""
     logger.error(f"全局异常: {str(exc)}")
     logger.error(traceback.format_exc())

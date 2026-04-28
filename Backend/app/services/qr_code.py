@@ -1,3 +1,4 @@
+import os
 import qrcode
 import io
 import base64
@@ -13,13 +14,22 @@ from sqlmodel import Session, select
 class QRCodeService:
     """二维码凭证服务"""
 
-    # 加密密钥（实际生产应从环境变量读取）
-    SECRET_KEY = "lms-leave-credential-2024"
+    # 加密密钥
+    SECRET_KEY = os.environ.get("QR_CODE_SECRET_KEY", None)
+
+    @classmethod
+    def _get_secret_key(cls) -> str:
+        if not cls.SECRET_KEY:
+            cls.SECRET_KEY = os.environ.get("QR_CODE_SECRET_KEY")
+            if not cls.SECRET_KEY:
+                raise RuntimeError("QR_CODE_SECRET_KEY must be set via environment variable")
+        return cls.SECRET_KEY
 
     @staticmethod
     def _encrypt(content: str) -> str:
         """简单的签名加密"""
-        raw = f"{content}|{QRCodeService.SECRET_KEY}"
+        secret_key = QRCodeService._get_secret_key()
+        raw = f"{content}|{secret_key}"
         signature = hashlib.sha256(raw.encode()).hexdigest()[:16]
         return f"{content}|{signature}"
 
@@ -35,7 +45,8 @@ class QRCodeService:
             provided_sig = parts[1]
 
             # 验证签名
-            raw = f"{content}|{QRCodeService.SECRET_KEY}"
+            secret_key = QRCodeService._get_secret_key()
+            raw = f"{content}|{secret_key}"
             expected_sig = hashlib.sha256(raw.encode()).hexdigest()[:16]
 
             if provided_sig != expected_sig:

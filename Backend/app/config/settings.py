@@ -110,7 +110,10 @@ class Settings:
     def jwt_secret_key(self) -> str:
         """获取JWT密钥"""
         import os
-        return os.environ.get("JWT_SECRET_KEY") or self._config_data.get("jwt", {}).get("secret_key", "LXah6-fGpXGsVig2sHVBDIXa3_h4N0nIbjVlv3dC7Vk")
+        secret = os.environ.get("JWT_SECRET_KEY") or self._config_data.get("jwt", {}).get("secret_key")
+        if not secret:
+            raise RuntimeError("JWT_SECRET_KEY must be set via environment variable or config.toml")
+        return secret
 
     @property
     def jwt_algorithm(self) -> str:
