@@ -16,7 +16,7 @@ class ReviewerService:
         current_user: dict,
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
-        session: Session = Depends(lambda: None),
+        session: Session = None,
         school_id: int = None,
     ):
         """分页获取审核员列表

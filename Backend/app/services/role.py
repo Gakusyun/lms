@@ -10,7 +10,7 @@ class RoleService:
     def get_roles(
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
-        session: Session = Depends(lambda: None),
+        session: Session = None,
     ):
         """分页获取角色列表"""
         roles, total, total_pages = CommonService.paginate_query(
