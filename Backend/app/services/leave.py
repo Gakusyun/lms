@@ -21,7 +21,7 @@ APPROVAL_LEVEL_1_THRESHOLD = 8    # ≤8课时：辅导员审批
 APPROVAL_LEVEL_2_THRESHOLD = 56   # 8-56课时：书记审批
 
 
-def get_reviewer_role_name(reviewer: Reviewer, session: Session) -> str:
+def get_reviewer_role_name(reviewer, session: Session) -> str:
     """获取审核员的角色名称"""
     if not reviewer or not reviewer.role_id:
         return ""
@@ -39,17 +39,6 @@ def parse_leave_hours(leave_hours_str) -> float:
         # 尝试从字符串中提取数字
         match = re.search(r'[\d.]+', str(leave_hours_str))
         return float(match.group()) if match else 0
-
-
-def get_reviewer_role_name(reviewer, session: Session) -> str:
-    """获取审核员的职务名称"""
-    if reviewer.role_id:
-        role = session.exec(
-            select(Role).where(Role.role_id == reviewer.role_id)
-        ).first()
-        if role:
-            return role.role_name
-    return ""
 
 
 def get_reviewer_school_id(reviewer) -> int:
@@ -1007,7 +996,7 @@ class LeaveService:
         return leave
 
     @staticmethod
-    async def upload_file(file: UploadFile, session: Session = None) -> dict:
+    async def upload_file(file: UploadFile) -> dict:
         """上传证明文件"""
         if not file.filename:
             raise HTTPException(status_code=400, detail="文件名不能为空")

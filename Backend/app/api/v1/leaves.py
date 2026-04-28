@@ -202,7 +202,6 @@ def guarantee_leave(
     session: Session = Depends(get_session),
 ):
     """担保请假条 - 担保学生确认担保，双方担保权限均需在当前时间之前方可生效"""
-    from app.services.leave import LeaveService
     return LeaveService.guarantee_leave(current_user, leave_id, session)
 
 
