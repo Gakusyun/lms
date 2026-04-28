@@ -1,5 +1,6 @@
 from sqlmodel import Session, select, func
 from fastapi import Depends, HTTPException, Query
+from datetime import datetime
 import io
 
 from app.models import Student, Reviewer, School, Role
@@ -30,7 +31,7 @@ class StudentService:
         current_user: dict,
         page: int = Query(1, ge=1),
         page_size: int = Query(20, ge=1, le=100),
-        session: Session = Depends(lambda: None),
+        session: Session = None,
     ):
         """分页获取学生列表"""
         obj = current_user
@@ -261,20 +262,17 @@ class StudentService:
                 school_id = int(row[3]) if len(row) > 3 and row[3] else None
                 reviewer_id = int(row[4]) if len(row) > 4 and row[4] else None
 
-                # guarantee_permission: 0表示从未处罚有权限，其他时间戳表示处罚截止时间
+                # guarantee_permission: 0或空表示从未处罚有权限（无截止时间），其他时间戳表示处罚截止时间
                 guarantee_permission = None
                 if len(row) > 5 and row[5]:
                     try:
-                        guarantee_permission = int(row[5])
-                        if guarantee_permission == 0:
-                            # 0表示默认有权限，从未被处罚，设置为当前时间
-                            guarantee_permission = None  # 后面统一处理
+                        val = int(row[5])
+                        # 0表示从未被处罚，有担保权限，保持None（无时间限制）
+                        # 其他正数表示处罚截止时间
+                        if val != 0:
+                            guarantee_permission = datetime.fromtimestamp(val) if val > 0 else None
                     except (ValueError, TypeError):
                         guarantee_permission = None
-
-                # 如果没有设置guarantee_permission（0或空），默认为当前时间（从未被处罚，有担保权限）
-                if guarantee_permission is None:
-                    guarantee_permission = datetime.now()
 
                 # 检查是否已存在
                 existing = session.exec(
